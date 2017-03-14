@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunrun.mapper.DevTaskExecuteMapper">
+	
+	<insert id="saveDevTaskExecute">
+		insert into dev_task_execute(
+			id,						task_id,				task_type,				task_order,				task_describe,		
+			task_execute_state,		task_execute_note,		task_execute_begin,		task_execute_end,		create_time,		state
+		) values(
+			#{execute.id}, 			#{execute.taskId},		#{execute.taskType},	#{execute.taskOrder}, 	#{execute.taskDescribe}, 
+			#{execute.taskExecuteState},#{execute.taskExecuteNote},	#{execute.taskExecuteBegin},#{execute.taskExecuteEnd},now(), 1	
+		)
+	</insert>
+	
+	<update id="updateDevTaskExecute">
+		update dev_task_execute
+		<trim prefix="set" suffixOverrides=",">
+				update_time = now(),
+				<if test="execute.taskOrder != null">task_order=#{execute.taskOrder},</if>
+				<if test="execute.taskDescribe != null">task_describe=#{execute.taskDescribe},</if>
+				<if test="execute.taskExecuteState != null">task_execute_state=#{execute.taskExecuteState},</if>
+				<if test="execute.taskExecuteNote != null">task_execute_note=#{execute.taskExecuteNote},</if>
+				<if test="execute.taskExecuteBegin != null">task_execute_begin=#{execute.taskExecuteBegin},</if>
+				<if test="execute.taskExecuteEnd != null">task_execute_end=#{execute.taskExecuteEnd},</if>
+				<if test="execute.state != null">state=#{execute.state},</if>
+			</trim>
+		where 1=1  and state=1
+		<if test="execute.id != null">
+		    AND id = #{execute.id}
+		</if>
+		<if test="execute.taskId != null">
+		    AND task_id = #{execute.taskId}
+		</if>
+	</update>
+	
+	<delete id="deleteDevTaskExecute">
+		delete from dev_task_execute where 1=1
+		<if test="id != null">
+		    AND id = #{id}
+		</if>
+		<if test="taskId != null">
+		    AND task_id = #{taskId}
+		</if>
+	</delete>
+	
+	<select id="findTaskExecute" resultType="com.sunrun.entity.DevTaskExecute">
+		select * from dev_task_execute where 1=1
+		<if test="taskId != null">
+		    AND task_id = #{taskId}
+		</if>
+	</select>
+	
+</mapper>

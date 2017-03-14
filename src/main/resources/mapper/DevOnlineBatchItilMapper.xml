@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunrun.mapper.DevOnlineBatchItilMapper">
+
+	<insert id="saveDevOnlineBatch">
+		insert into dev_online_batch_itil(
+			id,				batch_name,				batch_describe,			batch_state,		 create_time,	      	state,
+			itil_number,	itil_assignee,			itil_category,			itil_subcategory,	itil_businessArea,		itil_status,
+			itil_requestor, itil_title,				itil_description,		itil_plannedEnd
+		) values(
+			#{itil.id},		#{itil.batchName},		#{itil.batchDescribe},		1, 					now(),				 1,
+			#{itil.itilNumber},#{itil.itilAssignee},#{itil.itilCategory},	#{itil.itilSubcategory},#{itil.itilBusinessArea},#{itil.itilStatus},
+			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd}
+		)
+	</insert>
+	
+	<update id="updateDevOnlineBatch">
+		update dev_online_batch_itil
+			<trim prefix="set" suffixOverrides=",">
+				update_time = now(),
+				<if test="itil.batchName != null">batch_name=#{itil.batchName},</if>
+				<if test="itil.batchDescribe != null">batch_describe=#{itil.batchName},</if>
+				<if test="itil.batchState != null">batch_state=#{itil.batchState},</if>
+				<if test="itil.state != null">state=#{itil.state},</if>
+				<if test="itil.itilStatus != null">state=#{itil.itilStatus},</if>
+				
+			</trim>
+		where 1=1
+		<if test="itil.id != null">
+		    AND id = #{itil.id}
+		</if>
+		<if test="itil.id != null">
+		    AND itil_number = #{itil.itilNumber}
+		</if>
+	</update>
+	
+	<delete id="deleteDevOnlineBatch">
+		delete from dev_online_batch_itil
+		where 1=1
+		<if test="id != null">
+		    AND id = #{id}
+		</if>
+	</delete>
+
+	<select id="findBatchById" resultType="com.sunrun.entity.DevOnlineBatchItil">
+		select * from dev_online_batch_itil
+		where id = #{id}
+	</select>
+
+	<select id="findItilTask" resultType="com.sunrun.entity.view.DevOnlineBatchTaskView">
+		SELECT * from(
+			SELECT 
+				b.id AS id,
+				b.batch_name AS batchName,
+				b.batch_describe AS batchDescribe,
+				b.batch_state AS batchState,
+				b.itil_number AS itilNumber,
+				b.itil_assignee AS itilAssignee,
+				b.itil_category AS itilCategory,
+				b.itil_subcategory AS itilSubcategory,
+				b.itil_businessArea As itilBusinessArea,
+				b.itil_status AS itilStatus,
+				b.itil_requestor AS itilRequestor,
+				b.itil_title AS itilTitle,
+				b.itil_description AS itilDescription,
+				b.itil_plannedEnd AS itilPlannedEnd,
+				<!-- b.itil_sourceId AS itilSourceId,
+				b.itil_requestedDate AS itilRequestedDate,
+				b.itil_source AS itilSource,
+				b.itil_openedBy AS itilOpenedBy, -->
+				
+				t.id AS taskId,
+				t.task_type AS taskType,
+				t.group_key AS groupKey,
+				t.task_describe AS taskDescribe,
+				t.task_state AS taskState,
+				t.brand_name AS brandName,
+				t.model_name AS modelName,
+				t.area_name AS areaName,
+				t.area_describe AS areaDescribe,
+				t.host_name AS hostName,
+				t.manager_ip AS managerIp,
+				t.main_switchboard_ip AS mainSwitchboardIp,
+				t.main_switchboard_port AS mainSwitchboardPort,
+				t.backup_switchboard_ip AS backupSwitchboardIp,
+				t.backup_switchboard_port AS backupSwitchboardPort,
+				t.dev_online_rack AS devOnlineRack,
+				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
+				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
+				t.create_time AS taskCreateTime,
+				t.update_time AS taskUpdateTime
+			FROM dev_online_batch_itil b, dev_online_task t,  dev_online_task_itil ti 
+			WHERE b.itil_number = ti.itil_number AND t.id = ti.dev_online_task_id and b.state=1 and t.state=1 and ti.state=1
+		) taskView	where 1=1 
+		<if test="taskView.id!=null">
+		    AND id = #{taskView.id}
+		</if>
+		<if test="taskView.batchState!=null and (taskView.batchState==1 or taskView.batchState==2) ">
+		    AND (batchState = 1 or batchState = 2)
+		</if>
+		<if test="taskView.batchState!=null and taskView.batchState==3">
+		    AND batchState = 3
+		</if>
+		<if test="taskView.itilNumber!=null">
+		    AND itilNumber = #{taskView.itilNumber}
+		</if>
+		<if test="like!= null">
+			<include refid="taskLikeQuery" />
+		</if>
+		<if test="sortBy!=null">
+				order by ${sortBy}
+		</if>
+		<if test="order!=null">
+				${order}
+		</if>
+		<if test="limit!=null">
+				limit ${limit}
+		</if>
+	</select>
+	
+	<select id="countItilTask" resultType="java.lang.Integer">
+		SELECT * from(
+			SELECT 
+				b.id AS id,
+				b.batch_name AS batchName,
+				b.batch_describe AS batchDescribe,
+				b.batch_state AS batchState,
+				b.itil_number AS itilNumber,
+				b.itil_assignee AS itilAssignee,
+				b.itil_category AS itilCategory,
+				b.itil_subcategory AS itilSubcategory,
+				b.itil_businessArea As itilBusinessArea,
+				b.itil_status AS itilStatus,
+				b.itil_requestor AS itilRequestor,
+				b.itil_title AS itilTitle,
+				b.itil_description AS itilDescription,
+				b.itil_plannedEnd AS itilPlannedEnd,
+				<!-- b.itil_sourceId AS itilSourceId,
+				b.itil_requestedDate AS itilRequestedDate,
+				b.itil_source AS itilSource,
+				b.itil_openedBy AS itilOpenedBy, -->
+				
+				t.id AS taskId,
+				t.task_type AS taskType,
+				t.group_key AS groupKey,
+				t.task_describe AS taskDescribe,
+				t.task_state AS taskState,
+				t.brand_name AS brandName,
+				t.model_name AS modelName,
+				t.area_name AS areaName,
+				t.area_describe AS areaDescribe,
+				t.host_name AS hostName,
+				t.manager_ip AS managerIp,
+				t.main_switchboard_ip AS mainSwitchboardIp,
+				t.main_switchboard_port AS mainSwitchboardPort,
+				t.backup_switchboard_ip AS backupSwitchboardIp,
+				t.backup_switchboard_port AS backupSwitchboardPort,
+				t.dev_online_rack AS devOnlineRack,
+				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
+				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
+				t.create_time AS taskCreateTime,
+				t.update_time AS taskUpdateTime
+			FROM dev_online_batch_itil b, dev_online_task t,  dev_online_task_itil ti 
+			WHERE b.itil_number = ti.itil_number AND t.id = ti.dev_online_task_id  
+		) taskView	where 1=1 
+		<if test="taskView.id!=null">
+		    AND id = #{taskView.id}
+		</if>
+		<if test="taskView.itilNumber!=null">
+		    AND itilNumber = #{taskView.itilNumber}
+		</if>
+		<if test="like!= null">
+			<include refid="taskLikeQuery" />
+		</if>
+		<if test="sortBy!=null">
+				order by ${sortBy}
+		</if>
+		<if test="order!=null">
+				${order}
+		</if>
+		<if test="limit!=null">
+				limit ${limit}
+		</if>
+	</select>
+	
+	<sql id="taskLikeQuery">
+		AND (
+			    taskView.batchName like concat(concat('%',#{like}),'%') 
+			    or taskView.batchDescribe like concat(concat('%',#{like}),'%') 
+			    or taskView.batchState like binary  concat(concat('%',#{like}),'%') 
+			    or taskView.itilNumber like concat(concat('%',#{like}),'%') 
+				or taskView.itilAssignee like concat(concat('%',#{like}),'%') 
+				or taskView.itilCategory like concat(concat('%',#{like}),'%') 
+				or taskView.itilSubcategory like concat(concat('%',#{like}),'%') 
+				or taskView.itilBusinessArea like concat(concat('%',#{like}),'%') 
+				or taskView.itilStatus like binary concat(concat('%',#{like}),'%') 
+				or taskView.itilRequestor like concat(concat('%',#{like}),'%') 
+				or taskView.itilTitle like concat(concat('%',#{like}),'%') 
+				or taskView.itilDescription like concat(concat('%',#{like}),'%') 
+				or taskView.itilPlannedEnd like binary  concat(concat('%',#{like}),'%') 
+				<!-- or taskView.itilSourceId like concat(concat('%',#{like}),'%')
+				or taskView.itilRequestedDate like binary concat(concat('%',#{like}),'%')
+				or taskView.itilSource like concat(concat('%',#{like}),'%')
+				or taskView.itilOpenedBy like concat(concat('%',#{like}),'%') -->
+			    or taskView.taskType like binary concat(concat('%',#{like}),'%') 
+			    or taskView.groupKey like concat(concat('%',#{like}),'%') 
+			    or taskView.taskDescribe like concat(concat('%',#{like}),'%') 
+			    or taskView.taskState like binary concat(concat('%',#{like}),'%') 
+			    or taskView.brandName like concat(concat('%',#{like}),'%') 
+			    or taskView.modelName like concat(concat('%',#{like}),'%') 
+			    or taskView.areaName like concat(concat('%',#{like}),'%') 
+			    or taskView.areaDescribe like concat(concat('%',#{like}),'%') 
+			    or taskView.hostName like concat(concat('%',#{like}),'%') 
+			    or taskView.managerIp like concat(concat('%',#{like}),'%') 
+			    or taskView.mainSwitchboardIp like concat(concat('%',#{like}),'%') 
+			    or taskView.mainSwitchboardPort like concat(concat('%',#{like}),'%') 
+			    or taskView.backupSwitchboardIp like concat(concat('%',#{like}),'%') 
+			    or taskView.backupSwitchboardPort like concat(concat('%',#{like}),'%') 
+			    or taskView.exclusiveSwitchboardIp like concat(concat('%',#{like}),'%') 
+			    or taskView.exclusiveSwitchboardPort like concat(concat('%',#{like}),'%') 
+			    or taskView.devOnlineRack like concat(concat('%',#{like}),'%') 
+		    )
+	</sql>
+
+</mapper>
