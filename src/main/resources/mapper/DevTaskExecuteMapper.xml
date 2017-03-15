@@ -5,10 +5,10 @@
 	
 	<insert id="saveDevTaskExecute">
 		insert into dev_task_execute(
-			id,						task_id,				task_type,				task_order,				task_describe,		
+			id,						task_id,				task_type,				task_order,				task_describe,		execute_step,
 			task_execute_state,		task_execute_note,		task_execute_begin,		task_execute_end,		create_time,		state
 		) values(
-			#{execute.id}, 			#{execute.taskId},		#{execute.taskType},	#{execute.taskOrder}, 	#{execute.taskDescribe}, 
+			#{execute.id}, 			#{execute.taskId},		#{execute.taskType},	#{execute.taskOrder}, 	#{execute.taskDescribe}, #{execute.executeStep},
 			#{execute.taskExecuteState},#{execute.taskExecuteNote},	#{execute.taskExecuteBegin},#{execute.taskExecuteEnd},now(), 1	
 		)
 	</insert>
@@ -17,6 +17,7 @@
 		update dev_task_execute
 		<trim prefix="set" suffixOverrides=",">
 				update_time = now(),
+				<if test="execute.executeStep != null">execute_step=#{execute.executeStep},</if>
 				<if test="execute.taskOrder != null">task_order=#{execute.taskOrder},</if>
 				<if test="execute.taskDescribe != null">task_describe=#{execute.taskDescribe},</if>
 				<if test="execute.taskExecuteState != null">task_execute_state=#{execute.taskExecuteState},</if>

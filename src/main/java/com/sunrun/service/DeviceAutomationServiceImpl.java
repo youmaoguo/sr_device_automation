@@ -34,10 +34,15 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	
 	@Transactional
 	@Override
-	public boolean saveDevice(DevOnlineTask task) {
+	public boolean saveDevice(DevOnlineTask task, Integer executeStep) {
 		boolean b = true;
 		try{
 			devOnlineTaskMapper.saveDevOnlineTask(task);
+			DevTaskExecute execute = new DevTaskExecute();
+			execute.setId(StringUtil.getUuid());
+			execute.setTaskId(task.getId());
+			execute.setExecuteStep(executeStep);
+			devTaskExecuteMapper.saveDevTaskExecute(execute);
 		}catch(Exception e){
 			b = false;
 			e.printStackTrace();
@@ -103,10 +108,15 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	}
 
 	@Override
-	public boolean updateTask(DevOnlineTask task) {
+	public boolean updateTask(DevOnlineTask task, Integer executeStep) {
 		boolean b = true;
 		try{
 			devOnlineTaskMapper.updateDevOnlineTask(task);
+			DevTaskExecute execute = new DevTaskExecute();
+			execute.setId(StringUtil.getUuid());
+			execute.setTaskId(task.getId());
+			execute.setExecuteStep(executeStep);
+			devTaskExecuteMapper.saveDevTaskExecute(execute);
 		}catch(Exception e){
 			b = false;
 			e.printStackTrace();

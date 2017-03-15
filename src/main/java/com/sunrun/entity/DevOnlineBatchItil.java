@@ -11,7 +11,7 @@ public class DevOnlineBatchItil extends BaseEntity {
 	
 	private String batchName;		//'批次名称',
 	private String batchDescribe;	//'批次描述',
-	private int batchState;			//'批次状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
+	private Integer batchState;			//'批次状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
 	
 	private String itilNumber;		//'itil申请单编号 文本，唯一键 151200319843 itil系统返回',
 	//private String itilSourceId;  	//'来源ID GEN000002',
@@ -28,7 +28,6 @@ public class DevOnlineBatchItil extends BaseEntity {
 	//private String itilSource; 		//'来源 文本 cloud',
 	//private String itilOpenedBy;	//'创建人 文本 cmb.int.cloud'
 	
-	
 	public String getBatchName() {
 		return batchName;
 	}
@@ -41,10 +40,10 @@ public class DevOnlineBatchItil extends BaseEntity {
 	public void setBatchDescribe(String batchDescribe) {
 		this.batchDescribe = batchDescribe;
 	}
-	public int getBatchState() {
+	public Integer getBatchState() {
 		return batchState;
 	}
-	public void setBatchState(int batchState) {
+	public void setBatchState(Integer batchState) {
 		this.batchState = batchState;
 	}
 	public String getItilNumber() {
@@ -111,14 +110,15 @@ public class DevOnlineBatchItil extends BaseEntity {
 	public String toString() {
 		return "DevOnlineBatchItil [batchName=" + batchName
 				+ ", batchDescribe=" + batchDescribe + ", batchState="
-				+ batchState + ", itilNumber=" + itilNumber  + ", itilAssignee=" + itilAssignee
-				+ ", itilCategory=" + itilCategory + ", itilSubcategory="
-				+ itilSubcategory + ", itilBusinessArea=" + itilBusinessArea
-				+ ", itilStatus=" + itilStatus + ", itilRequestor="
-				+ itilRequestor + ", itilTitle=" + itilTitle
-				+ ", itilDescription=" + itilDescription + ", itilPlannedEnd="
-				+ itilPlannedEnd   + "]";
+				+ batchState + ", itilNumber=" + itilNumber + ", itilAssignee="
+				+ itilAssignee + ", itilCategory=" + itilCategory
+				+ ", itilSubcategory=" + itilSubcategory
+				+ ", itilBusinessArea=" + itilBusinessArea + ", itilStatus="
+				+ itilStatus + ", itilRequestor=" + itilRequestor
+				+ ", itilTitle=" + itilTitle + ", itilDescription="
+				+ itilDescription + ", itilPlannedEnd=" + itilPlannedEnd + "]";
 	}
+	
 	
 	
 }

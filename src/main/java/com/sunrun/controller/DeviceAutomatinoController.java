@@ -42,6 +42,8 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request		
 	 * @param batchId		批次ID(可选参数，暂时没用到)
 	 * @param batchState	批次状态（1或者2：未完成；3：已经完成。可选参数，不传递就是查询所有状态的，传递了就是查询具体状态的）
+	 * @param id			任务id,(参数可选)
+	 * @param executeStep	任务步骤（参数可选）
 	 * 
 	 * 类似下面几个参数基本上用不到了（现在和前端默认是不带分页，把所有数据返回）
 	 * @param like			模糊查询值/搜索值
@@ -51,10 +53,12 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param pageSize		每页记录数
 	 * @return				返回json字符串
 	 */
-	@RequestMapping(value = "/v1/deviceAutomatino/findDevBatchTask", method = RequestMethod.GET, produces="application/json")
+	@RequestMapping(value = "/deviceAutomation/v1/findDevBatchTask", method = RequestMethod.GET, produces="application/json")
 	public void findDevBatchTask(HttpServletRequest request, HttpServletResponse response,
+								@RequestParam(value = "id", required = false) String taskId,
+								@RequestParam(value = "executeStep", required = false) Integer executeStep,
 								@RequestParam(value = "batchState", required = false) Integer batchState,
-								@RequestParam(value = "id", required = false) String id,
+								@RequestParam(value = "batchId", required = false) String batchId,
 								@RequestParam(value = "like", required = false) String like, 
 								@RequestParam(value = "sortBy", required = false) String sortBy, 
 								@RequestParam(value = "order", required = false) String order, 
@@ -67,11 +71,15 @@ public class DeviceAutomatinoController extends BaseController{
 		System.out.println("========"+ request.getQueryString());
 		try{
 			DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
-			if(id!=null && !"".equals(id)){
-				batchView.setId(id);
+			if(batchId!=null && !"".equals(batchId)){
+				batchView.setId(batchId);
 			}
 			if(batchState!=null){
 				batchView.setBatchState(batchState); 
+			}
+			if(taskId!=null && !"".equals(taskId) && executeStep!=null){
+				batchView.setTaskId(taskId);
+				batchView.setExecuteStep(executeStep); 
 			}
 			List<DevOnlineBatchTaskView> list = deviceAutomationService.findDevBatchTask(batchView, like, sortBy, order, page(currentPage, pageSize));
 			Map<Object, Object> collect = new HashMap<Object, Object>();
@@ -105,7 +113,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request	request请求对象
 	 * @return			返回json格式的字符串
 	 */
-	@RequestMapping(value = "/v1/deviceAutomatino/editDevice", method = RequestMethod.POST, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	@RequestMapping(value = "/deviceAutomation/v1/editDevice", method = RequestMethod.POST, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
 	public void editDevice(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request, HttpServletResponse response){
 		Json json = new Json();
 		String info = "编辑交换机设备成功";
@@ -113,6 +121,9 @@ public class DeviceAutomatinoController extends BaseController{
 		Boolean success = true;
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
+			String id = obj.getString("id");	//taskId 任务id
+			Integer executeStep = obj.getIntValue("executeStep");//任务步骤
+			
 			String brandName = obj.getString("brandName");
 			String modelName = obj.getString("modelName");
 			String areaName = obj.getString("areaName");
@@ -140,21 +151,21 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
 			task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
 			
-			String id = obj.getString("id");
 			String d = null;
 			if(StringUtils.isEmpty(id)){
 				String uuid = StringUtil.getUuid();
 				d = uuid;
 				task.setId(uuid);
-				deviceAutomationService.saveDevice(task);
+				deviceAutomationService.saveDevice(task, executeStep);
 			}else{
 				d = id;
-				deviceAutomationService.updateTask(task);
+				task.setId(id);
+				deviceAutomationService.updateTask(task, executeStep);
 			}
 			
 			//编辑完之后还要把这条信息返回给前端
-			DevOnlineTask data = deviceAutomationService.findTaskById(d);
-			json.setData(data);
+			//DevOnlineTask data = deviceAutomationService.findTaskById(d);
+			json.setData(d);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -177,7 +188,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request	request请求对象
 	 * @return			返回json格式的字符串
 	 */
-	@RequestMapping(value = "/v1/deviceAutomatino/deleteDevice", method = {RequestMethod.POST, RequestMethod.DELETE}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	@RequestMapping(value = "/deviceAutomation/v1/deleteDevice", method = {RequestMethod.POST, RequestMethod.DELETE}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
 	public void deleteDevice(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request,HttpServletResponse response){
 		Json json = new Json();
 		String info = "删除成功";

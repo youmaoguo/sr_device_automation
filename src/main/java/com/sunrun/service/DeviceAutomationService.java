@@ -16,9 +16,10 @@ public interface DeviceAutomationService {
 	/**
 	 * 新增某一批次下具体的新增任务
 	 * @param task	具体新增的任务对象
+	 * @param executeStep	任务步骤
 	 * @return		true or false
 	 */
-	boolean saveDevice(DevOnlineTask task);
+	boolean saveDevice(DevOnlineTask task, Integer executeStep);
 	
 	/**
 	 * 删除批次Itil
@@ -61,9 +62,11 @@ public interface DeviceAutomationService {
 	
 	/**
 	 * 修改批次下的任务
+	 * @param task			任务对象
+	 * @param executeStep	任务步骤
 	 * @return
 	 */
-	boolean updateTask(DevOnlineTask task);
+	boolean updateTask(DevOnlineTask task, Integer executeStep);
 	
 	/**
 	 * 修改具体任务的执行情况

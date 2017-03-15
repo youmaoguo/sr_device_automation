@@ -9,6 +9,7 @@ public class DevOnlineTaskItil extends BaseEntity{
 
 	private String itilNumber;		//'itil申请单编号 ',
 	private String devOnlineTaskId;	// '设备上线任务表记录对应ID',
+	
 	public String getItilNumber() {
 		return itilNumber;
 	}

@@ -65,11 +65,7 @@
 				b.itil_title AS itilTitle,
 				b.itil_description AS itilDescription,
 				b.itil_plannedEnd AS itilPlannedEnd,
-				<!-- b.itil_sourceId AS itilSourceId,
-				b.itil_requestedDate AS itilRequestedDate,
-				b.itil_source AS itilSource,
-				b.itil_openedBy AS itilOpenedBy, -->
-				
+			
 				t.id AS taskId,
 				t.task_type AS taskType,
 				t.group_key AS groupKey,
@@ -89,12 +85,21 @@
 				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
 				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
 				t.create_time AS taskCreateTime,
-				t.update_time AS taskUpdateTime
-			FROM dev_online_batch_itil b, dev_online_task t,  dev_online_task_itil ti 
-			WHERE b.itil_number = ti.itil_number AND t.id = ti.dev_online_task_id and b.state=1 and t.state=1 and ti.state=1
+				t.update_time AS taskUpdateTime,
+				e.execute_step As executeStep
+				
+			FROM dev_online_batch_itil b, dev_online_task t,  dev_online_task_itil ti,	dev_task_execute e  
+			WHERE b.itil_number = ti.itil_number AND t.id = ti.dev_online_task_id and e.task_id = t.id
+				and b.state=1 and t.state=1 and ti.state=1 and e.state=1
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">
 		    AND id = #{taskView.id}
+		</if>
+		<if test="taskView.taskId!=null">
+		    AND taskId = #{taskView.taskId}
+		</if>
+		<if test="taskView.executeStep!=null">
+		    AND executeStep = #{taskView.executeStep}
 		</if>
 		<if test="taskView.batchState!=null and (taskView.batchState==1 or taskView.batchState==2) ">
 		    AND (batchState = 1 or batchState = 2)
@@ -136,10 +141,6 @@
 				b.itil_title AS itilTitle,
 				b.itil_description AS itilDescription,
 				b.itil_plannedEnd AS itilPlannedEnd,
-				<!-- b.itil_sourceId AS itilSourceId,
-				b.itil_requestedDate AS itilRequestedDate,
-				b.itil_source AS itilSource,
-				b.itil_openedBy AS itilOpenedBy, -->
 				
 				t.id AS taskId,
 				t.task_type AS taskType,
@@ -166,6 +167,18 @@
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">
 		    AND id = #{taskView.id}
+		</if>
+		<if test="taskView.taskId!=null">
+		    AND taskId = #{taskView.taskId}
+		</if>
+		<if test="taskView.executeStep!=null">
+		    AND executeStep = #{taskView.executeStep}
+		</if>
+		<if test="taskView.batchState!=null and (taskView.batchState==1 or taskView.batchState==2) ">
+		    AND (batchState = 1 or batchState = 2)
+		</if>
+		<if test="taskView.batchState!=null and taskView.batchState==3">
+		    AND batchState = 3
 		</if>
 		<if test="taskView.itilNumber!=null">
 		    AND itilNumber = #{taskView.itilNumber}
@@ -199,10 +212,6 @@
 				or taskView.itilTitle like concat(concat('%',#{like}),'%') 
 				or taskView.itilDescription like concat(concat('%',#{like}),'%') 
 				or taskView.itilPlannedEnd like binary  concat(concat('%',#{like}),'%') 
-				<!-- or taskView.itilSourceId like concat(concat('%',#{like}),'%')
-				or taskView.itilRequestedDate like binary concat(concat('%',#{like}),'%')
-				or taskView.itilSource like concat(concat('%',#{like}),'%')
-				or taskView.itilOpenedBy like concat(concat('%',#{like}),'%') -->
 			    or taskView.taskType like binary concat(concat('%',#{like}),'%') 
 			    or taskView.groupKey like concat(concat('%',#{like}),'%') 
 			    or taskView.taskDescribe like concat(concat('%',#{like}),'%') 

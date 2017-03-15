@@ -12,7 +12,7 @@ public class DevOnlineBatchTaskView {
 	private String id;				//批次itil ID
 	private String batchName;		//'批次名称',
 	private String batchDescribe;	//'批次描述',
-	private int batchState;			//'批次状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
+	private Integer batchState;			//'批次状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
 	private String itilNumber;		//'itil申请单编号 文本，唯一键 151200319843 itil系统返回',
 	private String itilSourceId;  	//'来源ID GEN000002',
 	private String itilAssignee;	//'处理人 文本00203045 必须为ITIL操作员账号，一般是员工号',
@@ -29,10 +29,10 @@ public class DevOnlineBatchTaskView {
 	private String itilOpenedBy;	//'创建人 文本 cmb.int.cloud'
 	
 	private String taskId;			//任务id
-	private int taskType; 			//'任务类型 1：接入设备任务;2:汇聚设备任务',
+	private Integer taskType; 			//'任务类型 1：接入设备任务;2:汇聚设备任务',
 	private String groupKey;		//'组名，用于标示多个任务属于同一组',
 	private String taskDescribe;	//'任务描述',
-	private int taskState;			//'批次任务状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
+	private Integer taskState;			//'批次任务状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
 	private String brandName;		//'品牌名称',
 	private String modelName;		//'型号',
 	private String areaName;		//'区域名称',
@@ -49,11 +49,13 @@ public class DevOnlineBatchTaskView {
 	private Date taskCreateTime;		//任务创建时间
 	private Date taskUpdateTime;		//任务修改时间
 	
-	public String getTaskId() {
-		return taskId;
+	private Integer executeStep;		//任务步骤
+	
+	public String getId() {
+		return id;
 	}
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
+	public void setId(String id) {
+		this.id = id;
 	}
 	public String getBatchName() {
 		return batchName;
@@ -67,16 +69,106 @@ public class DevOnlineBatchTaskView {
 	public void setBatchDescribe(String batchDescribe) {
 		this.batchDescribe = batchDescribe;
 	}
-	public int getBatchState() {
+	public Integer getBatchState() {
 		return batchState;
 	}
-	public void setBatchState(int batchState) {
+	public void setBatchState(Integer batchState) {
 		this.batchState = batchState;
 	}
-	public int getTaskType() {
+	public String getItilNumber() {
+		return itilNumber;
+	}
+	public void setItilNumber(String itilNumber) {
+		this.itilNumber = itilNumber;
+	}
+	public String getItilSourceId() {
+		return itilSourceId;
+	}
+	public void setItilSourceId(String itilSourceId) {
+		this.itilSourceId = itilSourceId;
+	}
+	public String getItilAssignee() {
+		return itilAssignee;
+	}
+	public void setItilAssignee(String itilAssignee) {
+		this.itilAssignee = itilAssignee;
+	}
+	public String getItilCategory() {
+		return itilCategory;
+	}
+	public void setItilCategory(String itilCategory) {
+		this.itilCategory = itilCategory;
+	}
+	public String getItilSubcategory() {
+		return itilSubcategory;
+	}
+	public void setItilSubcategory(String itilSubcategory) {
+		this.itilSubcategory = itilSubcategory;
+	}
+	public String getItilBusinessArea() {
+		return itilBusinessArea;
+	}
+	public void setItilBusinessArea(String itilBusinessArea) {
+		this.itilBusinessArea = itilBusinessArea;
+	}
+	public String getItilStatus() {
+		return itilStatus;
+	}
+	public void setItilStatus(String itilStatus) {
+		this.itilStatus = itilStatus;
+	}
+	public String getItilRequestor() {
+		return itilRequestor;
+	}
+	public void setItilRequestor(String itilRequestor) {
+		this.itilRequestor = itilRequestor;
+	}
+	public String getItilTitle() {
+		return itilTitle;
+	}
+	public void setItilTitle(String itilTitle) {
+		this.itilTitle = itilTitle;
+	}
+	public String getItilDescription() {
+		return itilDescription;
+	}
+	public void setItilDescription(String itilDescription) {
+		this.itilDescription = itilDescription;
+	}
+	public Date getItilPlannedEnd() {
+		return itilPlannedEnd;
+	}
+	public void setItilPlannedEnd(Date itilPlannedEnd) {
+		this.itilPlannedEnd = itilPlannedEnd;
+	}
+	public Date getItilRequestedDate() {
+		return itilRequestedDate;
+	}
+	public void setItilRequestedDate(Date itilRequestedDate) {
+		this.itilRequestedDate = itilRequestedDate;
+	}
+	public String getItilSource() {
+		return itilSource;
+	}
+	public void setItilSource(String itilSource) {
+		this.itilSource = itilSource;
+	}
+	public String getItilOpenedBy() {
+		return itilOpenedBy;
+	}
+	public void setItilOpenedBy(String itilOpenedBy) {
+		this.itilOpenedBy = itilOpenedBy;
+	}
+	public String getTaskId() {
+		return taskId;
+	}
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+	public Integer getTaskType() {
 		return taskType;
 	}
-	public void setTaskType(int taskType) {
+	public void setTaskType(Integer taskType) {
 		this.taskType = taskType;
 	}
 	public String getGroupKey() {
@@ -91,10 +183,10 @@ public class DevOnlineBatchTaskView {
 	public void setTaskDescribe(String taskDescribe) {
 		this.taskDescribe = taskDescribe;
 	}
-	public int getTaskState() {
+	public Integer getTaskState() {
 		return taskState;
 	}
-	public void setTaskState(int taskState) {
+	public void setTaskState(Integer taskState) {
 		this.taskState = taskState;
 	}
 	public String getBrandName() {
@@ -187,95 +279,11 @@ public class DevOnlineBatchTaskView {
 	public void setTaskUpdateTime(Date taskUpdateTime) {
 		this.taskUpdateTime = taskUpdateTime;
 	}
-	public String getId() {
-		return id;
+	public Integer getExecuteStep() {
+		return executeStep;
 	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getItilNumber() {
-		return itilNumber;
-	}
-	public void setItilNumber(String itilNumber) {
-		this.itilNumber = itilNumber;
-	}
-	public String getItilAssignee() {
-		return itilAssignee;
-	}
-	public void setItilAssignee(String itilAssignee) {
-		this.itilAssignee = itilAssignee;
-	}
-	public String getItilCategory() {
-		return itilCategory;
-	}
-	public void setItilCategory(String itilCategory) {
-		this.itilCategory = itilCategory;
-	}
-	public String getItilSubcategory() {
-		return itilSubcategory;
-	}
-	public void setItilSubcategory(String itilSubcategory) {
-		this.itilSubcategory = itilSubcategory;
-	}
-	public String getItilBusinessArea() {
-		return itilBusinessArea;
-	}
-	public void setItilBusinessArea(String itilBusinessArea) {
-		this.itilBusinessArea = itilBusinessArea;
-	}
-	public String getItilStatus() {
-		return itilStatus;
-	}
-	public void setItilStatus(String itilStatus) {
-		this.itilStatus = itilStatus;
-	}
-	public String getItilRequestor() {
-		return itilRequestor;
-	}
-	public void setItilRequestor(String itilRequestor) {
-		this.itilRequestor = itilRequestor;
-	}
-	public String getItilTitle() {
-		return itilTitle;
-	}
-	public void setItilTitle(String itilTitle) {
-		this.itilTitle = itilTitle;
-	}
-	public String getItilDescription() {
-		return itilDescription;
-	}
-	public void setItilDescription(String itilDescription) {
-		this.itilDescription = itilDescription;
-	}
-	public Date getItilPlannedEnd() {
-		return itilPlannedEnd;
-	}
-	public void setItilPlannedEnd(Date itilPlannedEnd) {
-		this.itilPlannedEnd = itilPlannedEnd;
-	}
-	public String getItilSourceId() {
-		return itilSourceId;
-	}
-	public void setItilSourceId(String itilSourceId) {
-		this.itilSourceId = itilSourceId;
-	}
-	public Date getItilRequestedDate() {
-		return itilRequestedDate;
-	}
-	public void setItilRequestedDate(Date itilRequestedDate) {
-		this.itilRequestedDate = itilRequestedDate;
-	}
-	public String getItilSource() {
-		return itilSource;
-	}
-	public void setItilSource(String itilSource) {
-		this.itilSource = itilSource;
-	}
-	public String getItilOpenedBy() {
-		return itilOpenedBy;
-	}
-	public void setItilOpenedBy(String itilOpenedBy) {
-		this.itilOpenedBy = itilOpenedBy;
+	public void setExecuteStep(Integer executeStep) {
+		this.executeStep = executeStep;
 	}
 	@Override
 	public String toString() {
@@ -304,8 +312,10 @@ public class DevOnlineBatchTaskView {
 				+ ", exclusiveSwitchboardIp=" + exclusiveSwitchboardIp
 				+ ", exclusiveSwitchboardPort=" + exclusiveSwitchboardPort
 				+ ", taskCreateTime=" + taskCreateTime + ", taskUpdateTime="
-				+ taskUpdateTime + "]";
+				+ taskUpdateTime + ", executeStep=" + executeStep + "]";
 	}
+	
+	
 	
 	
 }

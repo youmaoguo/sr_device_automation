@@ -8,10 +8,10 @@ package com.sunrun.entity;
 public class DevOnlineTask extends BaseEntity {
 	
 	private String batchId;			//'批次id(引用表dev_online_batch的主键)',
-	private int taskType; 			//'任务类型 1：接入设备任务;2:汇聚设备任务',
+	private Integer taskType; 			//'任务类型 1：接入设备任务;2:汇聚设备任务',
 	private String groupKey;		//'组名，用于标示多个任务属于同一组',
 	private String taskDescribe;	//'任务描述',
-	private int taskState;			//'批次任务状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
+	private Integer taskState;			//'批次任务状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
 	private String brandName;		//'品牌名称',
 	private String modelName;		//'型号',
 	private String areaName;		//'区域名称',
@@ -26,22 +26,16 @@ public class DevOnlineTask extends BaseEntity {
 	private String exclusiveSwitchboardIp;//'带外交机ip',
 	private String exclusiveSwitchboardPort;//'带外交机端口',
 	
-	public String getHostName() {
-		return hostName;
+	public String getBatchId() {
+		return batchId;
 	}
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
+	public void setBatchId(String batchId) {
+		this.batchId = batchId;
 	}
-	public String getManagerIp() {
-		return managerIp;
-	}
-	public void setManagerIp(String managerIp) {
-		this.managerIp = managerIp;
-	}
-	public int getTaskType() {
+	public Integer getTaskType() {
 		return taskType;
 	}
-	public void setTaskType(int taskType) {
+	public void setTaskType(Integer taskType) {
 		this.taskType = taskType;
 	}
 	public String getGroupKey() {
@@ -50,22 +44,16 @@ public class DevOnlineTask extends BaseEntity {
 	public void setGroupKey(String groupKey) {
 		this.groupKey = groupKey;
 	}
-	public String getBatchId() {
-		return batchId;
-	}
-	public void setBatchId(String batchId) {
-		this.batchId = batchId;
-	}
 	public String getTaskDescribe() {
 		return taskDescribe;
 	}
 	public void setTaskDescribe(String taskDescribe) {
 		this.taskDescribe = taskDescribe;
 	}
-	public int getTaskState() {
+	public Integer getTaskState() {
 		return taskState;
 	}
-	public void setTaskState(int taskState) {
+	public void setTaskState(Integer taskState) {
 		this.taskState = taskState;
 	}
 	public String getBrandName() {
@@ -91,6 +79,18 @@ public class DevOnlineTask extends BaseEntity {
 	}
 	public void setAreaDescribe(String areaDescribe) {
 		this.areaDescribe = areaDescribe;
+	}
+	public String getHostName() {
+		return hostName;
+	}
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+	public String getManagerIp() {
+		return managerIp;
+	}
+	public void setManagerIp(String managerIp) {
+		this.managerIp = managerIp;
 	}
 	public String getMainSwitchboardIp() {
 		return mainSwitchboardIp;
@@ -151,7 +151,6 @@ public class DevOnlineTask extends BaseEntity {
 				+ "]";
 	}
 	
-
 	
 	
 	
