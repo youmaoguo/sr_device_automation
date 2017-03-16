@@ -43,7 +43,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param batchId		批次ID(可选参数，暂时没用到)
 	 * @param batchState	批次状态（1或者2：未完成；3：已经完成。可选参数，不传递就是查询所有状态的，传递了就是查询具体状态的）
 	 * @param id			任务id,(参数可选)
-	 * @param executeStep	任务步骤（参数可选）
+	 * @param executeStep	任务步骤（参数可选.如要查询itil任务列表，则必须传入此参数值为：0）
 	 * 
 	 * 类似下面几个参数基本上用不到了（现在和前端默认是不带分页，把所有数据返回）
 	 * @param like			模糊查询值/搜索值
@@ -71,15 +71,18 @@ public class DeviceAutomatinoController extends BaseController{
 		System.out.println("========"+ request.getQueryString());
 		try{
 			DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
-			if(batchId!=null && !"".equals(batchId)){
-				batchView.setId(batchId);
-			}
-			if(batchState!=null){
-				batchView.setBatchState(batchState); 
-			}
-			if(taskId!=null && !"".equals(taskId) && executeStep!=null){
-				batchView.setTaskId(taskId);
-				batchView.setExecuteStep(executeStep); 
+			if(executeStep==null || executeStep==0){	//查询ITIL任务列表
+				if(batchId!=null && !"".equals(batchId)){
+					batchView.setId(batchId);
+				}
+				if(batchState!=null){
+					batchView.setBatchState(batchState); 
+				}
+			}else{	//查询任务具体信息
+				if(taskId!=null && !"".equals(taskId) && executeStep!=null && executeStep!=0){
+					batchView.setTaskId(taskId);
+					batchView.setExecuteStep(executeStep); 
+				}
 			}
 			List<DevOnlineBatchTaskView> list = deviceAutomationService.findDevBatchTask(batchView, like, sortBy, order, page(currentPage, pageSize));
 			Map<Object, Object> collect = new HashMap<Object, Object>();
