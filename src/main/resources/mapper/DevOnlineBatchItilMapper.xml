@@ -77,6 +77,7 @@
 				t.area_describe AS areaDescribe,
 				t.host_name AS hostName,
 				t.manager_ip AS managerIp,
+				t.vlan AS vlan,
 				t.main_switchboard_ip AS mainSwitchboardIp,
 				t.main_switchboard_port AS mainSwitchboardPort,
 				t.backup_switchboard_ip AS backupSwitchboardIp,
@@ -153,6 +154,7 @@
 				t.area_describe AS areaDescribe,
 				t.host_name AS hostName,
 				t.manager_ip AS managerIp,
+				t.vlan AS vlan,
 				t.main_switchboard_ip AS mainSwitchboardIp,
 				t.main_switchboard_port AS mainSwitchboardPort,
 				t.backup_switchboard_ip AS backupSwitchboardIp,
@@ -222,6 +224,7 @@
 			    or taskView.areaDescribe like concat(concat('%',#{like}),'%') 
 			    or taskView.hostName like concat(concat('%',#{like}),'%') 
 			    or taskView.managerIp like concat(concat('%',#{like}),'%') 
+			    or taskView.vlan like concat(concat('%',#{like}),'%') 
 			    or taskView.mainSwitchboardIp like concat(concat('%',#{like}),'%') 
 			    or taskView.mainSwitchboardPort like concat(concat('%',#{like}),'%') 
 			    or taskView.backupSwitchboardIp like concat(concat('%',#{like}),'%') 

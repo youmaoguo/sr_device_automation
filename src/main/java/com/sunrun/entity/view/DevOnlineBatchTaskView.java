@@ -39,6 +39,7 @@ public class DevOnlineBatchTaskView {
 	private String areaDescribe;	//'区域描述',
 	private String hostName;		//'接入交换机hostname',
 	private String managerIp;		//'接入交换机管理IP',
+	private String vlan;			//接入交换机将要上到哪个VLAN上
 	private String mainSwitchboardIp;//'主汇聚交换机ip',
 	private String mainSwitchboardPort;//'主汇聚交换机端口',
 	private String backupSwitchboardIp;//'备汇聚交换机ip',
@@ -51,6 +52,12 @@ public class DevOnlineBatchTaskView {
 	
 	private Integer executeStep;		//任务步骤
 	
+	public String getVlan() {
+		return vlan;
+	}
+	public void setVlan(String vlan) {
+		this.vlan = vlan;
+	}
 	public String getId() {
 		return id;
 	}
@@ -303,7 +310,7 @@ public class DevOnlineBatchTaskView {
 				+ taskDescribe + ", taskState=" + taskState + ", brandName="
 				+ brandName + ", modelName=" + modelName + ", areaName="
 				+ areaName + ", areaDescribe=" + areaDescribe + ", hostName="
-				+ hostName + ", managerIp=" + managerIp
+				+ hostName + ", managerIp=" + managerIp + ", vlan=" + vlan
 				+ ", mainSwitchboardIp=" + mainSwitchboardIp
 				+ ", mainSwitchboardPort=" + mainSwitchboardPort
 				+ ", backupSwitchboardIp=" + backupSwitchboardIp
@@ -314,6 +321,7 @@ public class DevOnlineBatchTaskView {
 				+ ", taskCreateTime=" + taskCreateTime + ", taskUpdateTime="
 				+ taskUpdateTime + ", executeStep=" + executeStep + "]";
 	}
+	
 	
 	
 	

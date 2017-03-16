@@ -12,6 +12,7 @@ create table dev_online_task
 	area_describe varchar(100) comment '区域描述',
 	host_name varchar(100) comment '接入交换机hostname',
 	manager_ip varchar(100) comment '接入交换机管理IP',
+	vlan varchar(100) comment '接入交换机将要上到哪个VLAN上',
 	main_switchboard_ip varchar(20) comment '主汇聚交换机ip',
 	main_switchboard_port varchar(20) comment '主汇聚交换机端口',
 	backup_switchboard_ip varchar(20) comment '备汇聚交换机ip',

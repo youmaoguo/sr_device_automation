@@ -156,7 +156,7 @@ public class DeviceAutomatinoController extends BaseController{
 				String uuid = StringUtil.getUuid();
 				d = uuid;
 				task.setId(uuid);
-				deviceAutomationService.saveDevice(task, executeStep);
+				deviceAutomationService.saveDevice(task, executeStep); 
 			}else{
 				d = id;
 				task.setId(id);
@@ -196,8 +196,8 @@ public class DeviceAutomatinoController extends BaseController{
 		Boolean success = true;
 		try{
 			JSONObject obj = new JSONObject();
-			String itilNumber = obj.getString("itilNumber");			//itil批次Id
-			String taskId = obj.getString("taskId");	//任务Id
+			String itilNumber = obj.getString("itilNumber");//itil批次Id
+			String taskId = obj.getString("taskId");		//任务Id
 			String executeId = obj.getString("executeId");	//执行情况Id
 			
 			//删除itil批次

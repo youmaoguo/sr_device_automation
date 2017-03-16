@@ -17,6 +17,7 @@ public class DevOnlineTask extends BaseEntity {
 	private String areaName;		//'区域名称',
 	private String areaDescribe;	//'区域描述',
 	private String hostName;		//'接入交换机hostname',
+	private String vlan;			//'接入交换机将要上到哪个VLAN上',
 	private String managerIp;		//'接入交换机管理IP',
 	private String mainSwitchboardIp;//'主汇聚交换机ip',
 	private String mainSwitchboardPort;//'主汇聚交换机端口',
@@ -26,6 +27,12 @@ public class DevOnlineTask extends BaseEntity {
 	private String exclusiveSwitchboardIp;//'带外交机ip',
 	private String exclusiveSwitchboardPort;//'带外交机端口',
 	
+	public String getVlan() {
+		return vlan;
+	}
+	public void setVlan(String vlan) {
+		this.vlan = vlan;
+	}
 	public String getBatchId() {
 		return batchId;
 	}
@@ -141,16 +148,16 @@ public class DevOnlineTask extends BaseEntity {
 				+ ", taskState=" + taskState + ", brandName=" + brandName
 				+ ", modelName=" + modelName + ", areaName=" + areaName
 				+ ", areaDescribe=" + areaDescribe + ", hostName=" + hostName
-				+ ", managerIp=" + managerIp + ", mainSwitchboardIp="
-				+ mainSwitchboardIp + ", mainSwitchboardPort="
-				+ mainSwitchboardPort + ", backupSwitchboardIp="
-				+ backupSwitchboardIp + ", backupSwitchboardPort="
-				+ backupSwitchboardPort + ", devOnlineRack=" + devOnlineRack
+				+ ", vlan=" + vlan + ", managerIp=" + managerIp
+				+ ", mainSwitchboardIp=" + mainSwitchboardIp
+				+ ", mainSwitchboardPort=" + mainSwitchboardPort
+				+ ", backupSwitchboardIp=" + backupSwitchboardIp
+				+ ", backupSwitchboardPort=" + backupSwitchboardPort
+				+ ", devOnlineRack=" + devOnlineRack
 				+ ", exclusiveSwitchboardIp=" + exclusiveSwitchboardIp
 				+ ", exclusiveSwitchboardPort=" + exclusiveSwitchboardPort
 				+ "]";
 	}
-	
 	
 	
 	
