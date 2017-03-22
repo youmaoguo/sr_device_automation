@@ -27,6 +27,43 @@ public class DevOnlineTask extends BaseEntity {
 	private String exclusiveSwitchboardIp;//'带外交机ip',
 	private String exclusiveSwitchboardPort;//'带外交机端口',
 	
+	private Integer managerIpWrite;		//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private Integer accessConfigWrite;	//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private String exclusiveSwitchboardInfo;//带外交机要信息描述
+	private String currentIosVersion;	//当前IOS版本信息
+	private Integer mainSwitchboardConfigWrite;//主汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	
+	
+	public Integer getManagerIpWrite() {
+		return managerIpWrite;
+	}
+	public void setManagerIpWrite(Integer managerIpWrite) {
+		this.managerIpWrite = managerIpWrite;
+	}
+	public Integer getAccessConfigWrite() {
+		return accessConfigWrite;
+	}
+	public void setAccessConfigWrite(Integer accessConfigWrite) {
+		this.accessConfigWrite = accessConfigWrite;
+	}
+	public String getExclusiveSwitchboardInfo() {
+		return exclusiveSwitchboardInfo;
+	}
+	public void setExclusiveSwitchboardInfo(String exclusiveSwitchboardInfo) {
+		this.exclusiveSwitchboardInfo = exclusiveSwitchboardInfo;
+	}
+	public String getCurrentIosVersion() {
+		return currentIosVersion;
+	}
+	public void setCurrentIosVersion(String currentIosVersion) {
+		this.currentIosVersion = currentIosVersion;
+	}
+	public Integer getMainSwitchboardConfigWrite() {
+		return mainSwitchboardConfigWrite;
+	}
+	public void setMainSwitchboardConfigWrite(Integer mainSwitchboardConfigWrite) {
+		this.mainSwitchboardConfigWrite = mainSwitchboardConfigWrite;
+	}
 	public String getVlan() {
 		return vlan;
 	}
@@ -156,8 +193,13 @@ public class DevOnlineTask extends BaseEntity {
 				+ ", devOnlineRack=" + devOnlineRack
 				+ ", exclusiveSwitchboardIp=" + exclusiveSwitchboardIp
 				+ ", exclusiveSwitchboardPort=" + exclusiveSwitchboardPort
-				+ "]";
+				+ ", managerIpWrite=" + managerIpWrite + ", accessConfigWrite="
+				+ accessConfigWrite + ", exclusiveSwitchboardInfo="
+				+ exclusiveSwitchboardInfo + ", currentIosVersion="
+				+ currentIosVersion + ", mainSwitchboardConfigWrite="
+				+ mainSwitchboardConfigWrite + "]";
 	}
+	
 	
 	
 	

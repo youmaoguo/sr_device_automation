@@ -12,6 +12,13 @@ create table dev_online_task
 	area_describe varchar(100) comment '区域描述',
 	host_name varchar(100) comment '接入交换机hostname',
 	manager_ip varchar(100) comment '接入交换机管理IP',
+	
+	manager_ip_write tinyint default 0 comment '接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败',
+	access_config_write tinyint default 0 comment '接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败',
+	exclusive_switchboard_info varchar(200) comment '带外交机要信息描述',
+	current_ios_version varchar(100) comment '当前IOS版本信息', 
+	main_switchboard_config_write tinyint default 0 comment '主汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败',
+	
 	vlan varchar(100) comment '接入交换机将要上到哪个VLAN上',
 	main_switchboard_ip varchar(20) comment '主汇聚交换机ip',
 	main_switchboard_port varchar(20) comment '主汇聚交换机端口',
@@ -26,6 +33,5 @@ create table dev_online_task
 	update_time datetime comment '修改时间',
 	update_user varchar(32) comment '修改人员id',
 	state tinyint default 1 comment '状态 0 代表已删除，1代表正常',
-	primary key (id),
-	foreign key(batch_id) references dev_online_batch(id)
+	primary key (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8 ROW_FORMAT=DYNAMIC collate=utf8_bin COMMENT '设备上线批次任务表';

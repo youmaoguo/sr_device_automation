@@ -14,6 +14,8 @@ import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevOnlineTaskItil;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
+import com.sunrun.mapper.DevExclusiveSwitchboardConnMapper;
+import com.sunrun.mapper.DevIosVersionsMapper;
 import com.sunrun.mapper.DevOnlineBatchItilMapper;
 import com.sunrun.mapper.DevOnlineTaskItilMapper;
 import com.sunrun.mapper.DevOnlineTaskMapper;
@@ -31,6 +33,10 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	private DevTaskExecuteMapper devTaskExecuteMapper;
 	@Resource
 	private DevOnlineTaskItilMapper devOnlineTaskItilMapper;
+	@Resource
+	private DevExclusiveSwitchboardConnMapper devExclusiveSwitchboardConnMapper;
+	@Resource
+	private DevIosVersionsMapper devIosVersionsMapper;
 	
 	@Transactional
 	@Override

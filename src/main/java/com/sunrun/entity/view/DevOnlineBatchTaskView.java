@@ -49,9 +49,44 @@ public class DevOnlineBatchTaskView {
 	private String exclusiveSwitchboardPort;//'带外交机端口',
 	private Date taskCreateTime;		//任务创建时间
 	private Date taskUpdateTime;		//任务修改时间
+	private Integer managerIpWrite;		//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private Integer accessConfigWrite;	//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private String exclusiveSwitchboardInfo;//带外交机要信息描述
+	private String currentIosVersion;	//当前IOS版本信息
+	private Integer mainSwitchboardConfigWrite;//主汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
 	
 	private Integer executeStep;		//任务步骤
 	
+	public Integer getManagerIpWrite() {
+		return managerIpWrite;
+	}
+	public void setManagerIpWrite(Integer managerIpWrite) {
+		this.managerIpWrite = managerIpWrite;
+	}
+	public Integer getAccessConfigWrite() {
+		return accessConfigWrite;
+	}
+	public void setAccessConfigWrite(Integer accessConfigWrite) {
+		this.accessConfigWrite = accessConfigWrite;
+	}
+	public Integer getMainSwitchboardConfigWrite() {
+		return mainSwitchboardConfigWrite;
+	}
+	public void setMainSwitchboardConfigWrite(Integer mainSwitchboardConfigWrite) {
+		this.mainSwitchboardConfigWrite = mainSwitchboardConfigWrite;
+	}
+	public String getExclusiveSwitchboardInfo() {
+		return exclusiveSwitchboardInfo;
+	}
+	public void setExclusiveSwitchboardInfo(String exclusiveSwitchboardInfo) {
+		this.exclusiveSwitchboardInfo = exclusiveSwitchboardInfo;
+	}
+	public String getCurrentIosVersion() {
+		return currentIosVersion;
+	}
+	public void setCurrentIosVersion(String currentIosVersion) {
+		this.currentIosVersion = currentIosVersion;
+	}
 	public String getVlan() {
 		return vlan;
 	}

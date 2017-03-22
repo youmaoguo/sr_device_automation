@@ -23,7 +23,7 @@
 				<if test="itil.batchDescribe != null">batch_describe=#{itil.batchName},</if>
 				<if test="itil.batchState != null">batch_state=#{itil.batchState},</if>
 				<if test="itil.state != null">state=#{itil.state},</if>
-				<if test="itil.itilStatus != null">state=#{itil.itilStatus},</if>
+				<if test="itil.itilStatus != null">itil_status=#{itil.itilStatus},</if>
 				
 			</trim>
 		where 1=1
@@ -87,6 +87,11 @@
 				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
 				t.create_time AS taskCreateTime,
 				t.update_time AS taskUpdateTime,
+				t.manager_ip_write AS managerIpWrite,
+				t.access_config_write AS accessConfigWrite,
+				t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
+				t.current_ios_version AS currentIosVersion, 
+				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
 				e.execute_step As executeStep
 				
 			FROM dev_online_batch_itil b, dev_online_task t,  dev_online_task_itil ti,	dev_task_execute e  
@@ -126,7 +131,7 @@
 	</select>
 	
 	<select id="countItilTask" resultType="java.lang.Integer">
-		SELECT * from(
+		SELECT count(*) from(
 			SELECT 
 				b.id AS id,
 				b.batch_name AS batchName,
@@ -142,7 +147,7 @@
 				b.itil_title AS itilTitle,
 				b.itil_description AS itilDescription,
 				b.itil_plannedEnd AS itilPlannedEnd,
-				
+			
 				t.id AS taskId,
 				t.task_type AS taskType,
 				t.group_key AS groupKey,
@@ -163,7 +168,14 @@
 				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
 				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
 				t.create_time AS taskCreateTime,
-				t.update_time AS taskUpdateTime
+				t.update_time AS taskUpdateTime,
+				t.manager_ip_write AS managerIpWrite,
+				t.access_config_write AS accessConfigWrite,
+				t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
+				t.current_ios_version AS currentIosVersion, 
+				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
+				e.execute_step As executeStep
+				
 			FROM dev_online_batch_itil b, dev_online_task t,  dev_online_task_itil ti 
 			WHERE b.itil_number = ti.itil_number AND t.id = ti.dev_online_task_id  
 		) taskView	where 1=1 
@@ -232,6 +244,11 @@
 			    or taskView.exclusiveSwitchboardIp like concat(concat('%',#{like}),'%') 
 			    or taskView.exclusiveSwitchboardPort like concat(concat('%',#{like}),'%') 
 			    or taskView.devOnlineRack like concat(concat('%',#{like}),'%') 
+			    or taskView.managerIpWrite like concat(concat('%',#{like}),'%') 
+			    or taskView.accessConfigWrite like concat(concat('%',#{like}),'%') 
+			    or taskView.exclusiveSwitchboardInfo like concat(concat('%',#{like}),'%') 
+			    or taskView.currentIosVersion like concat(concat('%',#{like}),'%') 
+			    or taskView.mainSwitchboardConfigWrite like concat(concat('%',#{like}),'%') 
 		    )
 	</sql>
 
