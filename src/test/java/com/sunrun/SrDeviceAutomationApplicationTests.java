@@ -1,12 +1,16 @@
 package com.sunrun;
 
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.StringUtils;
 
-import com.alibaba.fastjson.JSONObject;
+import com.sunrun.util.StringUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -17,14 +21,19 @@ public class SrDeviceAutomationApplicationTests {
 	}
 
 	public static void main(String[] args) {
-		JSONObject obj = new JSONObject();
-		obj.put("id", "1");
-		System.out.println(obj.toJSONString());
-		System.out.println(obj.getString("id"));
-		String name = obj.getString("name");
-		if(StringUtils.isEmpty(name)){
-			System.out.println("空");
+		String s = StringUtil.read("D:\\port.txt");
+		try {
+			//s = new String(s.getBytes("gbk"),"utf-8");
+			org.json.JSONObject obj = new org.json.JSONObject(s);
+			Object str = obj.get("data");
+			System.out.println(str.toString()); 
+			List<String> l = com.alibaba.fastjson.JSONArray.parseArray(str.toString(), String.class);
+			System.out.println(l.toString());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
 	}
 	
 	

@@ -49,7 +49,7 @@ public class DevOnlineBatchTaskView {
 	private String exclusiveSwitchboardPort;//'带外交机端口',
 	private Date taskCreateTime;		//任务创建时间
 	private Date taskUpdateTime;		//任务修改时间
-	private Integer managerIpWrite;		//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private Integer managerIpWrite;		//接入交换机管理口ip写入配制状态 ；0 ：待写入，1：成功,2:失败
 	private Integer accessConfigWrite;	//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
 	private String exclusiveSwitchboardInfo;//带外交机要信息描述
 	private String currentIosVersion;	//当前IOS版本信息

@@ -13,7 +13,7 @@ create table dev_online_task
 	host_name varchar(100) comment '接入交换机hostname',
 	manager_ip varchar(100) comment '接入交换机管理IP',
 	
-	manager_ip_write tinyint default 0 comment '接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败',
+	manager_ip_write tinyint default 0 comment '接入交换机管理IP写入配制状态 ；0 ：待写入，1：成功,2:失败',
 	access_config_write tinyint default 0 comment '接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败',
 	exclusive_switchboard_info varchar(200) comment '带外交机要信息描述',
 	current_ios_version varchar(100) comment '当前IOS版本信息', 

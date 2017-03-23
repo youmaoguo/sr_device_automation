@@ -8,8 +8,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -18,10 +20,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.service.DeviceAutomationService;
+import com.sunrun.task.ManagementPort;
+import com.sunrun.task.UpdateIos;
+import com.sunrun.task.WriteAccessConfig;
+import com.sunrun.task.WriteGatherConfig;
 import com.sunrun.util.Json;
 import com.sunrun.util.StringUtil;
 
@@ -36,6 +43,9 @@ public class DeviceAutomatinoController extends BaseController{
 	
 	@Resource
 	private DeviceAutomationService deviceAutomationService;
+	
+	@Value("${sr_public.thirdPartUrl}")
+	private String thirdPartUrl;
 	
 	/**
 	 * 查询批次任务
@@ -56,7 +66,7 @@ public class DeviceAutomatinoController extends BaseController{
 	@RequestMapping(value = "/deviceAutomation/v1/findDevBatchTask", method = RequestMethod.GET, produces="application/json")
 	public void findDevBatchTask(HttpServletRequest request, HttpServletResponse response,
 								@RequestParam(value = "id", required = false) String taskId,
-								@RequestParam(value = "executeStep", required = false) Integer executeStep,
+								@RequestParam(value = "execute_step", required = false) Integer executeStep,
 								@RequestParam(value = "batchState", required = false) Integer batchState,
 								@RequestParam(value = "batchId", required = false) String batchId,
 								@RequestParam(value = "like", required = false) String like, 
@@ -102,10 +112,6 @@ public class DeviceAutomatinoController extends BaseController{
 		json.setRet_info(info);
 		json.setSuccess(success);
 		//返回数据
-		/*if(isCrossDomain(request))
-			return returnJsonP(json);
-		else
-			return returnJson(json);*/
 		response(json, response, request);
 	}
 	
@@ -125,32 +131,38 @@ public class DeviceAutomatinoController extends BaseController{
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String id = obj.getString("id");	//taskId 任务id
-			Integer executeStep = obj.getIntValue("executeStep");//任务步骤
+			Integer executeStep = obj.getIntValue("execute_step");//任务步骤
 			
 			String brandName = obj.getString("brandName");
 			String modelName = obj.getString("modelName");
 			String areaName = obj.getString("areaName");
+			String areaDescribe = obj.getString("areaDescribe");
 			String devOnlineRack = obj.getString("devOnlineRack");
 			String hostName = obj.getString("hostName");
+			String mainSwitchboardIp = obj.getString("mainSwitchboardIp");
+			String backupSwitchboardIp = obj.getString("backupSwitchboardIp");
 			DevOnlineTask task = new DevOnlineTask();
 			task.setBrandName(brandName);
 			task.setModelName(modelName);
 			task.setAreaName(areaName);
 			task.setDevOnlineRack(devOnlineRack);
 			task.setHostName(hostName);
+			task.setAreaDescribe(areaDescribe); 
+			task.setBackupSwitchboardIp(backupSwitchboardIp);
+			task.setMainSwitchboardIp(mainSwitchboardIp);
 			
 			String managerIp = obj.getString("managerIp");
-			String mainSwitchboardIp = obj.getString("mainSwitchboardIp");
+			String vlan = obj.getString("vlan");
+			task.setManagerIp(managerIp);
+			task.setVlan(vlan); 
+			
 			String mainSwitchboardPort = obj.getString("mainSwitchboardPort");
-			String backupSwitchboardIp = obj.getString("backupSwitchboardIp");
 			String backupSwitchboardPort = obj.getString("backupSwitchboardPort");
+			task.setMainSwitchboardPort(mainSwitchboardPort);
+			task.setBackupSwitchboardPort(backupSwitchboardPort);
+			
 			String exclusiveSwitchboardIp = obj.getString("exclusiveSwitchboardIp");
 			String exclusiveSwitchboardPort = obj.getString("exclusiveSwitchboardPort");
-			task.setManagerIp(managerIp);
-			task.setMainSwitchboardIp(mainSwitchboardIp);
-			task.setMainSwitchboardPort(mainSwitchboardPort);
-			task.setBackupSwitchboardIp(backupSwitchboardIp);
-			task.setBackupSwitchboardPort(backupSwitchboardPort);
 			task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
 			task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
 			
@@ -161,9 +173,22 @@ public class DeviceAutomatinoController extends BaseController{
 				task.setId(uuid);
 				deviceAutomationService.saveDevice(task, executeStep); 
 			}else{
+				Object object = null;
+				//第五步.保存接入交换机配置信息
+				if(executeStep==5){
+					Object data = obj.get("data");
+					List<String> l = com.alibaba.fastjson.JSONArray.parseArray(data.toString(), String.class);
+					object = l;
+				}
+				//第六步，保存带外交换机信息; || 第七步，写交换机入管理口ip
+				if(executeStep==6 || executeStep==7){
+					Object data = obj.get("data");
+					List<DevOnlineTask> l = com.alibaba.fastjson.JSONArray.parseArray(data.toString(), DevOnlineTask.class);
+					object = l;
+				}
 				d = id;
 				task.setId(id);
-				deviceAutomationService.updateTask(task, executeStep);
+				deviceAutomationService.updateTask(task, executeStep, object);
 			}
 			
 			//编辑完之后还要把这条信息返回给前端
@@ -229,7 +254,142 @@ public class DeviceAutomatinoController extends BaseController{
 		response(json, response, request); 
 	}
 	
+	@RequestMapping(value = "/deviceAutomation/v1/deleteDevice", method = {RequestMethod.POST}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	public void ThirdParty(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request,HttpServletResponse response){
+		Json json = new Json();
+		String info = "接口调用成功";
+		Integer code = 201;	//201:用户新建或修改数据成功
+		Boolean success = true;
+		try{
+			JSONObject obj = JSONObject.parseObject(jsonStr);
+			String methodName = obj.getString("method_name");				//请求第三方接口方法名字
+			if(methodName.equals("/interchanger/v1/managementPort")){		//请求写入接入交换机配置管理口IP
+				managementPort(obj, auth);
+			}else if(methodName.equals("/interchanger/v1/updateIos")){		//更新IOS版本
+				updateIos(obj, auth);
+			}else if(methodName.equals("/interchanger/v1/writeAccessConfig")){	//请求写入接入交换机配置
+				writeAccessConfig(obj, auth);
+			}else if(methodName.equals("/interchanger/v1/writeGatherConfig")){	//请求写入汇聚接入交换机配置
+				writeGatherConfig(obj, auth);
+			}
+			
+		}catch(Exception e){
+			code = 500;
+			success = false;
+			logger.error("接口程序出错");
+			e.printStackTrace();
+		}
+		json.setRet_code(code);
+		json.setRet_info(info);
+		json.setSuccess(success);
+		//返回数据
+		response(json, response, request); 
+	}
 	
+	private void  writeGatherConfig(JSONObject obj, String auth) {
+		JSONArray array = (JSONArray) obj.get("data");
+		for(int i=0;i<array.size();i++){
+			JSONObject o = (com.alibaba.fastjson.JSONObject) array.get(i);	//获取对象
+			String host = obj.getString("host");//交换机的telnet登录IP地址
+			String port = obj.getString("port");//交换机的telnet登录端口号
+			String user = obj.getString("user");//交换机的telnet登录账号
+			String password = obj.getString("password");//交换机的telnet登录密码
+			String type = obj.getString("type");//交换机的类型，分别为4948E和5548
+			String[] commands = (String[]) obj.get("commands");//需要写入接入交换机的命令列表集合
+			String taskId = o.getString("taskId");//任务id
+			
+			if(!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(user) && !StringUtils.isEmpty(password)
+				&& !StringUtils.isEmpty(type) && !StringUtils.isEmpty(taskId) && !StringUtils.isEmpty(commands)){
+				
+				o.put("method_name", obj.getString("method_name"));
+				WriteGatherConfig mp = new WriteGatherConfig(thirdPartUrl, o, "post", auth, deviceAutomationService);
+				Thread t = new Thread(mp);
+		        t.start();
+		        
+			}
+		}
+	}
+
+	private void writeAccessConfig(JSONObject obj, String auth) {
+		JSONArray array = (JSONArray) obj.get("data");
+		for(int i=0;i<array.size();i++){
+			JSONObject o = (com.alibaba.fastjson.JSONObject) array.get(i);	//获取对象
+			String host = obj.getString("host");//交换机的telnet登录IP地址
+			String port = obj.getString("port");//交换机的telnet登录端口号
+			String user = obj.getString("user");//交换机的telnet登录账号
+			String password = obj.getString("password");//交换机的telnet登录密码
+			String type = obj.getString("type");//交换机的类型，分别为4948E和5548
+			String[] commands = (String[]) obj.get("commands");//需要写入接入交换机的命令列表集合
+			String taskId = o.getString("taskId");//任务id
+			
+			if(!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(user) && !StringUtils.isEmpty(password)
+				&& !StringUtils.isEmpty(type) && !StringUtils.isEmpty(taskId) && !StringUtils.isEmpty(commands)){
+				
+				o.put("method_name", obj.getString("method_name"));
+				WriteAccessConfig mp = new WriteAccessConfig(thirdPartUrl, o, "post", auth, deviceAutomationService);
+				Thread t = new Thread(mp);
+		        t.start();
+		        
+			}
+		}
+	}
+
+	private void updateIos(JSONObject obj, String auth) throws JSONException {
+		JSONArray array = (JSONArray) obj.get("data");
+		for(int i=0;i<array.size();i++){
+			JSONObject o = (com.alibaba.fastjson.JSONObject) array.get(i);	//获取对象
+			String host = o.getString("host");//交换机的telnet登录IP地址
+			String port = o.getString("port");//交换机的telnet登录端口号
+			String user = o.getString("user");//交换机的telnet登录账号
+			String password = o.getString("password");//交换机的telnet登录密码
+			String type = o.getString("type");//交换机的类型，分别为4948E和5548
+			String serverIp = obj.getString("serverIp");//更新源服务器的IP
+			String sourceFileName = obj.getString("sourceFileName");//源文件名
+			String desFileName = obj.getString("desFileName");//目的文件名
+			String iosName = obj.getString("iosName");//IOS名称
+			String updateId = obj.getString("updateId");//请求需用回调的ID updateId 
+			String taskId = o.getString("taskId");//任务id
+			
+			if(!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(user) && !StringUtils.isEmpty(password)
+				&& !StringUtils.isEmpty(type) && !StringUtils.isEmpty(serverIp) && !StringUtils.isEmpty(sourceFileName) 
+				&& !StringUtils.isEmpty(desFileName) && !StringUtils.isEmpty(iosName) && !StringUtils.isEmpty(taskId)){
+				
+				o.put("method_name", obj.getString("method_name"));
+				UpdateIos mp = new UpdateIos(thirdPartUrl, o, "post", auth, deviceAutomationService);
+				Thread t = new Thread(mp);
+		        t.start();
+		        
+			}
+		}
+	}
+
+	/**
+	 * 请求写入接入交换机配置管理口IP
+	 * @param obj
+	 * @param auth
+	 * @throws JSONException
+	 */
+	public void managementPort(JSONObject obj, String auth) throws JSONException{ 
+		JSONArray array = (JSONArray) obj.get("data");
+		for(int i=0;i<array.size();i++){
+			JSONObject o =  (com.alibaba.fastjson.JSONObject)array.get(i);	//获取对象
+			String host = o.getString("host");//交换机的telnet登录IP地址
+			String port = o.getString("port");//交换机的telnet登录端口号
+			String user = o.getString("user");//交换机的telnet登录账号
+			String password = o.getString("password");//交换机的telnet登录密码
+			String taskId = o.getString("taskId");//交换机的telnet登录密码
+			String type = o.getString("type");//交换机的类型，分别为4948E和5548
+			if(!StringUtils.isEmpty(host) && !StringUtils.isEmpty(port) && !StringUtils.isEmpty(user) && !StringUtils.isEmpty(password) 
+					&& !StringUtils.isEmpty(taskId) && !StringUtils.isEmpty(type)){
+				
+				o.put("method_name", obj.getString("method_name"));
+				ManagementPort mp = new ManagementPort(thirdPartUrl, o, "post", auth, deviceAutomationService);
+				Thread t = new Thread(mp);
+		        t.start();
+		        
+			}
+		}
+	}
 	
 
 }

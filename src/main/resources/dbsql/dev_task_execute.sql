@@ -5,7 +5,7 @@ create table dev_task_execute
 	task_type tinyint comment '任务类型，此字段目前不使用，备用',
 	execute_step smallint default 1 comment '任务步骤',
 	task_order smallint default 1 comment '任务执行顺序',
-	task_describe varchar(500) comment '任务描述',
+	task_describe varchar(1000) comment '任务描述',
 	task_execute_state tinyint default 1 comment '任务执行状态 1：新建；2：执行中；3：成功;4:失败',
 	task_execute_note varchar(1000) comment '脚本执行情况',
 	task_execute_begin datetime comment '任务开始执行时间',

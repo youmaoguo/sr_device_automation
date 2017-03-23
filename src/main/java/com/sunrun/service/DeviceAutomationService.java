@@ -1,6 +1,7 @@
 package com.sunrun.service;
 
 import java.util.List;
+
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
@@ -64,9 +65,19 @@ public interface DeviceAutomationService {
 	 * 修改批次下的任务
 	 * @param task			任务对象
 	 * @param executeStep	任务步骤
+	 * @param object		配置数据信息
 	 * @return
 	 */
-	boolean updateTask(DevOnlineTask task, Integer executeStep);
+	boolean updateTask(DevOnlineTask task, Integer executeStep, Object object);
+	
+	/**
+	 * 修改批次下的任务
+	 * @param task			任务对象
+	 * @param execute		具体任务的执行情况对象
+	 * @param executeStep	任务步骤
+	 * @return
+	 */
+	boolean updateTask2(DevOnlineTask task,DevTaskExecute execute, Integer executeStep);
 	
 	/**
 	 * 修改具体任务的执行情况

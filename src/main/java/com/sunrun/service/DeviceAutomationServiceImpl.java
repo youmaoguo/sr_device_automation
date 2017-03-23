@@ -113,15 +113,34 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		return b;
 	}
 
+	@Transactional
 	@Override
-	public boolean updateTask(DevOnlineTask task, Integer executeStep) {
+	public boolean updateTask(DevOnlineTask task, Integer executeStep, Object object) {
 		boolean b = true;
 		try{
-			devOnlineTaskMapper.updateDevOnlineTask(task);
+			if(executeStep>0 && executeStep<6)
+				devOnlineTaskMapper.updateDevOnlineTask(task);
+			//第五步.保存接入交换机配置信息
+			if(executeStep==5){
+				List<String> l = (List<String>) object;
+				//调用大文本api
+				
+			}
+			//第六步，保存带外交换机信息  || 第七步，写交换机入管理口ip
+			if(executeStep==6 /*|| executeStep==7*/){
+				List<DevOnlineTask> l = (List<DevOnlineTask>) object;
+				for(int i=0;i<l.size();i++){
+					DevOnlineTask t = l.get(i);
+					devOnlineTaskMapper.updateDevOnlineTask(t);
+				}
+			}
+			
+			//保存每一步步骤执行情况
 			DevTaskExecute execute = new DevTaskExecute();
 			execute.setId(StringUtil.getUuid());
 			execute.setTaskId(task.getId());
 			execute.setExecuteStep(executeStep);
+			execute.setTaskExecuteState(3);
 			devTaskExecuteMapper.saveDevTaskExecute(execute);
 		}catch(Exception e){
 			b = false;
@@ -179,6 +198,23 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			logger.error("删除itil任务出错");
 			throw new RuntimeException(e);
 		}
+	}
+
+
+	@Transactional
+	@Override
+	public boolean updateTask2(DevOnlineTask task, DevTaskExecute execute, Integer executeStep) {
+		boolean b = true;
+		try{
+			devOnlineTaskMapper.updateDevOnlineTask(task);
+			//保存每一步步骤执行情况
+			devTaskExecuteMapper.saveDevTaskExecute(execute);
+		}catch(Exception e){
+			b = false;
+			e.printStackTrace();
+			logger.error("修改批次下的任务出错了");
+		}
+		return b;
 	}
 	
 
