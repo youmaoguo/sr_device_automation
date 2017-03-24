@@ -1,10 +1,8 @@
 package com.sunrun.task;
 
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-
 import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
@@ -52,7 +50,7 @@ public class UpdateIos implements Runnable {
 				logger.error(info);
 			}else{
 				org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-				if(obj1.getInt("errCode")!=200){
+				if(obj1.getInt("ret_code")!=200){
 					info = "升级ios版本失败";
 					success = false;
 				}

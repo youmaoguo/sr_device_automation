@@ -71,7 +71,7 @@ public interface DeviceAutomationService {
 	boolean updateTask(DevOnlineTask task, Integer executeStep, Object object);
 	
 	/**
-	 * 修改批次下的任务
+	 * 修改批次下的任务,并且记录任务执行情况log
 	 * @param task			任务对象
 	 * @param execute		具体任务的执行情况对象
 	 * @param executeStep	任务步骤

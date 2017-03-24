@@ -52,11 +52,11 @@ public class WriteAccessConfig implements Runnable {
 				logger.error(info);
 			}else{
 				org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-				if(obj1.getInt("errCode")!=200){
+				if(obj1.getInt("ret_code")!=200){
 					info = "写入接入交换机配置失败";
 					success = false;
-					if(obj1.getInt("errCode")==505){
-						JSONArray array = obj1.getJSONArray("resultList");
+					if(obj1.getInt("ret_code")==505){
+						JSONArray array = obj1.getJSONArray("data");
 						String data = array.toString();
 						info = "某些命令执行不成功:"+data.toString();
 					}
