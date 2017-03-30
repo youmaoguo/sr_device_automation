@@ -48,6 +48,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			execute.setId(StringUtil.getUuid());
 			execute.setTaskId(task.getId());
 			execute.setExecuteStep(executeStep);
+			execute.setTaskExecuteState(3);
 			devTaskExecuteMapper.saveDevTaskExecute(execute);
 		}catch(Exception e){
 			b = false;
@@ -165,8 +166,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 
 
 	@Override
-	public DevOnlineTask findTaskById(String id) {
-		return devOnlineTaskMapper.findTaskById(id);
+	public DevOnlineBatchTaskView findTaskById(DevOnlineBatchTaskView taskView) {
+		return devOnlineTaskMapper.findTaskById(taskView);
 	}
 
 

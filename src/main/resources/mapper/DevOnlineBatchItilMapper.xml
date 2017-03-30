@@ -94,9 +94,12 @@
 				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
 				e.execute_step As executeStep
 				
-			FROM dev_online_batch_itil b, dev_online_task t,  dev_online_task_itil ti,	dev_task_execute e  
-			WHERE b.itil_number = ti.itil_number AND t.id = ti.dev_online_task_id and e.task_id = t.id
-				and b.state=1 and t.state=1 and ti.state=1 and e.state=1
+			FROM  dev_online_task t 
+				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
+				LEFT JOIN dev_online_batch_itil b on b.itil_number = ti.itil_number
+				LEFT JOIN dev_task_execute e ON e.task_id=t.id
+			WHERE t.state=1  
+			
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">
 		    AND id = #{taskView.id}
@@ -176,8 +179,11 @@
 				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
 				e.execute_step As executeStep
 				
-			FROM dev_online_batch_itil b, dev_online_task t,  dev_online_task_itil ti 
-			WHERE b.itil_number = ti.itil_number AND t.id = ti.dev_online_task_id  
+			FROM  dev_online_task t 
+				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
+				LEFT JOIN dev_online_batch_itil b on b.itil_number = ti.itil_number
+				LEFT JOIN dev_task_execute e ON e.task_id=t.id
+			WHERE t.state=1   
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">
 		    AND id = #{taskView.id}

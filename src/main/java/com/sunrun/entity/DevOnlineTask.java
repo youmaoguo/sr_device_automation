@@ -7,7 +7,6 @@ package com.sunrun.entity;
  */
 public class DevOnlineTask extends BaseEntity {
 	
-	private String batchId;			//'批次id(引用表dev_online_batch的主键)',
 	private Integer taskType; 			//'任务类型 1：接入设备任务;2:汇聚设备任务',
 	private String groupKey;		//'组名，用于标示多个任务属于同一组',
 	private String taskDescribe;	//'任务描述',
@@ -69,12 +68,6 @@ public class DevOnlineTask extends BaseEntity {
 	}
 	public void setVlan(String vlan) {
 		this.vlan = vlan;
-	}
-	public String getBatchId() {
-		return batchId;
-	}
-	public void setBatchId(String batchId) {
-		this.batchId = batchId;
 	}
 	public Integer getTaskType() {
 		return taskType;
@@ -180,7 +173,7 @@ public class DevOnlineTask extends BaseEntity {
 	}
 	@Override
 	public String toString() {
-		return "DevOnlineTask [batchId=" + batchId + ", taskType=" + taskType
+		return "DevOnlineTask [taskType=" + taskType
 				+ ", groupKey=" + groupKey + ", taskDescribe=" + taskDescribe
 				+ ", taskState=" + taskState + ", brandName=" + brandName
 				+ ", modelName=" + modelName + ", areaName=" + areaName

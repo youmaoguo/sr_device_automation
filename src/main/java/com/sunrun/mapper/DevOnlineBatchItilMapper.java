@@ -7,7 +7,7 @@ import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 
 /**
- * 设备上线批次（表名：dev_online_batch）mapper接口
+ * 设备上线批次（表名：dev_online_batch_itil）mapper接口
  * @author ymg
  *
  */

@@ -87,11 +87,11 @@ public interface DeviceAutomationService {
 	boolean updateExecute(DevTaskExecute execute);
 	
 	/**
-	 * 根据id查询任务对象
-	 * @param id	任务id
+	 * 查询任务对象
+	 * @param taskView	
 	 * @return
 	 */
-	DevOnlineTask findTaskById(String id); 
+	DevOnlineBatchTaskView findTaskById(DevOnlineBatchTaskView taskView); 
 	
 	/**
 	 * 保存工单与任务的对应关系

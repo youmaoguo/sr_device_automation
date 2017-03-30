@@ -1,5 +1,6 @@
 package com.sunrun.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,7 @@ public class DeviceAutomatinoController extends BaseController{
 		Boolean success = true;
 		System.out.println("========"+ request.getQueryString());
 		try{
+			List<DevOnlineBatchTaskView> list = new ArrayList<DevOnlineBatchTaskView>();
 			DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
 			if(executeStep==null || executeStep==0){	//查询ITIL任务列表
 				if(batchId!=null && !"".equals(batchId)){
@@ -88,13 +90,15 @@ public class DeviceAutomatinoController extends BaseController{
 				if(batchState!=null){
 					batchView.setBatchState(batchState); 
 				}
+				list = deviceAutomationService.findDevBatchTask(batchView, like, sortBy, order, page(currentPage, pageSize));
 			}else{	//查询任务具体信息
 				if(taskId!=null && !"".equals(taskId) && executeStep!=null && executeStep!=0){
 					batchView.setTaskId(taskId);
 					batchView.setExecuteStep(executeStep); 
 				}
+				DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
+				list.add(view);
 			}
-			List<DevOnlineBatchTaskView> list = deviceAutomationService.findDevBatchTask(batchView, like, sortBy, order, page(currentPage, pageSize));
 			Map<Object, Object> collect = new HashMap<Object, Object>();
 			collect.put("total", (list!=null && list.size()>0) ? list.size() : 0);
 			collect.put("pagesize", setPageSize(currentPage, pageSize, list));
@@ -190,9 +194,6 @@ public class DeviceAutomatinoController extends BaseController{
 				task.setId(id);
 				deviceAutomationService.updateTask(task, executeStep, object);
 			}
-			
-			//编辑完之后还要把这条信息返回给前端
-			//DevOnlineTask data = deviceAutomationService.findTaskById(d);
 			json.setData(d);
 			
 		}catch(Exception e){
@@ -254,8 +255,8 @@ public class DeviceAutomatinoController extends BaseController{
 		response(json, response, request); 
 	}
 	
-	@RequestMapping(value = "/deviceAutomation/v1/deleteDevice", method = {RequestMethod.POST}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
-	public void ThirdParty(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request,HttpServletResponse response){
+	@RequestMapping(value = "/deviceAutomation/v1/thirdParty", method = {RequestMethod.POST}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	public void thirdParty(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request,HttpServletResponse response){
 		Json json = new Json();
 		String info = "接口调用成功";
 		Integer code = 201;	//201:用户新建或修改数据成功
@@ -271,6 +272,8 @@ public class DeviceAutomatinoController extends BaseController{
 				writeAccessConfig(obj, auth);
 			}else if(methodName.equals("/interchanger/v1/writeGatherConfig")){	//请求写入汇聚接入交换机配置
 				writeGatherConfig(obj, auth);
+			}else if(methodName.equals("/Kanban/v1/apply_ip")){				//请求看板接口获取管理口IP及VLAN 
+				
 			}
 			
 		}catch(Exception e){

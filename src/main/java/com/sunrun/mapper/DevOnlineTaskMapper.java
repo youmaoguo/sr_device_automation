@@ -2,7 +2,9 @@ package com.sunrun.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
 import com.sunrun.entity.DevOnlineTask;
+import com.sunrun.entity.view.DevOnlineBatchTaskView;
 
 /**
  * 设备上线批次任务接口
@@ -36,11 +38,11 @@ public interface DevOnlineTaskMapper {
 	Integer deleteDevOnlineTask(@Param("id") String id, @Param("batchId") String batchId);
 	
 	/**
-	 * 根据任务ID查询任务对象
-	 * @param id
+	 * 查询任务对象
+	 * @param taskView
 	 * @return
 	 */
-	DevOnlineTask findTaskById(@Param("id") String id);
+	DevOnlineBatchTaskView findTaskById(@Param("taskView") DevOnlineBatchTaskView taskView);
 	
 	
 }

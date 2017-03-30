@@ -48,21 +48,59 @@
 				<if test="task.currentIosVersion != null">current_ios_version=#{task.currentIosVersion},</if>
 				<if test="task.mainSwitchboardConfigWrite != null">main_switchboard_config_write=#{task.mainSwitchboardConfigWrite},</if>
 			</trim>
-		where 1=1
-		<if test="task.id != null">
+		where 1=1 
+		<if test="task.id != null"> 
 		    AND id = #{task.id}
 		</if>
 	</update>
 	
 	<delete id="deleteDevOnlineTask">
-		delete from dev_online_task where 1=1
-		<if test="id != null">
+		delete from dev_online_task where 1=1 
+		<if test="id != null"> 
 		    AND id = #{id}
 		</if>
 	</delete>
 	
-	<select id = "findTaskById" resultType="com.sunrun.entity.DevOnlineTask">
-		select * from dev_online_task where id = #{id}
+	<select id = "findTaskById" resultType="com.sunrun.entity.view.DevOnlineBatchTaskView">
+		SELECT * from(
+			SELECT 
+				t.id AS taskId,
+				t.task_type AS taskType,
+				t.group_key AS groupKey,
+				t.task_describe AS taskDescribe,
+				t.task_state AS taskState,
+				t.brand_name AS brandName,
+				t.model_name AS modelName,
+				t.area_name AS areaName,
+				t.area_describe AS areaDescribe,
+				t.host_name AS hostName,
+				t.manager_ip AS managerIp,
+				t.vlan AS vlan,
+				t.main_switchboard_ip AS mainSwitchboardIp,
+				t.main_switchboard_port AS mainSwitchboardPort,
+				t.backup_switchboard_ip AS backupSwitchboardIp,
+				t.backup_switchboard_port AS backupSwitchboardPort,
+				t.dev_online_rack AS devOnlineRack,
+				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
+				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
+				t.create_time AS taskCreateTime,
+				t.update_time AS taskUpdateTime,
+				t.manager_ip_write AS managerIpWrite,
+				t.access_config_write AS accessConfigWrite,
+				t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
+				t.current_ios_version AS currentIosVersion, 
+				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
+				e.execute_step As executeStep
+				
+			FROM  dev_online_task t  LEFT JOIN dev_task_execute e  ON e.task_id = t.id 
+			WHERE t.state=1  
+		) taskView	where 1=1 
+		<if test="taskView.taskId!=null">
+		    AND taskId = #{taskView.taskId}
+		</if>
+		<if test="taskView.executeStep!=null">
+		    AND executeStep = #{taskView.executeStep}
+		</if>
 	</select>
 	
 </mapper>
