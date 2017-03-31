@@ -92,6 +92,8 @@
 				t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
 				t.current_ios_version AS currentIosVersion, 
 				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
+				t.model_ios_version AS modelIosVersion,
+				t.access_version_write AS accessVersionWrite,
 				e.execute_step As executeStep
 				
 			FROM  dev_online_task t 
@@ -177,6 +179,8 @@
 				t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
 				t.current_ios_version AS currentIosVersion, 
 				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
+				t.model_ios_version AS modelIosVersion,
+				t.access_version_write AS accessVersionWrite,
 				e.execute_step As executeStep
 				
 			FROM  dev_online_task t 
@@ -255,6 +259,8 @@
 			    or taskView.exclusiveSwitchboardInfo like concat(concat('%',#{like}),'%') 
 			    or taskView.currentIosVersion like concat(concat('%',#{like}),'%') 
 			    or taskView.mainSwitchboardConfigWrite like concat(concat('%',#{like}),'%') 
+			    or taskView.modelIosVersion like concat(concat('%',#{like}),'%') 
+			    or taskView.accessVersionWrite like binary concat(concat('%',#{like}),'%') 
 		    )
 	</sql>
 

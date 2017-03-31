@@ -54,6 +54,8 @@ public class DevOnlineBatchTaskView {
 	private String exclusiveSwitchboardInfo;//带外交机要信息描述
 	private String currentIosVersion;	//当前IOS版本信息
 	private Integer mainSwitchboardConfigWrite;//主汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private String modelIosVersion;		//型号最新IOS版本
+	private Integer accessVersionWrite;//接入交换机IOS版本更新状态 ；0 ：待更新，1：成功,2:失败;3:无需更新
 	
 	private Integer executeStep;		//任务步骤
 	
@@ -327,6 +329,19 @@ public class DevOnlineBatchTaskView {
 	public void setExecuteStep(Integer executeStep) {
 		this.executeStep = executeStep;
 	}
+	
+	public String getModelIosVersion() {
+		return modelIosVersion;
+	}
+	public void setModelIosVersion(String modelIosVersion) {
+		this.modelIosVersion = modelIosVersion;
+	}
+	public Integer getAccessVersionWrite() {
+		return accessVersionWrite;
+	}
+	public void setAccessVersionWrite(Integer accessVersionWrite) {
+		this.accessVersionWrite = accessVersionWrite;
+	}
 	@Override
 	public String toString() {
 		return "DevOnlineBatchTaskView [id=" + id + ", batchName=" + batchName
@@ -354,11 +369,16 @@ public class DevOnlineBatchTaskView {
 				+ ", exclusiveSwitchboardIp=" + exclusiveSwitchboardIp
 				+ ", exclusiveSwitchboardPort=" + exclusiveSwitchboardPort
 				+ ", taskCreateTime=" + taskCreateTime + ", taskUpdateTime="
-				+ taskUpdateTime + ", executeStep=" + executeStep + "]";
+				+ taskUpdateTime + ", managerIpWrite=" + managerIpWrite
+				+ ", accessConfigWrite=" + accessConfigWrite
+				+ ", exclusiveSwitchboardInfo=" + exclusiveSwitchboardInfo
+				+ ", currentIosVersion=" + currentIosVersion
+				+ ", mainSwitchboardConfigWrite=" + mainSwitchboardConfigWrite
+				+ ", modelIosVersion=" + modelIosVersion
+				+ ", accessVersionWrite=" + accessVersionWrite
+				+ ", executeStep=" + executeStep + "]";
 	}
 	
-	
-	
-	
+	 
 	
 }

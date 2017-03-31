@@ -31,8 +31,22 @@ public class DevOnlineTask extends BaseEntity {
 	private String exclusiveSwitchboardInfo;//带外交机要信息描述
 	private String currentIosVersion;	//当前IOS版本信息
 	private Integer mainSwitchboardConfigWrite;//主汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private String modelIosVersion;		//型号最新IOS版本
+	private Integer accessVersionWrite;//接入交换机IOS版本更新状态 ；0 ：待更新，1：成功,2:失败;3:无需更新
 	
 	
+	public String getModelIosVersion() {
+		return modelIosVersion;
+	}
+	public void setModelIosVersion(String modelIosVersion) {
+		this.modelIosVersion = modelIosVersion;
+	}
+	public Integer getAccessVersionWrite() {
+		return accessVersionWrite;
+	}
+	public void setAccessVersionWrite(Integer accessVersionWrite) {
+		this.accessVersionWrite = accessVersionWrite;
+	}
 	public Integer getManagerIpWrite() {
 		return managerIpWrite;
 	}
@@ -173,13 +187,12 @@ public class DevOnlineTask extends BaseEntity {
 	}
 	@Override
 	public String toString() {
-		return "DevOnlineTask [taskType=" + taskType
-				+ ", groupKey=" + groupKey + ", taskDescribe=" + taskDescribe
-				+ ", taskState=" + taskState + ", brandName=" + brandName
-				+ ", modelName=" + modelName + ", areaName=" + areaName
-				+ ", areaDescribe=" + areaDescribe + ", hostName=" + hostName
-				+ ", vlan=" + vlan + ", managerIp=" + managerIp
-				+ ", mainSwitchboardIp=" + mainSwitchboardIp
+		return "DevOnlineTask [taskType=" + taskType + ", groupKey=" + groupKey
+				+ ", taskDescribe=" + taskDescribe + ", taskState=" + taskState
+				+ ", brandName=" + brandName + ", modelName=" + modelName
+				+ ", areaName=" + areaName + ", areaDescribe=" + areaDescribe
+				+ ", hostName=" + hostName + ", vlan=" + vlan + ", managerIp="
+				+ managerIp + ", mainSwitchboardIp=" + mainSwitchboardIp
 				+ ", mainSwitchboardPort=" + mainSwitchboardPort
 				+ ", backupSwitchboardIp=" + backupSwitchboardIp
 				+ ", backupSwitchboardPort=" + backupSwitchboardPort
@@ -190,9 +203,11 @@ public class DevOnlineTask extends BaseEntity {
 				+ accessConfigWrite + ", exclusiveSwitchboardInfo="
 				+ exclusiveSwitchboardInfo + ", currentIosVersion="
 				+ currentIosVersion + ", mainSwitchboardConfigWrite="
-				+ mainSwitchboardConfigWrite + "]";
+				+ mainSwitchboardConfigWrite + ", modelIosVersion="
+				+ modelIosVersion + ", accessVersionWrite="
+				+ accessVersionWrite + "]";
 	}
-	
+	 
 	
 	
 	
