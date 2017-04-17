@@ -5,9 +5,9 @@
 	
 	<insert id="saveTaskItil">
 		insert into dev_online_task_itil(
-			id,						itil_number,				dev_online_task_id,		create_time,	state
+			id,						itil_number,				dev_online_task_id,		create_time,	state,	create_user
 		) values(
-			#{taskItil.id}, 		#{taskItil.itilNumber},	#{taskItil.devOnlineTaskId},	now(),		 1
+			#{taskItil.id}, 		#{taskItil.itilNumber},	#{taskItil.devOnlineTaskId},	now(),		 1,		#{taskItil.createUser}
 		)
 	</insert>
 	

@@ -10,14 +10,14 @@
 			main_switchboard_ip,	main_switchboard_port,		backup_switchboard_ip,			backup_switchboard_port,
 			dev_online_rack,		exclusive_switchboard_ip,	exclusive_switchboard_port,		create_time,	state,
 			manager_ip_write,		access_config_write,	exclusive_switchboard_info,			current_ios_version,	main_switchboard_config_write,
-			model_ios_version,		access_version_write
+			model_ios_version,		access_version_write,	switch_state,		backup_switchboard_config_write,	create_user
 		) values(
 			#{task.id}, 			#{task.taskType},	#{task.groupKey}, #{task.taskDescribe}, #{task.taskState},  #{task.vlan},
 			#{task.brandName},		#{task.modelName},	#{task.areaName},	#{task.areaDescribe}, #{task.hostName}, #{task.managerIp},	
 			#{task.mainSwitchboardIp},#{task.mainSwitchboardPort}, #{task.backupSwitchboardIp},	#{task.backupSwitchboardPort},
 			#{task.devOnlineRack}, #{task.exclusiveSwitchboardIp}, #{task.exclusiveSwitchboardPort}, now(),		1,
 				0,						0,					 #{task.exclusiveSwitchboardInfo},	#{task.currentIosVersion},	0,
-			#{task.modelIosVersion},#{task.accessVersionWrite}
+			#{task.modelIosVersion},#{task.accessVersionWrite},{task.switchState},#{task.backupSwitchboardConfigWrite},#{task.createUser}
 		)
 	</insert>
 	
@@ -51,6 +51,12 @@
 				<if test="task.mainSwitchboardConfigWrite != null">main_switchboard_config_write=#{task.mainSwitchboardConfigWrite},</if>
 				<if test="task.modelIosVersion != null">model_ios_version=#{task.modelIosVersion},</if>
 				<if test="task.accessVersionWrite != null">access_version_write=#{task.accessVersionWrite},</if>
+				<if test="task.backupSwitchboardConfigWrite != null">backup_switchboard_config_write=#{task.backupSwitchboardConfigWrite},</if>
+				<if test="task.switchState != null">switch_state=#{task.switchState},</if>
+				<if test="task.emailId != null">email_id=#{task.emailId},</if>
+				<if test="task.updateUser != null">update_user=#{task.updateUser},</if>
+				<if test="task.accessSwitchboardCheck != null">access_switchboard_check=#{task.accessSwitchboardCheck},</if>
+				<if test="task.accessSwitchboardCheckInfo != null">access_switchboard_check_info=#{task.accessSwitchboardCheckInfo},</if>
 			</trim>
 		where 1=1 
 		<if test="task.id != null"> 
@@ -96,7 +102,10 @@
 				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
 				t.model_ios_version AS modelIosVersion,
 				t.access_version_write AS accessVersionWrite,
-				e.execute_step As executeStep
+				t.switch_state AS switchState,
+				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
+				e.execute_step AS executeStep,
+				e.execute_step AS taskCurrentStep
 				
 			FROM  dev_online_task t  LEFT JOIN dev_task_execute e  ON e.task_id = t.id 
 			WHERE t.state=1  
@@ -106,6 +115,16 @@
 		</if>
 		<if test="taskView.executeStep!=null">
 		    AND executeStep = #{taskView.executeStep}
+		</if>
+		<if test="taskView.switchState!=null">
+		    AND switchState = #{taskView.switchState}
+		</if>
+	</select>
+	
+	<select id="findPort" resultType="com.sunrun.entity.DevOnlineTask">
+		select * from dev_online_task where 1=1
+		<if test="id!=null">
+		    AND id = #{id}
 		</if>
 	</select>
 	

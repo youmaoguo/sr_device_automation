@@ -1,7 +1,6 @@
 package com.sunrun.service;
 
 import java.util.List;
-
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
@@ -20,7 +19,7 @@ public interface DeviceAutomationService {
 	 * @param executeStep	任务步骤
 	 * @return		true or false
 	 */
-	boolean saveDevice(DevOnlineTask task, Integer executeStep);
+	boolean saveDevice(DevOnlineTask task, Integer executeStep, String userName);
 	
 	/**
 	 * 删除批次Itil
@@ -68,7 +67,7 @@ public interface DeviceAutomationService {
 	 * @param object		配置数据信息
 	 * @return
 	 */
-	boolean updateTask(DevOnlineTask task, Integer executeStep, Object object);
+	boolean updateTask(DevOnlineTask task, Integer executeStep, Object object, String userName);
 	
 	/**
 	 * 修改批次下的任务,并且记录任务执行情况log
@@ -77,7 +76,7 @@ public interface DeviceAutomationService {
 	 * @param executeStep	任务步骤
 	 * @return
 	 */
-	boolean updateTask2(DevOnlineTask task,DevTaskExecute execute, Integer executeStep);
+	boolean updateTask2(DevOnlineTask task,DevTaskExecute execute, Integer executeStep, String userName);
 	
 	/**
 	 * 修改具体任务的执行情况
@@ -94,10 +93,33 @@ public interface DeviceAutomationService {
 	DevOnlineBatchTaskView findTaskById(DevOnlineBatchTaskView taskView); 
 	
 	/**
+	 * 查找所有的主备汇聚端口
+	 * @return
+	 */
+	List<DevOnlineTask> findPort(String taskId);
+	
+	/**
 	 * 保存工单与任务的对应关系
 	 * @param itilNumber	工单号
 	 * @param taskIds		任务id
 	 */
-	void saveTaskItil(String itilNumber, List<String> taskIds);
+	void saveTaskItil(String itilNumber, List<String> taskIds, String userName);
+	
+	
+	/**
+	 * 上线交换机ITIL工单处理业务
+	 * @param itilPlannedEnd
+	 * @param updateUser
+	 * @param taskId
+	 */
+	boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId);
+	
+	/**
+	 * 根据任务id查询任务执行情况
+	 * @param taskId	任务id
+	 * @param order		根据哪个字段降序排序
+	 * @return
+	 */
+	List<DevTaskExecute> findTaskExecute(String taskId, String order);
 	
 }

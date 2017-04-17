@@ -26,7 +26,7 @@ public class DevOnlineTask extends BaseEntity {
 	private String exclusiveSwitchboardIp;//'带外交机ip',
 	private String exclusiveSwitchboardPort;//'带外交机端口',
 	
-	private Integer managerIpWrite;		//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private Integer managerIpWrite;		//接入交换机管理IP写入配制状态；0 ：待写入，1：成功,2:失败
 	private Integer accessConfigWrite;	//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
 	private String exclusiveSwitchboardInfo;//带外交机要信息描述
 	private String currentIosVersion;	//当前IOS版本信息
@@ -34,7 +34,50 @@ public class DevOnlineTask extends BaseEntity {
 	private String modelIosVersion;		//型号最新IOS版本
 	private Integer accessVersionWrite;//接入交换机IOS版本更新状态 ；0 ：待更新，1：成功,2:失败;3:无需更新
 	
+	private Integer switchState;//设备添加状态 1：设备准备；2：汇聚设备配制；3：异常工单;4:成功工单 
+	private String itilNumber;//itil申请单编号 文本，唯一键 151200319843 itil系统返回
+	private String emailId;//发送邮件id(sys_send_email表)
+	private Integer backupSwitchboardConfigWrite;//备汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
 	
+	private Integer accessSwitchboardCheck;//接入交换机校验状态 ；0 ：待校验，1：校验成功,2:校验失败
+	private String accessSwitchboardCheckInfo;//接入交换机校验信息
+	
+	public Integer getAccessSwitchboardCheck() {
+		return accessSwitchboardCheck;
+	}
+	public void setAccessSwitchboardCheck(Integer accessSwitchboardCheck) {
+		this.accessSwitchboardCheck = accessSwitchboardCheck;
+	}
+	public String getAccessSwitchboardCheckInfo() {
+		return accessSwitchboardCheckInfo;
+	}
+	public void setAccessSwitchboardCheckInfo(String accessSwitchboardCheckInfo) {
+		this.accessSwitchboardCheckInfo = accessSwitchboardCheckInfo;
+	}
+	public Integer getSwitchState() {
+		return switchState;
+	}
+	public void setSwitchState(Integer switchState) {
+		this.switchState = switchState;
+	}
+	public String getItilNumber() {
+		return itilNumber;
+	}
+	public void setItilNumber(String itilNumber) {
+		this.itilNumber = itilNumber;
+	}
+	public String getEmailId() {
+		return emailId;
+	}
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+	public Integer getBackupSwitchboardConfigWrite() {
+		return backupSwitchboardConfigWrite;
+	}
+	public void setBackupSwitchboardConfigWrite(Integer backupSwitchboardConfigWrite) {
+		this.backupSwitchboardConfigWrite = backupSwitchboardConfigWrite;
+	}
 	public String getModelIosVersion() {
 		return modelIosVersion;
 	}
@@ -205,9 +248,13 @@ public class DevOnlineTask extends BaseEntity {
 				+ currentIosVersion + ", mainSwitchboardConfigWrite="
 				+ mainSwitchboardConfigWrite + ", modelIosVersion="
 				+ modelIosVersion + ", accessVersionWrite="
-				+ accessVersionWrite + "]";
+				+ accessVersionWrite + ", switchState=" + switchState
+				+ ", itilNumber=" + itilNumber + ", emailId=" + emailId
+				+ ", backupSwitchboardConfigWrite="
+				+ backupSwitchboardConfigWrite + ", accessSwitchboardCheck="
+				+ accessSwitchboardCheck + ", accessSwitchboardCheckInfo="
+				+ accessSwitchboardCheckInfo + "]";
 	}
-	 
 	
 	
 	

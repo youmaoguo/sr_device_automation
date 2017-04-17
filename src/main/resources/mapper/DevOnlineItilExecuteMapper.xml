@@ -8,12 +8,12 @@
 			id,				batch_name,				batch_describe,			batch_state,		 create_time,	      	state,
 			itil_number,	itil_assignee,			itil_category,			itil_subcategory,	itil_businessArea,		itil_status,
 			itil_requestor, itil_title,				itil_description,		itil_plannedEnd,	itil_sourceId,			itil_requestedDate,
-			itil_source,	itil_openedBy
+			itil_source,	itil_openedBy,			create_user
 		) values(
 			#{itil.id},		#{itil.batchName},		#{itil.batchDescribe},		1, 					now(),				 1,
 			#{itil.itilNumber},#{itil.itilAssignee},#{itil.itilCategory},	#{itil.itilSubcategory},#{itil.itilBusinessArea},#{itil.itilStatus},
 			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.itilSourceId},#{itil.itilRequestedDate},
-			#{itil.itilSource},	#{itil.itilOpenedBy}
+			#{itil.itilSource},	#{itil.itilOpenedBy},#{itil.createUser}
 		)
 	</insert>
 	

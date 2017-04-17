@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevOnlineTaskItil;
@@ -20,6 +22,9 @@ import com.sunrun.mapper.DevOnlineBatchItilMapper;
 import com.sunrun.mapper.DevOnlineTaskItilMapper;
 import com.sunrun.mapper.DevOnlineTaskMapper;
 import com.sunrun.mapper.DevTaskExecuteMapper;
+import com.sunrun.util.ITILRestfulInterface;
+import com.sunrun.util.ItilGenrequestBo;
+import com.sunrun.util.Json;
 import com.sunrun.util.StringUtil;
 
 @Service("deviceAutomationService")
@@ -40,20 +45,24 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	
 	@Transactional
 	@Override
-	public boolean saveDevice(DevOnlineTask task, Integer executeStep) {
+	public boolean saveDevice(DevOnlineTask task, Integer executeStep, String userName) {
 		boolean b = true;
 		try{
+			task.setCreate_user(userName);
 			devOnlineTaskMapper.saveDevOnlineTask(task);
 			DevTaskExecute execute = new DevTaskExecute();
 			execute.setId(StringUtil.getUuid());
 			execute.setTaskId(task.getId());
 			execute.setExecuteStep(executeStep);
 			execute.setTaskExecuteState(3);
+			execute.setTaskOrder(executeStep); 
+			execute.setCreate_user(userName);
 			devTaskExecuteMapper.saveDevTaskExecute(execute);
 		}catch(Exception e){
 			b = false;
 			e.printStackTrace();
-			logger.error("新增批次任务出错");
+			logger.error("新增上线设备任务出错");
+			return b;
 		}
 		return b;
 	}
@@ -71,6 +80,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			b = false;
 			e.printStackTrace();
 			logger.error("删除具体任务出错");
+			return b;
 		}
 		return b;
 	}
@@ -82,9 +92,9 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		try{
 			devTaskExecuteMapper.deleteDevTaskExecute(id, null);
 		}catch(Exception e){
-			b = false;
 			e.printStackTrace();
 			logger.error("删除任务执行情况出错");
+			return false;
 		}
 		return b;
 	}
@@ -110,43 +120,31 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			b = false;
 			e.printStackTrace();
 			logger.error("修改批次出错了");
+			return b;
 		}
 		return b;
 	}
 
 	@Transactional
 	@Override
-	public boolean updateTask(DevOnlineTask task, Integer executeStep, Object object) {
+	public boolean updateTask(DevOnlineTask task, Integer executeStep, Object object, String userName) {
 		boolean b = true;
 		try{
-			if(executeStep>0 && executeStep<6)
-				devOnlineTaskMapper.updateDevOnlineTask(task);
-			//第五步.保存接入交换机配置信息
-			if(executeStep==5){
-				List<String> l = (List<String>) object;
-				//调用大文本api
-				
-			}
-			//第六步，保存带外交换机信息  || 第七步，写交换机入管理口ip
-			if(executeStep==6 /*|| executeStep==7*/){
-				List<DevOnlineTask> l = (List<DevOnlineTask>) object;
-				for(int i=0;i<l.size();i++){
-					DevOnlineTask t = l.get(i);
-					devOnlineTaskMapper.updateDevOnlineTask(t);
-				}
-			}
-			
+			task.setUpdate_user(userName); 
+			devOnlineTaskMapper.updateDevOnlineTask(task);
 			//保存每一步步骤执行情况
 			DevTaskExecute execute = new DevTaskExecute();
 			execute.setId(StringUtil.getUuid());
 			execute.setTaskId(task.getId());
 			execute.setExecuteStep(executeStep);
 			execute.setTaskExecuteState(3);
+			execute.setCreate_user(userName);
 			devTaskExecuteMapper.saveDevTaskExecute(execute);
 		}catch(Exception e){
 			b = false;
 			e.printStackTrace();
 			logger.error("修改批次下的任务出错了");
+			return b;
 		}
 		return b;
 	}
@@ -172,13 +170,14 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 
 
 	@Override
-	public void saveTaskItil(String itilNumber, List<String> taskIds) {
+	public void saveTaskItil(String itilNumber, List<String> taskIds, String userName) {
 		try{
 			for(int i=0;i<taskIds.size();i++){
 				DevOnlineTaskItil taskItil = new DevOnlineTaskItil();
 				taskItil.setDevOnlineTaskId(taskIds.get(i));
 				taskItil.setItilNumber(itilNumber);
 				taskItil.setId(StringUtil.getUuid());
+				taskItil.setCreate_user(userName); 
 				devOnlineTaskItilMapper.saveTaskItil(taskItil);
 			}
 		}catch(Exception e){
@@ -204,18 +203,88 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 
 	@Transactional
 	@Override
-	public boolean updateTask2(DevOnlineTask task, DevTaskExecute execute, Integer executeStep) {
+	public boolean updateTask2(DevOnlineTask task, DevTaskExecute execute, Integer executeStep, String userName) {
 		boolean b = true;
 		try{
-			devOnlineTaskMapper.updateDevOnlineTask(task);
+			if(task!=null){
+				task.setUpdate_user(userName); 
+				devOnlineTaskMapper.updateDevOnlineTask(task);
+			}
 			//保存每一步步骤执行情况
-			devTaskExecuteMapper.saveDevTaskExecute(execute);
+			if(execute!=null){
+				execute.setCreate_user(userName); 
+				devTaskExecuteMapper.saveDevTaskExecute(execute);
+			}
 		}catch(Exception e){
-			b = false;
 			e.printStackTrace();
 			logger.error("修改批次下的任务出错了");
+			return false;
 		}
 		return b;
+	}
+ 
+	@Transactional
+	@Override
+	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId) {
+		boolean b = true;
+		try{
+			JSONObject paramterObj = new JSONObject();
+			paramterObj.put("assignee", "01034090");
+			paramterObj.put("title", "上线交换机申请itil工单");
+			paramterObj.put("category", "流程管理");
+			paramterObj.put("subcategory", "ITIL系统");
+			paramterObj.put("plannedEnd", itilPlannedEnd);
+			String sb = ITILRestfulInterface.createITIL(itil, paramterObj, "POST", "Basic MDEwMzQwOTA6");
+			Json j = JSONObject.parseObject(sb, Json.class);
+			if(j.getRet_code()!=0){
+				b = false;
+			}else{
+				ItilGenrequestBo bo = (ItilGenrequestBo) j.getData();
+				DevOnlineBatchItil it = new DevOnlineBatchItil();
+				it.setItilNumber(!StringUtils.isEmpty(bo.getNumber()) ? bo.getNumber() : null);
+				it.setItilAssignee(!StringUtils.isEmpty(bo.getAssignee()) ? bo.getAssignee() : null);
+				it.setItilCategory(!StringUtils.isEmpty(bo.getCategory()) ? bo.getCategory() : null);
+				it.setItilSubcategory(!StringUtil.isInteger(bo.getSubcategory()) ? bo.getSubcategory() : null);
+				it.setItilBusinessArea(!StringUtils.isEmpty(bo.getBusinessArea()) ? bo.getBusinessArea() : null);
+				it.setItilStatus(!StringUtils.isEmpty(bo.getStatus()) ? bo.getStatus() : null);
+				it.setItilRequestor(!StringUtils.isEmpty(bo.getRequestor()) ? bo.getRequestor() : null);
+				it.setItilTitle(!StringUtils.isEmpty(bo.getTitle()) ? bo.getTitle() : null);
+				it.setItilDescription(!StringUtils.isEmpty(bo.getDescription()) ? bo.getDescription().toString() : null);
+				it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getPlannedEnd()) ? bo.getPlannedEnd() : null);
+				it.setId(StringUtil.getUuid());
+				it.setCreate_user(updateUser);
+				//往工单批次表插入数据
+				devOnlineBatchItilMapper.saveDevOnlineBatch(it); 
+				
+				//往工单和任务对应关系表插入数据
+				for(int i=0;i<taskId.length;i++){
+					DevOnlineTaskItil taskItil = new DevOnlineTaskItil();
+					taskItil.setId(StringUtil.getUuid());
+					taskItil.setDevOnlineTaskId(taskId[i]);
+					taskItil.setItilNumber(bo.getNumber());
+					taskItil.setCreate_user(updateUser);
+					devOnlineTaskItilMapper.saveTaskItil(taskItil);
+				}
+				
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("申请ITIL工单处理业务出错");
+			return false;
+		}
+		return b;
+	}
+
+
+	@Override
+	public List<DevOnlineTask> findPort(String taskId) {
+		return devOnlineTaskMapper.findPort(taskId);
+	}
+
+
+	@Override
+	public List<DevTaskExecute> findTaskExecute(String taskId, String order) {
+		return devTaskExecuteMapper.findTaskExecute(taskId, order);
 	}
 	
 

@@ -56,9 +56,59 @@ public class DevOnlineBatchTaskView {
 	private Integer mainSwitchboardConfigWrite;//主汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
 	private String modelIosVersion;		//型号最新IOS版本
 	private Integer accessVersionWrite;//接入交换机IOS版本更新状态 ；0 ：待更新，1：成功,2:失败;3:无需更新
+	private Integer switchState;//设备添加状态 1：设备准备；2：汇聚设备配制；3：异常工单;4:成功工单 
+	private Integer backupSwitchboardConfigWrite;//备汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
+	private String emailId;//发送邮件id(sys_send_email表)
+	
+	private Integer accessSwitchboardCheck;//接入交换机校验状态 ；0 ：待校验，1：校验成功,2:校验失败
+	private String accessSwitchboardCheckInfo;//接入交换机校验信息
+	private String taskCurrentStepDescribe;//工单任务执行步骤描述
 	
 	private Integer executeStep;		//任务步骤
+	private Integer taskCurrentStep;	//任务步骤
 	
+	public Integer getAccessSwitchboardCheck() {
+		return accessSwitchboardCheck;
+	}
+	public void setAccessSwitchboardCheck(Integer accessSwitchboardCheck) {
+		this.accessSwitchboardCheck = accessSwitchboardCheck;
+	}
+	public String getAccessSwitchboardCheckInfo() {
+		return accessSwitchboardCheckInfo;
+	}
+	public void setAccessSwitchboardCheckInfo(String accessSwitchboardCheckInfo) {
+		this.accessSwitchboardCheckInfo = accessSwitchboardCheckInfo;
+	}
+	public String getTaskCurrentStepDescribe() {
+		return taskCurrentStepDescribe;
+	}
+	public void setTaskCurrentStepDescribe(String taskCurrentStepDescribe) {
+		this.taskCurrentStepDescribe = taskCurrentStepDescribe;
+	}
+	public Integer getTaskCurrentStep() {
+		return taskCurrentStep;
+	}
+	public void setTaskCurrentStep(Integer taskCurrentStep) {
+		this.taskCurrentStep = taskCurrentStep;
+	}
+	public Integer getSwitchState() {
+		return switchState;
+	}
+	public void setSwitchState(Integer switchState) {
+		this.switchState = switchState;
+	}
+	public String getEmailId() {
+		return emailId;
+	}
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+	public Integer getBackupSwitchboardConfigWrite() {
+		return backupSwitchboardConfigWrite;
+	}
+	public void setBackupSwitchboardConfigWrite(Integer backupSwitchboardConfigWrite) {
+		this.backupSwitchboardConfigWrite = backupSwitchboardConfigWrite;
+	}
 	public Integer getManagerIpWrite() {
 		return managerIpWrite;
 	}
@@ -376,8 +426,16 @@ public class DevOnlineBatchTaskView {
 				+ ", mainSwitchboardConfigWrite=" + mainSwitchboardConfigWrite
 				+ ", modelIosVersion=" + modelIosVersion
 				+ ", accessVersionWrite=" + accessVersionWrite
-				+ ", executeStep=" + executeStep + "]";
+				+ ", switchState=" + switchState
+				+ ", backupSwitchboardConfigWrite="
+				+ backupSwitchboardConfigWrite + ", emailId=" + emailId
+				+ ", accessSwitchboardCheck=" + accessSwitchboardCheck
+				+ ", accessSwitchboardCheckInfo=" + accessSwitchboardCheckInfo
+				+ ", taskCurrentStepDescribe=" + taskCurrentStepDescribe
+				+ ", executeStep=" + executeStep + ", taskCurrentStep="
+				+ taskCurrentStep + "]";
 	}
+	
 	
 	 
 	

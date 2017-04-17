@@ -7,11 +7,11 @@
 		insert into dev_online_batch_itil(
 			id,				batch_name,				batch_describe,			batch_state,		 create_time,	      	state,
 			itil_number,	itil_assignee,			itil_category,			itil_subcategory,	itil_businessArea,		itil_status,
-			itil_requestor, itil_title,				itil_description,		itil_plannedEnd
+			itil_requestor, itil_title,				itil_description,		itil_plannedEnd,	 create_user
 		) values(
 			#{itil.id},		#{itil.batchName},		#{itil.batchDescribe},		1, 					now(),				 1,
 			#{itil.itilNumber},#{itil.itilAssignee},#{itil.itilCategory},	#{itil.itilSubcategory},#{itil.itilBusinessArea},#{itil.itilStatus},
-			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd}
+			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.createUser}
 		)
 	</insert>
 	
@@ -24,6 +24,7 @@
 				<if test="itil.batchState != null">batch_state=#{itil.batchState},</if>
 				<if test="itil.state != null">state=#{itil.state},</if>
 				<if test="itil.itilStatus != null">itil_status=#{itil.itilStatus},</if>
+				<if test="itil.updateUser != null">update_user=#{itil.updateUser},</if>
 				
 			</trim>
 		where 1=1
@@ -94,7 +95,12 @@
 				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
 				t.model_ios_version AS modelIosVersion,
 				t.access_version_write AS accessVersionWrite,
-				e.execute_step As executeStep
+				t.switch_state AS switchState,
+				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
+				t.access_switchboard_check AS accessSwitchboardCheck,
+				e.execute_step AS executeStep,
+				e.execute_step AS taskCurrentStep,
+				e.task_describe AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
@@ -111,6 +117,9 @@
 		</if>
 		<if test="taskView.executeStep!=null">
 		    AND executeStep = #{taskView.executeStep}
+		</if>
+		<if test="taskView.switchState!=null">
+		    AND switchState = #{taskView.switchState}
 		</if>
 		<if test="taskView.batchState!=null and (taskView.batchState==1 or taskView.batchState==2) ">
 		    AND (batchState = 1 or batchState = 2)
@@ -181,7 +190,12 @@
 				t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
 				t.model_ios_version AS modelIosVersion,
 				t.access_version_write AS accessVersionWrite,
-				e.execute_step As executeStep
+				t.switch_state AS switchState,
+				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
+				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
+				e.execute_step AS executeStep,
+				e.execute_step AS taskCurrentStep,
+				e.task_describe AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
@@ -197,6 +211,9 @@
 		</if>
 		<if test="taskView.executeStep!=null">
 		    AND executeStep = #{taskView.executeStep}
+		</if>
+		<if test="taskView.switchState!=null">
+		    AND switchState = #{taskView.switchState}
 		</if>
 		<if test="taskView.batchState!=null and (taskView.batchState==1 or taskView.batchState==2) ">
 		    AND (batchState = 1 or batchState = 2)
@@ -261,6 +278,8 @@
 			    or taskView.mainSwitchboardConfigWrite like concat(concat('%',#{like}),'%') 
 			    or taskView.modelIosVersion like concat(concat('%',#{like}),'%') 
 			    or taskView.accessVersionWrite like binary concat(concat('%',#{like}),'%') 
+			    or taskView.switchState like binary concat(concat('%',#{like}),'%') 
+			    or taskView.backupSwitchboardConfigWrite like binary concat(concat('%',#{like}),'%') 
 		    )
 	</sql>
 

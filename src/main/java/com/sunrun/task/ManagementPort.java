@@ -73,7 +73,7 @@ public class ManagementPort implements Runnable{
 			execute.setExecuteStep(7);
 			execute.setTaskExecuteState(success==true ? 1 : 2);
 			execute.setTaskDescribe(info);
-			deviceAutomationService.updateTask2(task, execute, 7);
+			deviceAutomationService.updateTask2(task, execute, 7, "");
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("写入接入交换机配置管理口IP失败,程序出错");

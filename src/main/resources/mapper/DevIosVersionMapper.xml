@@ -5,11 +5,11 @@
 
 	<insert id="saveIosVersion">
 		insert into dev_ios_versions(
-			id,						brand_name,					model_name,				ios_version,		
-			ios_version_2,			newth_ios_version,			create_time,			state
+			id,						brand_name,					model_name,				ios_version,	create_user	
+			ios_version_2,			newth_ios_version,			create_time,			state,
 		) values(
 			#{version.id},			#{version.brandName},		#{version.modelName},	#{version.iosVersion}, 					
-			#{version.iosVersion2},	#{version.newthIosVersion},		now(),		 		1,
+			#{version.iosVersion2},	#{version.newthIosVersion},		now(),		 		1,				#{version.createUser}
 		)
 	</insert>
 	
@@ -23,6 +23,7 @@
 				<if test="version.iosVersion2 != null">ios_version_2=#{version.iosVersion2},</if>
 				<if test="version.newthIosVersion != null">newth_ios_version=#{version.newthIosVersion},</if>
 				<if test="version.state != null">state=#{version.state},</if>
+				<if test="version.updateUser != null">update_user=#{version.updateUser},</if>
 			</trim>
 		where 1=1
 		<if test="version.id != null">
@@ -40,7 +41,16 @@
 
 	<select id="findIosVersion" resultType="com.sunrun.entity.DevIosVersions">
 		select * from dev_ios_versions
-		where id = #{version.id}
+		where 1=1
+		<if test="version.id != null">
+		    AND id = #{version.id}
+		</if>
+		<if test="version.brandName != null">
+		    AND brand_name = #{version.brandName}
+		</if>
+		<if test="version.modelName != null">
+		    AND model_name = #{version.modelName}
+		</if>
 	</select>
 
 	

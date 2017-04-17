@@ -1,5 +1,7 @@
 package com.sunrun.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -44,5 +46,10 @@ public interface DevOnlineTaskMapper {
 	 */
 	DevOnlineBatchTaskView findTaskById(@Param("taskView") DevOnlineBatchTaskView taskView);
 	
+	/**
+	 * 查找所有的主备汇聚端口
+	 * @return
+	 */
+	List<DevOnlineTask> findPort(@Param("id") String id);
 	
 }

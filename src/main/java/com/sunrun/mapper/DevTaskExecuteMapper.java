@@ -42,6 +42,6 @@ public interface DevTaskExecuteMapper {
 	 * @param taskId
 	 * @return
 	 */
-	List<DevTaskExecute> findTaskExecute(@Param("taskId") String taskId);
+	List<DevTaskExecute> findTaskExecute(@Param("taskId") String taskId, @Param("order") String order);
 
 }
