@@ -174,7 +174,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json adminRequestIP(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName) {
+	public Json adminRequestIP(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName, int state) {
 		Json json = new Json();
 		String info = "ip地址回填成功";
 		Integer code = 200;	
@@ -182,8 +182,9 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/adminRequestIP");
-			param.put("ips", map.get("ip"));
+			param.put("ips", map.get("ip"));//其实就是task的管理口ip
 			param.put("subnet", task.getMainSwitchboardIp());	//本系统申请ip的网段(主汇聚交换机ip)
+			param.put("state", state);
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -201,10 +202,12 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			throw new RuntimeException(e);
 		}finally{
 			//记录任务执行步骤
-			DevOnlineTask t = new DevOnlineTask();
-			t.setId(task.getId());
-			t.setUpdate_user(userName);
-			writeProcess(t, 4, info, success, userName, null);
+			if(state==1){
+				DevOnlineTask t = new DevOnlineTask();
+				t.setId(task.getId());
+				t.setUpdate_user(userName);
+				writeProcess(t, 4, info, success, userName, null);
+			}
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -633,22 +636,29 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json SendEmailswitchDevice(String thirdPartUrl, String auth, String[] taskId, String recever, String title, String content, String userName) {
+	public Json SendEmailswitchDevice(String thirdPartUrl, String auth, String[] taskId, String emails, String names, String title, String content, String userName) {
 		Json json = new Json();
 		String info = "上线交换机邮件发送通知正常";
 		Integer code = 200;	
 		Boolean success = true;
+		String id = StringUtil.getUuid();
 		try{
 			JSONObject param = new JSONObject();
-			param.put("receiveName", recever);
-			param.put("userName", "");
-			param.put("title", title);
-			param.put("log", content);
+			param.put("id", id);
+			param.put("userName", userName);
+			param.put("sendName", userName);
+			param.put("mailType", 2);
+			param.put("mailConsigneeName", names);
+			param.put("mailConsigneeEmail", emails);
+			param.put("mailTitle", title);
+			param.put("mailContxt", content);
+			
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseArray(sb, Json.class);
 			code = j.getRet_code();
 			info = j.getRet_info();
 			success = j.getSuccess();
+			
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("上线交换机邮件发送通知程序不正常");
@@ -662,6 +672,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				DevOnlineTask t = new DevOnlineTask();
 				t.setId(taskId[i]);
 				t.setUpdate_user(userName);
+				t.setEmailId(id);
 				writeProcess(t, 12, info, success, userName, null);
 			}
 			
@@ -709,14 +720,130 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}
 	}
 
+	@SuppressWarnings("finally")
 	@Override
 	public Json writeGatherConfig(String thirdPartUrl, String auth, String taskId, String userName) {
-		return null;
+		Json json = new Json();
+		String info = "写入汇聚交换机配置正常";
+		Integer code = 200;	
+		Boolean success = true;
+		Object data = null;
+		try{
+			//查询出汇聚交换机配置信息
+			DevScriptConfig config = new DevScriptConfig();
+			config.setDevType(2);
+			config.setObjectId(taskId);
+			config.setScriptOrder(1);
+			List<DevScriptConfig> li = devScriptConfigMapper.findDevScriptConfig(config);
+			List<String> configs = null;
+			for(int i=0;i<li.size();i++){
+				configs = new ArrayList<String>();
+				configs.add(li.get(i).getScriptInfo());
+			}
+			
+			JSONObject param = new JSONObject();
+			param.put("method_name", "/interchanger/v1/writeGatherConfig");
+			param.put("host", "");		//交换机的telnet登录IP地址
+			param.put("port", "");		//交换机的telnet登录端口号
+			param.put("user", "");		//交换机的telnet登录账号
+			param.put("password", "");	//交换机的telnet登录密码
+			param.put("type", "");		//交换机的类型，分别为4948E和5548
+			param.put("commands", configs);	//需要写入接入交换机的命令列表集合
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			Json j = (Json) JSONObject.parseObject(sb, Json.class);
+			if(j.getRet_code()!=200){
+				code = j.getRet_code();
+				info = j.getRet_info();
+				success = j.getSuccess();
+				if(j.getRet_code()==505){
+					List<String> l = JSONArray.parseArray(j.getData().toString(), String.class);
+					data = l;
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("写入汇聚交换机配置不正常");
+			info = "写入汇聚交换机配置不正常";
+			code = 500;
+			success = false;
+			throw new RuntimeException(e);
+		}finally{
+			//记录任务执行步骤
+			DevOnlineTask t = new DevOnlineTask();
+			t.setId(taskId);
+			t.setUpdate_user(userName);
+			writeProcess(t, 14, info, success, userName, data.toString());
+			
+			json.setRet_code(code);
+			json.setRet_info(info);
+			json.setSuccess(success);
+			json.setData(data);
+			return json;
+		}
 	}
 
+	@SuppressWarnings("finally")
 	@Override
 	public Json checkConfig(String thirdPartUrl, String auth, String taskId, String userName) {
-		return null;
+		Json json = new Json();
+		String info = "校验配置正常";
+		Integer code = 200;	
+		Boolean success = true;
+		Object data = null;
+		try{
+			//查询出汇聚交换机配置信息
+			DevScriptConfig config = new DevScriptConfig();
+			config.setDevType(2);
+			config.setObjectId(taskId);
+			config.setScriptOrder(1);
+			List<DevScriptConfig> li = devScriptConfigMapper.findDevScriptConfig(config);
+			List<String> configs = null;
+			for(int i=0;i<li.size();i++){
+				configs = new ArrayList<String>();
+				configs.add(li.get(i).getScriptInfo());
+			}
+			
+			JSONObject param = new JSONObject();
+			param.put("method_name", "/interchanger/v1/checkConfig");
+			param.put("host", "");		//交换机的telnet登录IP地址
+			param.put("port", "");		//交换机的telnet登录端口号
+			param.put("user", "");		//交换机的telnet登录账号
+			param.put("password", "");	//交换机的telnet登录密码
+			param.put("type", "");		//交换机的类型，分别为4948E和5548
+			param.put("commands", configs);	//需要写入接入交换机的命令列表集合
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			Json j = (Json) JSONObject.parseObject(sb, Json.class);
+			if(j.getRet_code()!=200){
+				code = j.getRet_code();
+				info = j.getRet_info();
+				success = j.getSuccess();
+				if(j.getRet_code()==507){
+					List<String> l = JSONArray.parseArray(j.getData().toString(), String.class);
+					data = l;
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("校验配置不正常");
+			info = "校验配置不正常";
+			code = 500;
+			success = false;
+			throw new RuntimeException(e);
+		}finally{
+			//记录任务执行步骤
+			DevOnlineTask t = new DevOnlineTask();
+			t.setId(taskId);
+			t.setUpdate_user(userName);
+			writeProcess(t, 15, info, success, userName, data.toString());
+			
+			json.setRet_code(code);
+			json.setRet_info(info);
+			json.setSuccess(success);
+			json.setData(data);
+			return json;
+		}
 	}
 
 	/**
@@ -733,6 +860,117 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		execute.setCreate_user(userName);
 		execute.setTaskExecuteNote(taskExecuteNote);
 		deviceAutomationService.updateTask2(t, execute, executeStep, userName);
+	}
+
+	@SuppressWarnings("finally")
+	@Override
+	public Json writeNewAccessConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
+		Json json = new Json();
+		String info = "写入接入交换机配置正常";
+		Integer code = 200;	
+		Boolean success = true;
+		Object data = null;
+		try{
+			JSONObject param = new JSONObject();
+			param.put("method_name", "/interchanger/v1/writeNewAccessConfig");
+			param.put("deviceBrand", task.getModelName());	//品牌型号，列如cisco,huawei,h3c等
+			param.put("host", "");	//交换机的telnet登录IP地址
+			param.put("type", "");	//交换机的类型，分别为4948E和5548
+			param.put("ipPortName1", task.getMainSwitchboardIp());//主ip	???
+			param.put("ipPortName2", task.getBackupSwitchboardIp());//备ip	???
+			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	???
+			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	???
+			param.put("accHostName", task.getHostName());//接入设备对应的host名称
+			param.put("vlanNu", task.getVlan());//接入设备的管理Vlan号
+			param.put("description", "");//接入设备的描述配置信息
+			param.put("newIp", task.getManagerIp());//在看板系统上申请的IP地址
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			Json j = (Json) JSONObject.parseObject(sb, Json.class);
+			if(j.getRet_code()!=200){
+				code = j.getRet_code();
+				info = j.getRet_info();
+				success = j.getSuccess();
+				if(j.getRet_code()==505){
+					List<String> l = JSONArray.parseArray(j.getData().toString(), String.class);
+					data = l;
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("写入接入交换机配置不正常");
+			info = "写入接入交换机配置不正常";
+			code = 500;
+			success = false;
+			throw new RuntimeException(e);
+		}finally{
+			//记录任务执行步骤
+			DevOnlineTask t = new DevOnlineTask();
+			t.setId(task.getId());
+			t.setUpdate_user(userName);
+			writeProcess(t, 15, info, success, userName, data.toString());
+			
+			json.setRet_code(code);
+			json.setRet_info(info);
+			json.setSuccess(success);
+			json.setData(data);
+			return json;
+		}
+	}
+
+	@SuppressWarnings("finally")
+	@Override
+	public Json writeNewGatherConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
+		Json json = new Json();
+		String info = "写入汇聚交换机配置正常";
+		Integer code = 200;	
+		Boolean success = true;
+		Object data = null;
+		try{
+			JSONObject param = new JSONObject();
+			param.put("method_name", "/interchanger/v1/writeNewGatherConfig");
+			param.put("deviceBrand", task.getModelName());	//品牌型号，列如cisco,huawei,h3c等
+			param.put("host", "");	//交换机的telnet登录IP地址
+			param.put("type", "");	//汇聚交换机的类型，分别为N7KA、N7KB、65A、65B，四种类型
+			param.put("ipPortNameUserPass1", task.getMainSwitchboardIp());//主ip	???
+			param.put("ipPortNameUserPass2", task.getBackupSwitchboardIp());//备ip	???
+			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	???
+			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	???
+			param.put("accHostname", task.getHostName());//接入设备对应的host名称
+			param.put("NewType", "");//接入交换机的设备类型，分别为4948E和5548
+			param.put("newip", task.getManagerIp());//在看板系统上申请的IP地址
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			Json j = (Json) JSONObject.parseObject(sb, Json.class);
+			if(j.getRet_code()!=200){
+				code = j.getRet_code();
+				info = j.getRet_info();
+				success = j.getSuccess();
+				if(j.getRet_code()==505){
+					List<String> l = JSONArray.parseArray(j.getData().toString(), String.class);
+					data = l;
+				}
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("写入汇聚交换机配置不正常");
+			info = "写入汇聚交换机配置不正常";
+			code = 500;
+			success = false;
+			throw new RuntimeException(e);
+		}finally{
+			//记录任务执行步骤
+			DevOnlineTask t = new DevOnlineTask();
+			t.setId(task.getId());
+			t.setUpdate_user(userName);
+			writeProcess(t, 15, info, success, userName, data.toString());
+			
+			json.setRet_code(code);
+			json.setRet_info(info);
+			json.setSuccess(success);
+			json.setData(data);
+			return json;
+		}
 	}
 	
 }

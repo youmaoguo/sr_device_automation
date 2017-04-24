@@ -99,7 +99,7 @@ public class DataSources{
      * druid监控
      * @return
      */
-    @Bean
+    /*@Bean
     public ServletRegistrationBean druidServlet() {
         ServletRegistrationBean reg = new ServletRegistrationBean();
         reg.setServlet(new StatViewServlet());
@@ -109,19 +109,19 @@ public class DataSources{
         reg.addInitParameter("loginUsername", "niuli");
         reg.addInitParameter("loginPassword", "123456");
         return reg;
-    }
+    }*/
 
     /**
      * druid监控过滤
      * @return
      */
-    @Bean
+    /*@Bean
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         filterRegistrationBean.setFilter(new WebStatFilter());
         filterRegistrationBean.addUrlPatterns("/*");
         filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
         return filterRegistrationBean;
-    }
+    }*/
 
 }

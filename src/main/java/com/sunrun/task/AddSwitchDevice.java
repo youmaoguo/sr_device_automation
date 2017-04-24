@@ -7,7 +7,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
@@ -55,8 +54,10 @@ public class AddSwitchDevice implements Runnable {
 	
 	@Override
 	public void run() {
-		if(executeStep!=null){
+		if(executeStep!=null && executeStep<12){
 			executeStep2();
+		}else if(executeStep!=null && executeStep>=14){
+			executeStep3();
 		}else{
 			executeTask();
 		}
@@ -77,12 +78,27 @@ public class AddSwitchDevice implements Runnable {
 		//3.看网络是否通
 		json = null;
 		json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
-		if(!json.getSuccess())
-			return;
+		int code = json.getRet_code();//200:表示网络ping不通，本系统可用；505，表示网络ping通，被占了，本系统不可用; 500，服务器操作交换机时出错
+		if(!json.getSuccess() && code!=200){
+			if(code==505){
+				//网络ping通，被占了，回填不可用状态
+				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+				//重新申请ip,vlan
+				json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
+				map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
+				json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
+				if(json.getRet_code()!=200){
+					if(json.getRet_code()==505){
+						addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+					}
+					return;
+				}
+			}
+		}
 		
 		//4.ip地址回填
 		json = null;
-		json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName);
+		json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1);
 		if(!json.getSuccess())
 			return;
 		
@@ -96,6 +112,8 @@ public class AddSwitchDevice implements Runnable {
 		json = null;
 		task = deviceAutomationService.findPort(task.getId()).get(0);
 		json = addSwitchDeviceService.CreatConverPage(thirdPartUrl, auth, task, map, userName);
+		//ip地址回填 ，状态是3实分配
+		addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1);
 		if(!json.getSuccess())
 			return;
 		
@@ -127,14 +145,31 @@ public class AddSwitchDevice implements Runnable {
 		if(executeStep!=null && executeStep<=3){
 			json = null;
 			json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
-			if(!json.getSuccess())
-				return;
+			int code = json.getRet_code();//200:表示网络ping不通，本系统可用；505:表示网络ping通，被占了，本系统不可用; 500，服务器操作交换机时出错
+			if(!json.getSuccess() && code!=200){
+				if(code==505){
+					//网络ping通，被占了，回填不可用状态
+					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+					//重新申请ip,vlan
+					json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
+					map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
+					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
+					if(json.getRet_code()!=200){
+						if(json.getRet_code()==505){
+							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+						}
+						return;
+					}
+				}
+				//return;
+			}
+			
 		}
 		
 		//4.ip地址回填
 		if(executeStep!=null && executeStep<=4){
 			json = null;
-			json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName);
+			json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1);
 			if(!json.getSuccess())
 				return;
 		}
@@ -151,6 +186,8 @@ public class AddSwitchDevice implements Runnable {
 		if(executeStep!=null && executeStep<=6){
 			json = null;
 			json = addSwitchDeviceService.CreatConverPage(thirdPartUrl, auth, task, map, userName);
+			//ip地址回填 ，状态是3实分配
+			addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1);
 			if(!json.getSuccess())
 				return;
 		}
@@ -178,12 +215,45 @@ public class AddSwitchDevice implements Runnable {
 			return;
 		
 		//11. 写入接入交换机配置
-		addSwitchDeviceService.writeAccessConfig(thirdPartUrl, auth, task.getId(), userName);
-		
-		
+		json = null;
+		json = addSwitchDeviceService.writeAccessConfig(thirdPartUrl, auth, task.getId(), userName);
+		if(!json.getSuccess())
+			return;
+		if(json.getSuccess()){
+			task.setSwitchState(2);
+			deviceAutomationService.updateTask2(task, null, 11, userName);
+		}
 		
 	}
 	
+	/**
+	 * 在汇聚设备tab下点击执行的
+	 */
+	public void executeStep3(){
+		Json json = new Json();
+		List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
+		if(li!=null && li.size()>0){
+			task = li.get(0);
+			//14.写入汇聚接入交换机配置
+			json = addSwitchDeviceService.writeGatherConfig(thirdPartUrl, auth, task.getId(), userName);
+			if(!json.getSuccess())
+				return;
+			
+			//15.在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
+			json = null;
+			json = addSwitchDeviceService.checkConfig(thirdPartUrl, auth, task.getId(), userName);
+			if(!json.getSuccess())
+				return;
+			
+			if(json.getSuccess()){
+				task.setSwitchState(4);
+			}else{
+				task.setSwitchState(3);
+			}
+			deviceAutomationService.updateTask2(task, null, 15, userName);
+			
+		}
+	}
 	
 	
 }

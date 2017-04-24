@@ -5,45 +5,20 @@
 
 	<insert id="saveSwitchboardConn">
 		insert into dev_exclusive_switchboard_conn(
-			id,				exclusive_switchboard_info,				exclusive_switchboard_ip,			exclusive_switchboard_port,
-			brand_name,		model_name,								current_ios_version,			create_time,	state,		create_user
+			id,					exclusive_switchboard_ip,	exclusive_switchboard_port,			exclusive_switchboard_info,		brand_name,			
+			model_name,			currentIos_version,			create_time,						state,							create_user
 		) values(
-			#{conn.id},		#{conn.exclusiveSwitchboardInfo},		#{conn.exclusiveSwitchboardIp},		#{conn.exclusiveSwitchboardPort}, 					
-			#{conn.brandName},#{conn.modelName},					#{conn.currentIosVersion},				now(),		 1,		#{conn.createUser}
+			#{conn.id},			#{conn.exclusiveSwitchboardIp},	#{conn.exclusiveSwitchboardPort},#{conn.exclusiveSwitchboardInfo}, #{conn.brandName},				
+			#{conn.modelName},	#{conn.currentIosVersion},	now(),							 	1,								#{conn.createUser}
 		)
 	</insert>
 	
-	<update id="updateSwitchboardConn">
-		update dev_exclusive_switchboard_conn
-			<trim prefix="set" suffixOverrides=",">
-				update_time = now(),
-				<if test="conn.exclusiveSwitchboardInfo != null">exclusive_switchboard_info=#{conn.exclusiveSwitchboardInfo},</if>
-				<if test="conn.exclusiveSwitchboardIp != null">exclusive_switchboard_ip=#{conn.exclusiveSwitchboardIp},</if>
-				<if test="conn.exclusiveSwitchboardPort != null">exclusive_switchboard_port=#{conn.exclusiveSwitchboardPort},</if>
-				<if test="conn.state != null">state=#{conn.state},</if>
-				<if test="conn.brandName != null">brand_name=#{conn.brandName},</if>
-				<if test="conn.modelName != null">model_name=#{conn.modelName},</if>
-				<if test="conn.currentIosVersion != null">current_ios_version=#{conn.currentIosVersion},</if>
-				<if test="conn.updateUser != null">update_user=#{conn.updateUser},</if>
-				
-			</trim>
-		where 1=1
-		<if test="conn.id != null">
-		    AND id = #{conn.id}
-		</if>
-	</update>
-	
-	<delete id="deleteSwitchboardConn">
-		delete from dev_exclusive_switchboard_conn
-		where 1=1
-		<if test="id != null">
-		    AND id = #{id}
-		</if>
-	</delete>
 
 	<select id="findSwitchboardConn" resultType="com.sunrun.entity.DevExclusiveSwitchboardConn">
-		select * from dev_exclusive_switchboard_conn
-		where id = #{id}
+		select * from dev_exclusive_switchboard_conn  where state=1
+		<if test="id != null">
+			id = #{id}
+		</if>
 	</select>
 
 	

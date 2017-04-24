@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunrun.mapper.DevAreaSwitchboardIpMapper">
+
+
+	<select id="findAreaIp" resultType="com.sunrun.entity.DevAreaSwitchboardIp">
+		select * from dev_area_switchboard_ip
+		where 1=1
+		<if test="area.mainSwitchboardIp != null">
+		    AND main_switchboard_ip = #{area.mainSwitchboardIp}
+		</if>
+		<if test="area.backupSwitchboardIp != null">
+		    AND backup_switchboard_ip = #{area.backupSwitchboardIp}
+		</if>
+		<if test="area.areaName != null">
+		    AND area_name = #{area.areaName}
+		</if>
+	</select>
+
+	
+
+</mapper>

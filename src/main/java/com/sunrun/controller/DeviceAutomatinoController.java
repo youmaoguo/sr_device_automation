@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,20 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevExclusiveSwitchboardConn;
+import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
 import com.sunrun.task.AddSwitchDevice;
-import com.sunrun.task.ManagementPort;
-import com.sunrun.task.UpdateIos;
-import com.sunrun.task.WriteAccessConfig;
-import com.sunrun.task.WriteGatherConfig;
-import com.sunrun.util.ITILRestfulInterface;
-import com.sunrun.util.ItilGenrequestBo;
 import com.sunrun.util.Json;
-import com.sunrun.util.RestfulRequestUtil;
 import com.sunrun.util.StringUtil;
 
 /**
@@ -73,7 +66,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request	request请求对象
 	 * @return			返回json格式的字符串
 	 */
-	@RequestMapping(value = "/deviceAutomation/v1/addSwitchDevice", method = RequestMethod.POST, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	@RequestMapping(value = "/deviceAutomation/v1/addSwitchDevice", method = RequestMethod.POST, produces="application/json", consumes="application/json")
 	public void addSwitchDevice(HttpServletRequest request, HttpServletResponse response,
 								@RequestBody String jsonStr, @RequestHeader("Authorization") String auth){
 		Json json = new Json();
@@ -99,6 +92,7 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setHostName(hostName);
 			task.setMainSwitchboardIp(mainSwitchboardIp);
 			task.setBackupSwitchboardIp(backupSwitchboardIp);
+			task.setSwitchState(1);
 			String uuid = StringUtil.getUuid();
 			task.setId(uuid);
 			addSwitchDeviceService.saveDeviceBaseInfo(task, "");
@@ -209,7 +203,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request	request请求对象
 	 * @return			返回json格式的字符串
 	 */
-	@RequestMapping(value = "/deviceAutomation/v1/editDevice", method = RequestMethod.POST, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	@RequestMapping(value = "/deviceAutomation/v1/editDevice", method = RequestMethod.POST, produces="application/json", consumes="application/json")
 	public void editDevice(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request, HttpServletResponse response){
 		Json json = new Json();
 		String info = "编辑交换机设备成功";
@@ -300,7 +294,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request	request请求对象
 	 * @return			返回json格式的字符串
 	 */
-	@RequestMapping(value = "/deviceAutomation/v1/deleteSwitchDevice", method = {RequestMethod.POST, RequestMethod.DELETE}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	@RequestMapping(value = "/deviceAutomation/v1/deleteSwitchDevice", method = {RequestMethod.POST, RequestMethod.DELETE}, produces="application/json", consumes="application/json")
 	public void deleteSwitchDevice(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request,HttpServletResponse response){
 		Json json = new Json();
 		String info = "删除成功";
@@ -309,16 +303,21 @@ public class DeviceAutomatinoController extends BaseController{
 		try{
 			JSONObject obj = new JSONObject();
 			String updateUser = obj.getString("updateUser");
-			String itilNumber = obj.getString("itilNumber");//itil批次Id
 			String taskId = obj.getString("taskId");		//任务Id
 			
-			//删除itil批次
-			if(!StringUtils.isEmpty(itilNumber) && !StringUtils.isEmpty(taskId))
-				deviceAutomationService.deleteTaskItil(itilNumber, taskId);
-			
 			//删除任务
-			if(!StringUtils.isEmpty(taskId) && StringUtils.isEmpty(itilNumber))
-				deviceAutomationService.deleteTask(taskId);
+			if(!StringUtils.isEmpty(taskId)){
+				
+				//回填从看板申请回来的ip状态，state=2：回收，第三方系统放弃使用该ip，IP状态由“预占用”改为“未分配”
+				List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
+				if(l!=null && l.size()>0){
+					 Map<String, String> map = new HashMap<String, String>();
+					 map.put("ip", l.get(0).getManagerIp());
+					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, l.get(0), map, updateUser, 2);
+				}
+				
+				success = deviceAutomationService.deleteTask(taskId);
+			}
 			
 		}catch(Exception e){
 			code = 500;
@@ -340,7 +339,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = "/deviceAutomation/v1/executeSwitchDevice", method = {RequestMethod.POST}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	@RequestMapping(value = "/deviceAutomation/v1/executeSwitchDevice", method = {RequestMethod.POST}, produces="application/json", consumes="application/json")
 	public void executeSwitchDevice(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, 
 									HttpServletRequest request,HttpServletResponse response){
 		Json json = new Json();
@@ -384,19 +383,22 @@ public class DeviceAutomatinoController extends BaseController{
 			addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
 			
 			//查询出该任务执行到第几步骤 然后分多线程继续执行之后的步骤（写入接入交换机配置管理口ip、更新ios版本、写入接入交换机配置信息）
+			Integer executeStep = null;
 			if(switchState==1){
 				List<DevTaskExecute> li = deviceAutomationService.findTaskExecute(taskId, "execute_step");
 				if(li!=null && li.size()>0){
-					Integer executeStep = li.get(0).getExecuteStep();
+					executeStep = li.get(0).getExecuteStep();
 					Integer executeState = li.get(0).getTaskExecuteState();
 					if(executeState==3){	//3:成功，就要从下一步开始
 						executeStep += 1;
 					}
-					AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep); 
-					Thread t = new Thread(addTask);
-					t.start();
 				}
+			}else if(switchState==2){
+				executeStep = 14;
 			}
+			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep); 
+			Thread t = new Thread(addTask);
+			t.start();
 			
 			
 		}catch(Exception e){
@@ -419,7 +421,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = "/deviceAutomation/v1/switchDeviceITIL", method = {RequestMethod.POST}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	@RequestMapping(value = "/deviceAutomation/v1/switchDeviceITIL", method = {RequestMethod.POST}, produces="application/json", consumes="application/json")
 	public void switchDeviceITIL(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request,HttpServletResponse response){
 		Json json = new Json();
 		try{
@@ -448,7 +450,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = "/deviceAutomation/v1/sendEmailswitchDevice", method = {RequestMethod.POST}, produces="application/json", consumes="application/json", headers={"Authorization=sys/sysPwd/user/userPwd"})
+	@RequestMapping(value = "/deviceAutomation/v1/sendEmailswitchDevice", method = {RequestMethod.POST}, produces="application/json", consumes="application/json")
 	public void sendEmailswitchDevice(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request,HttpServletResponse response){
 		Json json = new Json();
 		String info = "上线交换机邮件发送成功";
@@ -464,16 +466,18 @@ public class DeviceAutomatinoController extends BaseController{
 			String title = obj.getString("mailTitle");
 			String content = obj.getString("mailContxt");
 			JSONArray array = obj.getJSONArray("mailConsignee");
-			String recever = "";//收件人邮箱
+			String emails = "";//收件人邮箱
+			String names = "";
 			for(int i=0;i<array.size();i++){
 				JSONObject j = (JSONObject) array.get(i);
 				String name = j.getString("mailConsigneeName");
 				String email = j.getString("mailConsigneeEmail");
-				recever += name;
+				emails += email;
+				names += name;
 			}
 			
 			//调用sr_public工程发送邮件通过接口方法
-			Json j = addSwitchDeviceService.SendEmailswitchDevice(sendEmail, auth, taskId, recever, title, content, "");
+			Json j = addSwitchDeviceService.SendEmailswitchDevice(sendEmail, auth, taskId, emails, names, title, content, "");
 			code = j.getRet_code();
 			info = j.getRet_info();
 			success = j.getSuccess();
@@ -500,7 +504,8 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param response
 	 */
 	@RequestMapping(value = "/deviceAutomation/v1/addEmailswitchDeviceEmail", method = {RequestMethod.GET}, produces="application/json")
-	public void addEmailswitchDeviceEmail(@RequestParam(value = "taskId", required = false) String taskId, HttpServletRequest request,HttpServletResponse response){
+	public void addEmailswitchDeviceEmail(@RequestParam(value = "taskId", required = false) String taskId, 
+											HttpServletRequest request,HttpServletResponse response, @RequestHeader("Authorization") String auth){
 		Json json = new Json();
 		String info = "上线交换机生成邮件内容成功";
 		Integer code = 200;	//200
@@ -542,6 +547,35 @@ public class DeviceAutomatinoController extends BaseController{
 		json.setData(data);
 		//返回数据
 		response(json, response, request); 
+	}
+	
+	
+	/**
+	 * kvm接口所对应的设备型号信息接口
+	 * @param request
+	 * @param response
+	 * @param exclusiveSwitchboardIp
+	 * @param exclusiveSwitchboardPort
+	 */
+	@RequestMapping(value = "/v1/thirdparty/kvmInfo", method = RequestMethod.GET, produces="application/json")
+	public void kvmInfo(HttpServletRequest request, HttpServletResponse response,  @RequestHeader("Authorization") String auth,
+						@RequestParam(value = "exclusiveSwitchboardIp", required = false) String exclusiveSwitchboardIp,
+						@RequestParam(value = "exclusiveSwitchboardPort", required = false) String exclusiveSwitchboardPort){
+		Json json = new Json();
+		try{
+			DevExclusiveSwitchboardInfo bean = new DevExclusiveSwitchboardInfo();
+			bean.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
+			bean.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
+			json = deviceAutomationService.findKvmInfo(bean, thirdPartUrl, auth);
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error(json.getRet_info());
+			json.setRet_code(500);
+			json.setRet_info("获取kvm接口所对应的设备型号信息出错了");
+			json.setSuccess(false);
+		}
+		//返回数据
+		response(json, response, request);
 	}
 	
 	

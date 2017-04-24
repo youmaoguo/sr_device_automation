@@ -73,8 +73,16 @@ public class SrDeviceAutomationApplicationTests {
 	
 	public static void main(String[] args) {
 		
+		String[] s1 = {"a","b","c"};
+		List list = java.util.Arrays.asList(s1);
+		System.out.println("1."+list.toString());
 		String s = StringUtil.readFile("D:\\port.txt");
-		try {
+		com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject(s);
+		String ms = obj.getString("message");
+		System.out.println(ms);
+		List<String> l = com.alibaba.fastjson.JSONArray.parseArray(obj.getString("common").toString(), String.class);
+		System.out.println(l.toString());
+		/*try {
 			JSONObject obj = new JSONObject(s);
 			JSONArray j = obj.getJSONArray("taskId");
 			List<String> l = com.alibaba.fastjson.JSONArray.parseArray(j.toString(), String.class);
@@ -86,6 +94,7 @@ public class SrDeviceAutomationApplicationTests {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		*/
 		
 		List<String> l1 = new ArrayList<String>();
 		l1.add("1");l1.add("2");

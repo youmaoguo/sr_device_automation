@@ -21,17 +21,7 @@ public interface DevExclusiveSwitchboardConnMapper {
 	 */
 	void saveSwitchboardConn(@Param("conn") DevExclusiveSwitchboardConn conn);
 	
-	/**
-	 * 修改
-	 * @param conn
-	 */
-	void updateSwitchboardConn(@Param("conn") DevExclusiveSwitchboardConn conn);
 	
-	/**
-	 * 删除
-	 * @param id
-	 */
-	void deleteSwitchboardConn(@Param("id") String id);
 	
 	/**
 	 * 查询

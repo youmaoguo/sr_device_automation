@@ -40,7 +40,7 @@ public interface AddSwitchDeviceService {
 	 * @param task
 	 * @return
 	 */
-	Json adminRequestIP(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName);
+	Json adminRequestIP(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName, int state);
 
 	/**添加设备第5步：
 	 * 判断汇聚交换机端口上是否有配置及端口状态是否为down
@@ -105,6 +105,18 @@ public interface AddSwitchDeviceService {
 	 */
 	Json writeAccessConfig(String thirdPartUrl, String auth, String taskId, String userName);
 	
+	/**添加设备第11步：(new)
+	 * 写入接入交换机配置(new)
+	 * @param thirdPartUrl
+	 * @param auth
+	 * @param task
+	 * @param userName
+	 * @return
+	 */
+	Json writeNewAccessConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
+
+	
+	
 	/**添加设备第12步：
 	 * 上线交换机邮件发送通知
 	 * @param thirdPartUrl
@@ -112,7 +124,7 @@ public interface AddSwitchDeviceService {
 	 * @param taskId
 	 * @return
 	 */
-	Json SendEmailswitchDevice(String thirdPartUrl, String auth, String[] taskId, String recever, String title, String content, String userName);
+	Json SendEmailswitchDevice(String thirdPartUrl, String auth, String[] taskId, String emails, String names, String title, String content, String userName);
 	
 	/**添加设备第13步：
 	 * 上线交换机ITIL工单申请
@@ -124,13 +136,23 @@ public interface AddSwitchDeviceService {
 	Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String[] taskId, String userName);
 	
 	/**添加设备第14步：
-	 * 写入汇聚接入交换机配置
+	 * 写入汇聚交换机配置
 	 * @param thirdPartUrl
 	 * @param auth
 	 * @param taskId
 	 * @return
 	 */
 	Json writeGatherConfig(String thirdPartUrl, String auth, String taskId, String userName);
+	
+	/**添加设备第14步：(new)
+	 * 写入汇聚交换机配置(new)
+	 * @param thirdPartUrl
+	 * @param auth
+	 * @param taskId
+	 * @return
+	 */
+	Json writeNewGatherConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
+	
 	
 	/**添加设备第15步：
 	 * 在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
@@ -140,5 +162,8 @@ public interface AddSwitchDeviceService {
 	 * @return
 	 */
 	Json checkConfig(String thirdPartUrl, String auth, String taskId, String userName);
+
+	
+	
 	
 }

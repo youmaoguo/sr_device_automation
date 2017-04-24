@@ -1,10 +1,13 @@
 package com.sunrun.service;
 
 import java.util.List;
+
+import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
+import com.sunrun.util.Json;
 
 /**
  * 交换机设备自动化业务层
@@ -121,5 +124,14 @@ public interface DeviceAutomationService {
 	 * @return
 	 */
 	List<DevTaskExecute> findTaskExecute(String taskId, String order);
+	
+	/**
+	 * kvm接口所对应的设备型号信息接口
+	 * @param info
+	 * @param thirdPartUrl
+	 * @param auth
+	 * @return
+	 */
+	Json findKvmInfo(DevExclusiveSwitchboardInfo info, String thirdPartUrl, String auth);
 	
 }

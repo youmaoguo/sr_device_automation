@@ -1,6 +1,8 @@
 package com.sunrun.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -11,12 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sunrun.entity.DevBrandModel;
+import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevOnlineTaskItil;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
+import com.sunrun.mapper.DevBrandModelMapper;
 import com.sunrun.mapper.DevExclusiveSwitchboardConnMapper;
+import com.sunrun.mapper.DevExclusiveSwitchboardInfoMapper;
 import com.sunrun.mapper.DevIosVersionsMapper;
 import com.sunrun.mapper.DevOnlineBatchItilMapper;
 import com.sunrun.mapper.DevOnlineTaskItilMapper;
@@ -25,6 +31,7 @@ import com.sunrun.mapper.DevTaskExecuteMapper;
 import com.sunrun.util.ITILRestfulInterface;
 import com.sunrun.util.ItilGenrequestBo;
 import com.sunrun.util.Json;
+import com.sunrun.util.RestfulRequestUtil;
 import com.sunrun.util.StringUtil;
 
 @Service("deviceAutomationService")
@@ -42,6 +49,10 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	private DevExclusiveSwitchboardConnMapper devExclusiveSwitchboardConnMapper;
 	@Resource
 	private DevIosVersionsMapper devIosVersionsMapper;
+	@Resource
+	private DevExclusiveSwitchboardInfoMapper devExclusiveSwitchboardInfoMapper;
+	@Resource
+	private DevBrandModelMapper devBrandModelMapper; 
 	
 	@Transactional
 	@Override
@@ -285,6 +296,66 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	@Override
 	public List<DevTaskExecute> findTaskExecute(String taskId, String order) {
 		return devTaskExecuteMapper.findTaskExecute(taskId, order);
+	}
+
+
+	@Override
+	public Json findKvmInfo(DevExclusiveSwitchboardInfo info, String thirdPartUrl, String auth) {
+		Json j = new Json();
+		String s = "获取kvm接口所对应的设备型号信息成功";
+		Integer code = 200;	//200:用户查询数据成功
+		Boolean success = true;
+		List<Object> li = new ArrayList<Object>();
+		try{
+			//先查询出带外交换机的ip和端口
+			List<DevExclusiveSwitchboardInfo> list = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
+			for(int i=0;i<list.size();i++){
+				DevExclusiveSwitchboardInfo d = list.get(i);
+				JSONObject param = new JSONObject();
+				param.put("host", d.getExclusiveSwitchboardIp());
+				param.put("port", d.getExclusiveSwitchboardPort());
+				param.put("user", "");
+				param.put("password", "");
+				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "post", auth);
+				Json json = JSONObject.parseObject(sb, Json.class);
+				if(json.getRet_code()==200){
+					Map<Object, Object> map = (Map<Object, Object>) json.getData();
+					String model = map.get("model").toString();
+					//在根据model去查询品牌型号表
+					DevBrandModel bean = new DevBrandModel();
+					bean.setModelName(model);
+					List<DevBrandModel> ll = devBrandModelMapper.findBrandModel(bean);
+					if(ll!=null && ll.size()>0){
+						bean = ll.get(0);
+					}
+					JSONObject obj = new JSONObject();
+					obj.put("exclusiveSwitchboardIp", d.getExclusiveSwitchboardIp());
+					obj.put("exclusiveSwitchboardPort", d.getExclusiveSwitchboardPort());
+					obj.put("exclusiveSwitchboardOrder", d.getExclusiveSwitchboardOrder());
+					obj.put("brandName", bean.getBrandName());
+					obj.put("modelName", bean.getModelName());
+					obj.put("currentIosVersion", bean.getIosVersion());
+					li.add(obj);
+				}else{
+					code = json.getRet_code();
+					success = json.getSuccess();
+					s = json.getRet_info();
+				}
+			}
+			
+		}catch(Exception e){
+			logger.error("kvm接口所对应的设备型号信息接口出错");
+			e.printStackTrace();
+			j.setRet_code(500);
+			j.setRet_info("kvm接口所对应的设备型号信息接口出错");
+			j.setSuccess(false);
+			return j;
+		}
+		j.setRet_code(code);
+		j.setRet_info(s);
+		j.setSuccess(success);
+		j.setData(li); 
+		return j;
 	}
 	
 
