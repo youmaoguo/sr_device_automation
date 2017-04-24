@@ -61,7 +61,7 @@ public class MybatisConfig implements TransactionManagementConfigurer{
         bean.setPlugins(new Interceptor[]{pageHelper});
         
         /** 设置mybatis configuration 扫描路径 */                
-        bean.setConfigLocation(new ClassPathResource("mybatis-config.xml"));
+        //bean.setConfigLocation(new ClassPathResource("mybatis-config.xml"));
 
         //添加XML目录
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

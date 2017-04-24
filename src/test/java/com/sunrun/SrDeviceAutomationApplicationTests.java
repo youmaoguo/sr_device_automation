@@ -33,14 +33,9 @@ import com.sunrun.util.Json;
 import com.sunrun.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-//@SpringBootTest
-@WebAppConfiguration
-@Configuration
-@EnableTransactionManagement
+@SpringBootTest
 public class SrDeviceAutomationApplicationTests {
 
-	@Resource
-	private DevOnlineTaskMapper devOnlineTaskMapper;
 	
 	//@Test
 	public void contextLoads() {
