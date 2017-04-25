@@ -6,16 +6,29 @@
 	<insert id="saveSwitchboardConn">
 		insert into dev_exclusive_switchboard_conn(
 			id,					exclusive_switchboard_ip,	exclusive_switchboard_port,			exclusive_switchboard_info,		brand_name,			
-			model_name,			currentIos_version,			create_time,						state,							create_user
+			model_name,			current_ios_version,			create_time,						state,							create_user
 		) values(
 			#{conn.id},			#{conn.exclusiveSwitchboardIp},	#{conn.exclusiveSwitchboardPort},#{conn.exclusiveSwitchboardInfo}, #{conn.brandName},				
-			#{conn.modelName},	#{conn.currentIosVersion},	now(),							 	1,								#{conn.createUser}
+			#{conn.modelName},	#{conn.currentIosVersion},	now(),							 	1,								#{conn.create_user}
 		)
 	</insert>
 	
 
 	<select id="findSwitchboardConn" resultType="com.sunrun.entity.DevExclusiveSwitchboardConn">
-		select * from dev_exclusive_switchboard_conn  where state=1
+		select 
+			id AS id,
+			exclusive_switchboard_info AS exclusiveSwitchboardInfo,
+			exclusive_switchboard_ip AS exclusiveSwitchboardIp,
+			exclusive_switchboard_port AS exclusiveSwitchboardPort,
+			brand_name AS brandName,
+			model_name AS modelName,
+			current_ios_version AS currentIosVersion,
+			create_user AS create_user,
+			create_time AS create_time,
+			update_time AS update_time,
+			update_user AS update_user
+			
+		from dev_exclusive_switchboard_conn  where state=1
 		<if test="id != null">
 			id = #{id}
 		</if>

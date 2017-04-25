@@ -11,7 +11,7 @@
 		) values(
 			#{itil.id},		#{itil.batchName},		#{itil.batchDescribe},		1, 					now(),				 1,
 			#{itil.itilNumber},#{itil.itilAssignee},#{itil.itilCategory},	#{itil.itilSubcategory},#{itil.itilBusinessArea},#{itil.itilStatus},
-			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.createUser}
+			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.create_user}
 		)
 	</insert>
 	
@@ -24,7 +24,7 @@
 				<if test="itil.batchState != null">batch_state=#{itil.batchState},</if>
 				<if test="itil.state != null">state=#{itil.state},</if>
 				<if test="itil.itilStatus != null">itil_status=#{itil.itilStatus},</if>
-				<if test="itil.updateUser != null">update_user=#{itil.updateUser},</if>
+				<if test="itil.update_user != null">update_user=#{itil.update_user},</if>
 				
 			</trim>
 		where 1=1

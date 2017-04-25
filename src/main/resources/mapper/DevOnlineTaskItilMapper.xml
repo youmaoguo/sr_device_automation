@@ -7,13 +7,18 @@
 		insert into dev_online_task_itil(
 			id,						itil_number,				dev_online_task_id,		create_time,	state,	create_user
 		) values(
-			#{taskItil.id}, 		#{taskItil.itilNumber},	#{taskItil.devOnlineTaskId},	now(),		 1,		#{taskItil.createUser}
+			#{taskItil.id}, 		#{taskItil.itilNumber},	#{taskItil.devOnlineTaskId},	now(),		 1,		#{taskItil.create_user}
 		)
 	</insert>
 	
 	
 	<select id = "findTaskItilMap" resultType="com.sunrun.entity.DevOnlineTaskItil">
-		select * from dev_online_task_itil where 1=1
+		select 
+			id AS id,
+			itil_number ASitilNumber,
+			dev_online_task_id AS devOnlineTaskId
+			
+		from dev_online_task_itil where 1=1
 		<if test="taskId != null">
 			and dev_online_task_id = #{taskId}
 		</if>

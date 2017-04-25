@@ -9,13 +9,20 @@
 			script_order,			script_info,				create_time,			state,			create_user
 		) values(
 			#{config.id},			#{config.objectId},			#{config.devType},		#{config.scriptType}, 					
-			#{config.scriptOrder},	#{config.scriptInfo},		now(),		 			1,				#{config.createUser}
+			#{config.scriptOrder},	#{config.scriptInfo},		now(),		 			1,				#{config.create_user}
 		)
 	</insert>
 	
 	
 	<select id="findDevScriptConfig" resultType="com.sunrun.entity.DevScriptConfig">
-		select * from dev_script_config where 1=1
+		select 
+			object_id AS objectId,
+			dev_type AS devType,
+			script_type AS scriptType,
+			script_order AS scriptOrder,
+			script_info AS scriptInfo
+			
+		from dev_script_config where 1=1
 		<if test="config.objectId != null">
 			object_id = #{config.objectId}
 		</if>

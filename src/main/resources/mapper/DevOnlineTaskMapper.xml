@@ -17,7 +17,7 @@
 			#{task.mainSwitchboardIp},#{task.mainSwitchboardPort}, #{task.backupSwitchboardIp},	#{task.backupSwitchboardPort},
 			#{task.devOnlineRack}, #{task.exclusiveSwitchboardIp}, #{task.exclusiveSwitchboardPort}, now(),		1,
 				0,						0,					 #{task.exclusiveSwitchboardInfo},	#{task.currentIosVersion},	0,
-			#{task.modelIosVersion},#{task.accessVersionWrite},{task.switchState},#{task.backupSwitchboardConfigWrite},#{task.createUser}
+			#{task.modelIosVersion},#{task.accessVersionWrite},1,#{task.backupSwitchboardConfigWrite},#{task.create_user}
 		)
 	</insert>
 	
@@ -54,7 +54,7 @@
 				<if test="task.backupSwitchboardConfigWrite != null">backup_switchboard_config_write=#{task.backupSwitchboardConfigWrite},</if>
 				<if test="task.switchState != null">switch_state=#{task.switchState},</if>
 				<if test="task.emailId != null">email_id=#{task.emailId},</if>
-				<if test="task.updateUser != null">update_user=#{task.updateUser},</if>
+				<if test="task.update_user != null">update_user=#{task.update_user},</if>
 				<if test="task.accessSwitchboardCheck != null">access_switchboard_check=#{task.accessSwitchboardCheck},</if>
 				<if test="task.accessSwitchboardCheckInfo != null">access_switchboard_check_info=#{task.accessSwitchboardCheckInfo},</if>
 			</trim>

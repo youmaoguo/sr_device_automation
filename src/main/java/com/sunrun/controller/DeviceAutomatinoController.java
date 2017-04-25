@@ -95,7 +95,10 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setSwitchState(1);
 			String uuid = StringUtil.getUuid();
 			task.setId(uuid);
-			addSwitchDeviceService.saveDeviceBaseInfo(task, "");
+			json = addSwitchDeviceService.saveDeviceBaseInfo(task, "");
+			code = json.getRet_code();
+			info = json.getRet_info();
+			success = json.getSuccess();
 			
 			//先保存这条数据的基本信息，然后分线程去执行剩下的步骤
 			AddSwitchDevice addSwitchDevice = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "");
@@ -196,96 +199,6 @@ public class DeviceAutomatinoController extends BaseController{
 		response(json, response, request);
 	}
 	
-	/**
-	 * 添加交换机设备(页面每个‘下一步’调用的方法)
-	 * @param jsonStr	json格式的请求参数字符串
-	 * @param auth		Authorization认证参数
-	 * @param request	request请求对象
-	 * @return			返回json格式的字符串
-	 */
-	@RequestMapping(value = "/deviceAutomation/v1/editDevice", method = RequestMethod.POST, produces="application/json", consumes="application/json")
-	public void editDevice(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request, HttpServletResponse response){
-		Json json = new Json();
-		String info = "编辑交换机设备成功";
-		Integer code = 201;	//201:用户新建或修改数据成功
-		Boolean success = true;
-		try{
-			JSONObject obj = JSONObject.parseObject(jsonStr);
-			String id = obj.getString("id");	//taskId 任务id
-			Integer executeStep = obj.getIntValue("execute_step");//任务步骤
-			
-			String brandName = obj.getString("brandName");
-			String modelName = obj.getString("modelName");
-			String areaName = obj.getString("areaName");
-			String areaDescribe = obj.getString("areaDescribe");
-			String devOnlineRack = obj.getString("devOnlineRack");
-			String hostName = obj.getString("hostName");
-			String mainSwitchboardIp = obj.getString("mainSwitchboardIp");
-			String backupSwitchboardIp = obj.getString("backupSwitchboardIp");
-			DevOnlineTask task = new DevOnlineTask();
-			task.setBrandName(brandName);
-			task.setModelName(modelName);
-			task.setAreaName(areaName);
-			task.setDevOnlineRack(devOnlineRack);
-			task.setHostName(hostName);
-			task.setAreaDescribe(areaDescribe); 
-			task.setBackupSwitchboardIp(backupSwitchboardIp);
-			task.setMainSwitchboardIp(mainSwitchboardIp);
-			
-			String managerIp = obj.getString("managerIp");
-			String vlan = obj.getString("vlan");
-			task.setManagerIp(managerIp);
-			task.setVlan(vlan); 
-			
-			String mainSwitchboardPort = obj.getString("mainSwitchboardPort");
-			String backupSwitchboardPort = obj.getString("backupSwitchboardPort");
-			task.setMainSwitchboardPort(mainSwitchboardPort);
-			task.setBackupSwitchboardPort(backupSwitchboardPort);
-			
-			String exclusiveSwitchboardIp = obj.getString("exclusiveSwitchboardIp");
-			String exclusiveSwitchboardPort = obj.getString("exclusiveSwitchboardPort");
-			task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
-			task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-			
-			String d = null;
-			if(StringUtils.isEmpty(id)){
-				String uuid = StringUtil.getUuid();
-				d = uuid;
-				task.setId(uuid);
-				deviceAutomationService.saveDevice(task, executeStep, ""); 
-			}else{
-				Object object = null;
-				//第五步.保存接入交换机配置信息
-				if(executeStep==5){
-					Object data = obj.get("data");
-					List<String> l = com.alibaba.fastjson.JSONArray.parseArray(data.toString(), String.class);
-					object = l;
-				}
-				//第六步，保存带外交换机信息; || 第七步，写交换机入管理口ip
-				if(executeStep==6 || executeStep==7){
-					Object data = obj.get("data");
-					List<DevOnlineTask> l = com.alibaba.fastjson.JSONArray.parseArray(data.toString(), DevOnlineTask.class);
-					object = l;
-				}
-				d = id;
-				task.setId(id);
-				deviceAutomationService.updateTask(task, executeStep, object, "");
-			}
-			json.setData(d);
-			
-		}catch(Exception e){
-			e.printStackTrace();
-			info = "编辑批次任务交换机设备出错了";
-			code = 500;
-			success = false;
-			logger.error(info);
-		}
-		json.setRet_code(code);
-		json.setRet_info(info);
-		json.setSuccess(success);
-		//返回数据
-		response(json, response, request);
-	}
 	
 	/**
 	 * 删除交换机设备
@@ -301,7 +214,7 @@ public class DeviceAutomatinoController extends BaseController{
 		Integer code = 201;	//201:用户新建或修改数据成功
 		Boolean success = true;
 		try{
-			JSONObject obj = new JSONObject();
+			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String updateUser = obj.getString("updateUser");
 			String taskId = obj.getString("taskId");		//任务Id
 			
@@ -317,6 +230,18 @@ public class DeviceAutomatinoController extends BaseController{
 				}
 				
 				success = deviceAutomationService.deleteTask(taskId);
+				if(!success){
+					code = 500;
+					info = "删除出错";
+				}
+			}else{
+				json.setRet_code(400);
+				json.setRet_info("缺少参数");
+				json.setSuccess(false);
+				json.setData(null);
+				//返回数据
+				response(json, response, request);
+				return;
 			}
 			
 		}catch(Exception e){
@@ -505,12 +430,21 @@ public class DeviceAutomatinoController extends BaseController{
 	 */
 	@RequestMapping(value = "/deviceAutomation/v1/addEmailswitchDeviceEmail", method = {RequestMethod.GET}, produces="application/json")
 	public void addEmailswitchDeviceEmail(@RequestParam(value = "taskId", required = false) String taskId, 
-											HttpServletRequest request,HttpServletResponse response, @RequestHeader("Authorization") String auth){
+											HttpServletRequest request,HttpServletResponse response/*, @RequestHeader("Authorization") String auth*/){
 		Json json = new Json();
 		String info = "上线交换机生成邮件内容成功";
 		Integer code = 200;	//200
 		Boolean success = true;
 		Map<String, Object> data = new HashMap<String, Object>();
+		if(StringUtils.isEmpty(taskId)){
+			json.setRet_code(400);
+			json.setRet_info("缺少参数");
+			json.setSuccess(false);
+			json.setData(null);
+			//返回数据
+			response(json, response, request);
+			return;
+		}
 		try{
 			String content = StringUtil.emailHeadStr();
 			String[] ids = taskId.split(",");	//多个taskId用英文逗号隔开

@@ -13,13 +13,37 @@
 			#{itil.id},		#{itil.batchName},		#{itil.batchDescribe},		1, 					now(),				 1,
 			#{itil.itilNumber},#{itil.itilAssignee},#{itil.itilCategory},	#{itil.itilSubcategory},#{itil.itilBusinessArea},#{itil.itilStatus},
 			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.itilSourceId},#{itil.itilRequestedDate},
-			#{itil.itilSource},	#{itil.itilOpenedBy},#{itil.createUser}
+			#{itil.itilSource},	#{itil.itilOpenedBy},#{itil.create_user}
 		)
 	</insert>
 	
 
 	<select id="findItilExecuteInfo" resultType="com.sunrun.entity.DevOnlineItilExecute">
-		SELECT  * FROM dev_online_itil_execute WHERE itil_number = #{itilNumber}
+		SELECT  
+			itil_sourceId AS itilSourceId,
+			itil_requestedDate AS itilRequestedDate,
+			itil_source itilSource,
+			itil_openedBy AS itilOpenedBy,
+			batch_name AS batchName,
+			batch_describe AS batchDescribe ,
+			batch_state AS batchState ,
+			itil_number AS itilNumber ,
+			itil_assignee AS itilAssignee ,
+			itil_category AS itilCategory ,
+			itil_subcategory AS itilSubcategory ,
+			itil_businessArea AS itilBusinessArea ,
+			itil_status AS itilStatus ,
+			itil_requestor AS itilRequestor ,
+			itil_title AS itilTitle ,
+			itil_description AS itilDescription ,
+			itil_plannedEnd AS itilPlannedEnd ,
+			create_time,
+			create_user,
+			update_user,
+			update_time,
+			state
+		
+		FROM dev_online_itil_execute WHERE itil_number = #{itilNumber}
 	</select>
 	
 

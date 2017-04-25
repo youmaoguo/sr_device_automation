@@ -4,7 +4,18 @@
 <mapper namespace="com.sunrun.mapper.DevExclusiveSwitchboardInfoMapper">
 
 	<select id="findDevExclusiveSwitchboardInfo" resultType="com.sunrun.entity.DevExclusiveSwitchboardInfo">
-		select * from dev_exclusive_switchboard_info
+		select 
+			id AS id,
+			create_time AS create_time,
+			create_user AS create_user,
+			update_time AS update_time,
+			update_user AS update_user,
+			state AS state,
+			exclusive_switchboard_ip AS exclusiveSwitchboardIp,
+			exclusive_switchboard_port AS exclusiveSwitchboardPort,
+			exclusive_switchboard_order AS exclusiveSwitchboardOrder,
+			exclusive_switchboard_note AS exclusiveSwitchboardNote
+		from dev_exclusive_switchboard_info
 		where 1=1
 		<if test="info.id != null">
 		    AND id = #{info.id}

@@ -9,7 +9,7 @@
 			task_execute_state,		task_execute_note,		task_execute_begin,		task_execute_end,		create_time,		state,			create_user
 		) values(
 			#{execute.id}, 			#{execute.taskId},		#{execute.taskType},	#{execute.taskOrder}, 	#{execute.taskDescribe}, #{execute.executeStep},
-			#{execute.taskExecuteState},#{execute.taskExecuteNote},	#{execute.taskExecuteBegin},#{execute.taskExecuteEnd},now(), 1,				#{execute.createUser}
+			#{execute.taskExecuteState},#{execute.taskExecuteNote},	#{execute.taskExecuteBegin},#{execute.taskExecuteEnd},now(), 1,				#{execute.create_user}
 		)
 	</insert>
 	
@@ -25,7 +25,7 @@
 				<if test="execute.taskExecuteBegin != null">task_execute_begin=#{execute.taskExecuteBegin},</if>
 				<if test="execute.taskExecuteEnd != null">task_execute_end=#{execute.taskExecuteEnd},</if>
 				<if test="execute.state != null">state=#{execute.state},</if>
-				<if test="execute.updateUser != null">update_user=#{execute.updateUser},</if>
+				<if test="execute.update_user != null">update_user=#{execute.update_user},</if>
 			</trim>
 		where 1=1  and state=1
 		<if test="execute.id != null">
@@ -47,7 +47,22 @@
 	</delete>
 	
 	<select id="findTaskExecute" resultType="com.sunrun.entity.DevTaskExecute">
-		select * from dev_task_execute where 1=1
+		select
+			id AS id,
+			task_id AS taskId,
+			task_type AS taskType,
+			task_order AS taskOrder,
+			task_describe AS taskDescribe,
+			task_execute_state AS taskExecuteState,
+			task_execute_note AS taskExecuteNote,
+			task_execute_begin AS taskExecuteBegin,
+			task_execute_end AS taskExecuteEnd,
+			execute_step AS executeStep,
+			create_time AS create_time,
+			create_user AS create_user,
+			state AS state
+		
+		from dev_task_execute where 1=1
 		<if test="taskId != null">
 		    AND task_id = #{taskId}
 		</if>

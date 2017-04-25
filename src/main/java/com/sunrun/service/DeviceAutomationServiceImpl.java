@@ -61,14 +61,14 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		try{
 			task.setCreate_user(userName);
 			devOnlineTaskMapper.saveDevOnlineTask(task);
-			DevTaskExecute execute = new DevTaskExecute();
+			/*DevTaskExecute execute = new DevTaskExecute();
 			execute.setId(StringUtil.getUuid());
 			execute.setTaskId(task.getId());
 			execute.setExecuteStep(executeStep);
 			execute.setTaskExecuteState(3);
 			execute.setTaskOrder(executeStep); 
 			execute.setCreate_user(userName);
-			devTaskExecuteMapper.saveDevTaskExecute(execute);
+			devTaskExecuteMapper.saveDevTaskExecute(execute);*/
 		}catch(Exception e){
 			b = false;
 			e.printStackTrace();

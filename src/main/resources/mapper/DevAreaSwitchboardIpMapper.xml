@@ -5,7 +5,14 @@
 
 
 	<select id="findAreaIp" resultType="com.sunrun.entity.DevAreaSwitchboardIp">
-		select * from dev_area_switchboard_ip
+		select 
+			id AS id, 
+			area_name AS areaName,
+			area_describe AS areaDescribe,
+			main_switchboard_ip AS mainSwitchboardIp,
+			backup_switchboard_ip AS backupSwitchboardIp
+			
+		from dev_area_switchboard_ip
 		where 1=1
 		<if test="area.mainSwitchboardIp != null">
 		    AND main_switchboard_ip = #{area.mainSwitchboardIp}

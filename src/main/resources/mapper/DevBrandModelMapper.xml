@@ -9,13 +9,19 @@
 			ios_version_2,			create_time,				state,					create_user
 		) values(
 			#{model.id},			#{model.brandName},			#{model.modelName},		#{model.iosVersion}, 					
-			#{model.iosVersion2},	now(),		 				1,						#{model.createUser}
+			#{model.iosVersion2},	now(),		 				1,						#{model.create_user}
 		)
 	</insert>
 	
 
 	<select id="findBrandModel" resultType="com.sunrun.entity.DevBrandModel">
-		select * from dev_brand_model
+		select 
+			brand_name AS brandName,
+			model_name AS modelName,
+			ios_version AS iosVersion,
+			ios_version_2 AS iosVersion2
+			
+		from dev_brand_model
 		where 1=1
 		<if test="model.id != null">
 		    AND id = #{model.id}

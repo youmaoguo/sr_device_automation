@@ -48,7 +48,12 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 201;	//201:用户新建或修改数据成功
 		Boolean success = true;
 		try{
-			deviceAutomationService.saveDevice(task, 1,  userName);
+			success = deviceAutomationService.saveDevice(task, 1,  userName);
+			if(!success){
+				code = 500;
+				info = "添加交换机设备品牌、型号、主机名等基本信息失败";
+			}
+				
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("添加交换机设备品牌、型号、主机名等基本信息失败");
@@ -57,11 +62,13 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			success = false;
 			throw new RuntimeException(e);
 		}finally{
-			//记录任务执行步骤
-			DevOnlineTask t = new DevOnlineTask();
-			t.setId(task.getId());
-			t.setUpdate_user(userName);
-			writeProcess(t, 1, info, success, userName, null);
+			if(success){
+				//记录任务执行步骤
+				DevOnlineTask t = new DevOnlineTask();
+				t.setId(task.getId());
+				t.setUpdate_user(userName);
+				writeProcess(t, 1, info, success, userName, null);
+			}
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -447,7 +454,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			throw new RuntimeException(e);
 		}finally{
 			//记录任务执行步骤
-			writeProcess(task, 6, info, success, userName, null);
+			writeProcess(task, 8, info, success, userName, null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
