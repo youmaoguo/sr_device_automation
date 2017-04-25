@@ -51,7 +51,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			deviceAutomationService.saveDevice(task, 1,  userName);
 		}catch(Exception e){
 			e.printStackTrace();
-			logger.error("删除itil任务出错");
+			logger.error("添加交换机设备品牌、型号、主机名等基本信息失败");
 			info = "添加交换机设备品牌、型号、主机名等基本信息失败";
 			code = 500;
 			success = false;

@@ -137,8 +137,8 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param pageSize		每页记录数
 	 * @return				返回json字符串
 	 */
-	@RequestMapping(value = "/deviceAutomation/v1/findDevBatchTask", method = RequestMethod.GET, produces="application/json")
-	public void findDevBatchTask(HttpServletRequest request, HttpServletResponse response,
+	@RequestMapping(value = "/deviceAutomation/v1/findSwitchDevice", method = RequestMethod.GET, produces="application/json")
+	public void findSwitchDevice(HttpServletRequest request, HttpServletResponse response,
 								@RequestParam(value = "taskId", required = false) String taskId,
 								@RequestParam(value = "execute_step", required = false) Integer executeStep,
 								@RequestParam(value = "switchState", required = false) Integer switchState,
