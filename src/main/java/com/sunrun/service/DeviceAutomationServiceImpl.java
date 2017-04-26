@@ -219,6 +219,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		try{
 			if(task!=null){
 				task.setUpdate_user(userName); 
+				task.setState(1);
 				devOnlineTaskMapper.updateDevOnlineTask(task);
 			}
 			//保存每一步步骤执行情况
@@ -312,6 +313,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			for(int i=0;i<list.size();i++){
 				DevExclusiveSwitchboardInfo d = list.get(i);
 				JSONObject param = new JSONObject();
+				param.put("method_name", "/interchanger/v1/checkModel");
 				param.put("host", d.getExclusiveSwitchboardIp());
 				param.put("port", d.getExclusiveSwitchboardPort());
 				param.put("user", "");

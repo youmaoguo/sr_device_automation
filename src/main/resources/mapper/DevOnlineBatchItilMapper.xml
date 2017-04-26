@@ -45,7 +45,22 @@
 	</delete>
 
 	<select id="findBatchById" resultType="com.sunrun.entity.DevOnlineBatchItil">
-		select * from dev_online_batch_itil
+		select 
+			 id AS id,
+			 batch_name AS batchName,
+			 batch_describe AS batchDescribe,
+			 batch_state AS batchState,
+			 itil_number AS itilNumber,
+			 itil_assignee AS itilAssignee,
+			 itil_category AS itilCategory,
+			 itil_subcategory AS itilSubcategory,
+			 itil_businessArea As itilBusinessArea,
+			 itil_status AS itilStatus,
+			 itil_requestor AS itilRequestor,
+			 itil_title AS itilTitle,
+			 itil_description AS itilDescription,
+			 itil_plannedEnd AS itilPlannedEnd
+		from dev_online_batch_itil
 		where id = #{id}
 	</select>
 
@@ -98,14 +113,13 @@
 				t.switch_state AS switchState,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				t.access_switchboard_check AS accessSwitchboardCheck,
-				e.execute_step AS executeStep,
-				e.execute_step AS taskCurrentStep,
-				e.task_describe AS taskCurrentStepDescribe
+				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=taskId) AS executeStep,
+				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=taskId) AS taskCurrentStep,
+				(SELECT task_describe FROM dev_task_execute where task_id=taskId AND execute_step = executeStep ) AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
 				LEFT JOIN dev_online_batch_itil b on b.itil_number = ti.itil_number
-				LEFT JOIN dev_task_execute e ON e.task_id=t.id
 			WHERE t.state=1  
 			
 		) taskView	where 1=1 
@@ -193,14 +207,13 @@
 				t.switch_state AS switchState,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
-				e.execute_step AS executeStep,
-				e.execute_step AS taskCurrentStep,
-				e.task_describe AS taskCurrentStepDescribe
+				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=taskId) AS executeStep,
+				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=taskId) AS taskCurrentStep,
+				(SELECT task_describe FROM dev_task_execute where task_id=taskId AND execute_step = executeStep ) AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
 				LEFT JOIN dev_online_batch_itil b on b.itil_number = ti.itil_number
-				LEFT JOIN dev_task_execute e ON e.task_id=t.id
 			WHERE t.state=1   
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">

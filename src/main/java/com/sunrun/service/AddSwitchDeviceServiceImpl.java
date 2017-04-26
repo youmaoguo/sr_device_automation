@@ -64,10 +64,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}finally{
 			if(success){
 				//记录任务执行步骤
-				DevOnlineTask t = new DevOnlineTask();
-				t.setId(task.getId());
-				t.setUpdate_user(userName);
-				writeProcess(t, 1, info, success, userName, null);
+				task.setUpdate_user(userName);
+				writeProcess(task, 1, info, success, userName, null);
 			}
 			
 			json.setRet_code(code);
