@@ -240,40 +240,39 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				code = j.getRet_code();
 				info = j.getRet_info();
 				success = j.getSuccess();
-			}
-			
-			//解析出取到的所有主备ip对应的端口
-			JSONObject result = (JSONObject) j.getData();
-			Object main = result.getJSONArray(task.getMainSwitchboardIp());
-			List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
-			Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
-			List<String> backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
-			
-			List<String> mainp = new ArrayList<String>();	//保存数据库中所有使用了的主汇聚端口
-			List<String> backp = new ArrayList<String>();	//保存数据库中所有使用了的备汇聚端口
-			//从数据库查出所有使用了的主备端口，然后分配未使用的端口，
-			List<DevOnlineTask> ports = deviceAutomationService.findPort(null);
-			for(int i=0;i<ports.size();i++){
-				mainp.add(ports.get(i).getMainSwitchboardIp());
-				backp.add(ports.get(i).getBackupSwitchboardIp());
-			}
-			int index = 0;
-			for(int i=0;i<mainlist.size();i++){
-				if(!mainp.contains(mainlist.get(i))){
-					index = i;
-					break;
+			}else{
+				//解析出取到的所有主备ip对应的端口
+				JSONObject result = (JSONObject) j.getData();
+				Object main = result.getJSONArray(task.getMainSwitchboardIp());
+				List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
+				Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
+				List<String> backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
+				
+				List<String> mainp = new ArrayList<String>();	//保存数据库中所有使用了的主汇聚端口
+				List<String> backp = new ArrayList<String>();	//保存数据库中所有使用了的备汇聚端口
+				//从数据库查出所有使用了的主备端口，然后分配未使用的端口，
+				List<DevOnlineTask> ports = deviceAutomationService.findPort(null);
+				for(int i=0;i<ports.size();i++){
+					mainp.add(ports.get(i).getMainSwitchboardIp());
+					backp.add(ports.get(i).getBackupSwitchboardIp());
 				}
-			}
-			mp = mainlist.size()>=index+1 ? mainlist.get(index+1) : "";
-			int index2 = 0;
-			for(int i=0;i<backuplist.size();i++){
-				if(!backp.contains(backuplist.get(i))){
-					index2 = i;
-					break;
+				int index = 0;
+				for(int i=0;i<mainlist.size();i++){
+					if(!mainp.contains(mainlist.get(i))){
+						index = i;
+						break;
+					}
 				}
+				mp = mainlist.size()>=index+1 ? mainlist.get(index+1) : "";
+				int index2 = 0;
+				for(int i=0;i<backuplist.size();i++){
+					if(!backp.contains(backuplist.get(i))){
+						index2 = i;
+						break;
+					}
+				}
+				bp = backuplist.size()>=index2+1 ? backuplist.get(index2+1) : "";
 			}
-			bp = backuplist.size()>=index2+1 ? backuplist.get(index2+1) : "";
-			
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -538,7 +537,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 					param.put("user", "");		//交换机的telnet登录账号
 					param.put("password", "");	//交换机的telnet登录密码
 					param.put("type", "");		//交换机的类型，分别为4948E和5548
-					param.put("serverIp", "");		//交换机的类型，分别为4948E和5548
+					param.put("serverIp", "");		//更新源服务器的IP
 					param.put("sourceFileName", "");//源文件名
 					param.put("desFileName", "");	//目的文件名
 					param.put("iosName", newVersion);		//IOS名称
@@ -653,10 +652,10 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("userName", userName);
 			param.put("sendName", userName);
 			param.put("mailType", 2);
-			param.put("mailConsigneeName", names);
+			param.put("receiveName", names);
 			param.put("mailConsigneeEmail", emails);
-			param.put("mailTitle", title);
-			param.put("mailContxt", content);
+			param.put("title", title);
+			param.put("log", content);
 			
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseArray(sb, Json.class);

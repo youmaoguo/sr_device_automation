@@ -123,9 +123,40 @@
 	</select>
 	
 	<select id="findPort" resultType="com.sunrun.entity.DevOnlineTask">
-		select * from dev_online_task where 1=1
+		select 
+			t.id AS taskId,
+			t.task_type AS taskType,
+			t.group_key AS groupKey,
+			t.task_describe AS taskDescribe,
+			t.task_state AS taskState,
+			t.brand_name AS brandName,
+			t.model_name AS modelName,
+			t.area_name AS areaName,
+			t.area_describe AS areaDescribe,
+			t.host_name AS hostName,
+			t.manager_ip AS managerIp,
+			t.vlan AS vlan,
+			t.main_switchboard_ip AS mainSwitchboardIp,
+			t.main_switchboard_port AS mainSwitchboardPort,
+			t.backup_switchboard_ip AS backupSwitchboardIp,
+			t.backup_switchboard_port AS backupSwitchboardPort,
+			t.dev_online_rack AS devOnlineRack,
+			t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
+			t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
+			t.manager_ip_write AS managerIpWrite,
+			t.access_config_write AS accessConfigWrite,
+			t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
+			t.current_ios_version AS currentIosVersion, 
+			t.main_switchboard_config_write AS mainSwitchboardConfigWrite,
+			t.model_ios_version AS modelIosVersion,
+			t.access_version_write AS accessVersionWrite,
+			t.switch_state AS switchState,
+			t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
+			t.access_switchboard_check AS accessSwitchboardCheck
+			
+		from dev_online_task t where 1=1
 		<if test="id!=null">
-		    AND id = #{id}
+		    AND t.id = #{id}
 		</if>
 	</select>
 	
