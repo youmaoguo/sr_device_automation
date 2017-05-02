@@ -142,6 +142,12 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/pingFun");
+			param.put("host", "");
+			param.put("port", "");
+			param.put("user", "");
+			param.put("password", "");
+			param.put("type", "");
+			
 			String ips = map.get("ip");
 			String[] ip = ips.split(",");
 			for(int i=0;i<ip.length;i++){
