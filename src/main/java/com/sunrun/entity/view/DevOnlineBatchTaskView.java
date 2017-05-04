@@ -67,9 +67,16 @@ public class DevOnlineBatchTaskView {
 	private String accessSwitchboardCheckInfo;//接入交换机校验信息
 	private String taskCurrentStepDescribe;//工单任务执行步骤描述
 	
+	private Integer taskAllStep;
 	private Integer executeStep;		//任务步骤
 	private Integer taskCurrentStep;	//任务步骤
 	
+	public Integer getTaskAllStep() {
+		return taskAllStep;
+	}
+	public void setTaskAllStep(Integer taskAllStep) {
+		this.taskAllStep = taskAllStep;
+	}
 	public String getCreateTime() {
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String s = "";
