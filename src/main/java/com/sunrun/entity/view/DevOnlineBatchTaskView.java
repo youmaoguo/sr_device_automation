@@ -1,6 +1,8 @@
 package com.sunrun.entity.view;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
 
 /**
  * 查询批次、任务、执行情况的javaBean
@@ -9,7 +11,7 @@ import java.util.Date;
  */
 public class DevOnlineBatchTaskView {
 	
-	private String id;				//批次itil ID
+	//private String id;				//批次itil ID
 	private String batchName;		//'批次名称',
 	private String batchDescribe;	//'批次描述',
 	private Integer batchState;			//'批次状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
@@ -24,11 +26,11 @@ public class DevOnlineBatchTaskView {
 	private String itilTitle;		//'标题 文本 评估体系平台系统请求',
 	private String itilDescription;	//'申请内容',
 	private Date itilPlannedEnd;	//'期望完成时间',
-	private Date itilRequestedDate; //'申请时间 日期时间 2015-12-07T14:02:07+00:00',
+	private String itilRequestedDate; //'申请时间 日期时间 2015-12-07T14:02:07+00:00',
 	private String itilSource; 		//'来源 文本 cloud',
 	private String itilOpenedBy;	//'创建人 文本 cmb.int.cloud'
 	
-	private String taskId;			//任务id
+	private String id;					//任务id
 	private Integer taskType; 			//'任务类型 1：接入设备任务;2:汇聚设备任务',
 	private String groupKey;		//'组名，用于标示多个任务属于同一组',
 	private String taskDescribe;	//'任务描述',
@@ -47,8 +49,9 @@ public class DevOnlineBatchTaskView {
 	private String devOnlineRack;		//'上线后所处机架位置描述',
 	private String exclusiveSwitchboardIp;//'带外交机ip',
 	private String exclusiveSwitchboardPort;//'带外交机端口',
-	private Date taskCreateTime;		//任务创建时间
-	private Date taskUpdateTime;		//任务修改时间
+	private Date createTime;		//任务创建时间
+	private Date updateTime;		//任务修改时间
+	private String createUser;
 	private Integer managerIpWrite;		//接入交换机管理口ip写入配制状态 ；0 ：待写入，1：成功,2:失败
 	private Integer accessConfigWrite;	//接入交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
 	private String exclusiveSwitchboardInfo;//带外交机要信息描述
@@ -67,6 +70,34 @@ public class DevOnlineBatchTaskView {
 	private Integer executeStep;		//任务步骤
 	private Integer taskCurrentStep;	//任务步骤
 	
+	public String getCreateTime() {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = "";
+		if(createTime!=null){
+			s = fmt.format(createTime);
+		}
+		return s;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	public String getUpdateTime() {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = "";
+		if(updateTime!=null){
+			s = fmt.format(updateTime);
+		}
+		return s;
+	}
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+	public String getCreateUser() {
+		return createUser;
+	}
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
 	public Integer getAccessSwitchboardCheck() {
 		return accessSwitchboardCheck;
 	}
@@ -229,16 +260,21 @@ public class DevOnlineBatchTaskView {
 	public void setItilDescription(String itilDescription) {
 		this.itilDescription = itilDescription;
 	}
-	public Date getItilPlannedEnd() {
-		return itilPlannedEnd;
+	public String getItilPlannedEnd() {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = "";
+		if(itilPlannedEnd!=null){
+			s = fmt.format(itilPlannedEnd);
+		}
+		return s;
 	}
 	public void setItilPlannedEnd(Date itilPlannedEnd) {
 		this.itilPlannedEnd = itilPlannedEnd;
 	}
-	public Date getItilRequestedDate() {
+	public String getItilRequestedDate() {
 		return itilRequestedDate;
 	}
-	public void setItilRequestedDate(Date itilRequestedDate) {
+	public void setItilRequestedDate(String itilRequestedDate) {
 		this.itilRequestedDate = itilRequestedDate;
 	}
 	public String getItilSource() {
@@ -253,12 +289,7 @@ public class DevOnlineBatchTaskView {
 	public void setItilOpenedBy(String itilOpenedBy) {
 		this.itilOpenedBy = itilOpenedBy;
 	}
-	public String getTaskId() {
-		return taskId;
-	}
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
+	
 	public Integer getTaskType() {
 		return taskType;
 	}
@@ -361,18 +392,7 @@ public class DevOnlineBatchTaskView {
 	public void setExclusiveSwitchboardPort(String exclusiveSwitchboardPort) {
 		this.exclusiveSwitchboardPort = exclusiveSwitchboardPort;
 	}
-	public Date getTaskCreateTime() {
-		return taskCreateTime;
-	}
-	public void setTaskCreateTime(Date taskCreateTime) {
-		this.taskCreateTime = taskCreateTime;
-	}
-	public Date getTaskUpdateTime() {
-		return taskUpdateTime;
-	}
-	public void setTaskUpdateTime(Date taskUpdateTime) {
-		this.taskUpdateTime = taskUpdateTime;
-	}
+	
 	public Integer getExecuteStep() {
 		return executeStep;
 	}
@@ -405,7 +425,7 @@ public class DevOnlineBatchTaskView {
 				+ ", itilDescription=" + itilDescription + ", itilPlannedEnd="
 				+ itilPlannedEnd + ", itilRequestedDate=" + itilRequestedDate
 				+ ", itilSource=" + itilSource + ", itilOpenedBy="
-				+ itilOpenedBy + ", taskId=" + taskId + ", taskType="
+				+ itilOpenedBy + ", taskType="
 				+ taskType + ", groupKey=" + groupKey + ", taskDescribe="
 				+ taskDescribe + ", taskState=" + taskState + ", brandName="
 				+ brandName + ", modelName=" + modelName + ", areaName="
@@ -418,9 +438,9 @@ public class DevOnlineBatchTaskView {
 				+ ", devOnlineRack=" + devOnlineRack
 				+ ", exclusiveSwitchboardIp=" + exclusiveSwitchboardIp
 				+ ", exclusiveSwitchboardPort=" + exclusiveSwitchboardPort
-				+ ", taskCreateTime=" + taskCreateTime + ", taskUpdateTime="
-				+ taskUpdateTime + ", managerIpWrite=" + managerIpWrite
-				+ ", accessConfigWrite=" + accessConfigWrite
+				+ ", createTime=" + createTime + ", updateTime=" + updateTime
+				+ ", createUser=" + createUser + ", managerIpWrite="
+				+ managerIpWrite + ", accessConfigWrite=" + accessConfigWrite
 				+ ", exclusiveSwitchboardInfo=" + exclusiveSwitchboardInfo
 				+ ", currentIosVersion=" + currentIosVersion
 				+ ", mainSwitchboardConfigWrite=" + mainSwitchboardConfigWrite
@@ -435,7 +455,7 @@ public class DevOnlineBatchTaskView {
 				+ ", executeStep=" + executeStep + ", taskCurrentStep="
 				+ taskCurrentStep + "]";
 	}
-	
+
 	
 	 
 	

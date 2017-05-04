@@ -74,7 +74,7 @@
 	<select id = "findTaskById" resultType="com.sunrun.entity.view.DevOnlineBatchTaskView">
 		SELECT * from(
 			SELECT 
-				t.id AS taskId,
+				t.id AS id,
 				t.task_type AS taskType,
 				t.group_key AS groupKey,
 				t.task_describe AS taskDescribe,
@@ -93,8 +93,9 @@
 				t.dev_online_rack AS devOnlineRack,
 				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
 				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
-				t.create_time AS taskCreateTime,
-				t.update_time AS taskUpdateTime,
+				t.create_time AS createTime,
+				t.update_time AS updateTime,
+				t.create_user AS createUser,
 				t.manager_ip_write AS managerIpWrite,
 				t.access_config_write AS accessConfigWrite,
 				t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
@@ -124,7 +125,7 @@
 	
 	<select id="findPort" resultType="com.sunrun.entity.DevOnlineTask">
 		select 
-			t.id AS taskId,
+			t.id AS id,
 			t.task_type AS taskType,
 			t.group_key AS groupKey,
 			t.task_describe AS taskDescribe,

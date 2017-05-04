@@ -1,5 +1,6 @@
 package com.sunrun.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -20,8 +21,13 @@ public class DevOnlineItilExecute extends DevOnlineBatchItil {
 	public void setItilSourceId(String itilSourceId) {
 		this.itilSourceId = itilSourceId;
 	}
-	public Date getItilRequestedDate() {
-		return itilRequestedDate;
+	public String getItilRequestedDate() {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = "";
+		if(itilRequestedDate!=null){
+			s = fmt.format(itilRequestedDate);
+		}
+		return s;
 	}
 	public void setItilRequestedDate(Date itilRequestedDate) {
 		this.itilRequestedDate = itilRequestedDate;

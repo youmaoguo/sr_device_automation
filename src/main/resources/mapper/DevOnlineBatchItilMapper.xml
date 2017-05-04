@@ -67,7 +67,6 @@
 	<select id="findItilTask" resultType="com.sunrun.entity.view.DevOnlineBatchTaskView">
 		SELECT * from(
 			SELECT 
-				b.id AS id,
 				b.batch_name AS batchName,
 				b.batch_describe AS batchDescribe,
 				b.batch_state AS batchState,
@@ -82,7 +81,7 @@
 				b.itil_description AS itilDescription,
 				b.itil_plannedEnd AS itilPlannedEnd,
 			
-				t.id AS taskId,
+				t.id AS id,
 				t.task_type AS taskType,
 				t.group_key AS groupKey,
 				t.task_describe AS taskDescribe,
@@ -101,8 +100,9 @@
 				t.dev_online_rack AS devOnlineRack,
 				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
 				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
-				t.create_time AS taskCreateTime,
-				t.update_time AS taskUpdateTime,
+				t.create_time AS createTime, 
+				t.update_time AS updateTime,
+				t.create_user AS createUser,
 				t.manager_ip_write AS managerIpWrite,
 				t.access_config_write AS accessConfigWrite,
 				t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
@@ -113,9 +113,9 @@
 				t.switch_state AS switchState,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				t.access_switchboard_check AS accessSwitchboardCheck,
-				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=taskId) AS executeStep,
-				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=taskId) AS taskCurrentStep,
-				(SELECT task_describe FROM dev_task_execute where task_id=taskId AND execute_step = executeStep ) AS taskCurrentStepDescribe
+				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=id) AS executeStep,
+				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=id) AS taskCurrentStep,
+				(SELECT task_describe FROM dev_task_execute where task_id=id AND execute_step = executeStep ) AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
@@ -125,9 +125,6 @@
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">
 		    AND id = #{taskView.id}
-		</if>
-		<if test="taskView.taskId!=null">
-		    AND taskId = #{taskView.taskId}
 		</if>
 		<if test="taskView.executeStep!=null">
 		    AND executeStep = #{taskView.executeStep}
@@ -161,7 +158,6 @@
 	<select id="countItilTask" resultType="java.lang.Integer">
 		SELECT count(*) from(
 			SELECT 
-				b.id AS id,
 				b.batch_name AS batchName,
 				b.batch_describe AS batchDescribe,
 				b.batch_state AS batchState,
@@ -176,7 +172,7 @@
 				b.itil_description AS itilDescription,
 				b.itil_plannedEnd AS itilPlannedEnd,
 			
-				t.id AS taskId,
+				t.id AS id,
 				t.task_type AS taskType,
 				t.group_key AS groupKey,
 				t.task_describe AS taskDescribe,
@@ -195,8 +191,9 @@
 				t.dev_online_rack AS devOnlineRack,
 				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
 				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
-				t.create_time AS taskCreateTime,
-				t.update_time AS taskUpdateTime,
+				t.create_time AS createTime,
+				t.update_time AS updateTime,
+				t.create_user AS createUser,
 				t.manager_ip_write AS managerIpWrite,
 				t.access_config_write AS accessConfigWrite,
 				t.exclusive_switchboard_info AS exclusiveSwitchboardInfo,
@@ -207,9 +204,9 @@
 				t.switch_state AS switchState,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
-				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=taskId) AS executeStep,
-				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=taskId) AS taskCurrentStep,
-				(SELECT task_describe FROM dev_task_execute where task_id=taskId AND execute_step = executeStep ) AS taskCurrentStepDescribe
+				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=id) AS executeStep,
+				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=id) AS taskCurrentStep,
+				(SELECT task_describe FROM dev_task_execute where task_id=id AND execute_step = executeStep ) AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
@@ -218,9 +215,6 @@
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">
 		    AND id = #{taskView.id}
-		</if>
-		<if test="taskView.taskId!=null">
-		    AND taskId = #{taskView.taskId}
 		</if>
 		<if test="taskView.executeStep!=null">
 		    AND executeStep = #{taskView.executeStep}

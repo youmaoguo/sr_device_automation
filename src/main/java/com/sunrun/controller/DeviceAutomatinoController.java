@@ -171,7 +171,7 @@ public class DeviceAutomatinoController extends BaseController{
 				list = deviceAutomationService.findDevBatchTask(batchView, like, sortBy, order, page(currentPage, pageSize));
 			}else{	//查询任务具体信息
 				if(taskId!=null && !"".equals(taskId) && executeStep!=null && executeStep!=0){
-					batchView.setTaskId(taskId);
+					batchView.setId(taskId);
 					batchView.setExecuteStep(executeStep); 
 				}
 				DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
