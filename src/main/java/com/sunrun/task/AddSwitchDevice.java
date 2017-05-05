@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sunrun.entity.DevExclusiveSwitchboardConn;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
@@ -28,6 +29,7 @@ public class AddSwitchDevice implements Runnable {
 	private DevOnlineTask task;		//任务
 	private String userName;		//登录的用户名
 	private Integer executeStep;	//任务执行到第几步骤
+	private DevExclusiveSwitchboardConn conn;
 	
 	public AddSwitchDevice(){
 		super();
@@ -42,7 +44,7 @@ public class AddSwitchDevice implements Runnable {
 		this.task = task;
 	}
 	
-	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer executeStep){
+	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer executeStep, DevExclusiveSwitchboardConn conn){
 		this.deviceAutomationService = deviceAutomationService;
 		this.addSwitchDeviceService = addSwitchDeviceService;
 		this.thirdPartUrl = thirdPartUrl;
@@ -50,6 +52,7 @@ public class AddSwitchDevice implements Runnable {
 		this.userName = userName;
 		this.task = task;
 		this.executeStep = executeStep;
+		this.conn = conn;
 	}
 	
 	@Override
@@ -118,6 +121,10 @@ public class AddSwitchDevice implements Runnable {
 			return;
 		
 		//7.生成接入交换机配置 并记录（待定）
+		json = null;
+		json = addSwitchDeviceService.CreatAccessPage(thirdPartUrl, auth, task, map, userName);
+		if(!json.getSuccess())
+			return;
 		
 	}
 	
@@ -201,6 +208,10 @@ public class AddSwitchDevice implements Runnable {
 		}
 		
 		//8.第八步保存带外交换机端口与接入交换机的连接在进入这个方法前的控制器层已经调用方法执行了,此处不要重复执行了
+		json = null;
+		json = addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, userName);
+		if(!json.getSuccess())
+			return;
 		
 		//9.写入接入交换机配置管理口IP
 		json = null;
