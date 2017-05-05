@@ -149,8 +149,14 @@
 		<if test="sortBy!=null">
 				order by ${sortBy}
 		</if>
+		<if test="sortBy==null">
+				order by createTime
+		</if>
 		<if test="order!=null">
 				${order}
+		</if>
+		<if test="order==null">
+				desc
 		</if>
 		<if test="limit!=null">
 				limit ${limit}
