@@ -606,7 +606,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			throw new RuntimeException(e);
 		}finally{
 			//记录任务执行步骤
-			writeProcess(task, 8, info, success, userName, null);
+			//writeProcess(task, 8, info, success, userName, null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);

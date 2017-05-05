@@ -9,9 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import com.sunrun.entity.DevExclusiveSwitchboardConn;
 import com.sunrun.entity.DevOnlineTask;
+import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
 import com.sunrun.util.Json;
+import com.sunrun.util.StringUtil;
 
 /**
  * 添加交换机任务（1.从看板申请ip和vlan；2.看网络是否通；3.ip地址回填；4.判断汇聚交换机端口上是否有配置及端口状态是否为down；5.生成汇聚交换机配置 并记录）
@@ -207,11 +209,22 @@ public class AddSwitchDevice implements Runnable {
 				return;
 		}
 		
-		//8.第八步保存带外交换机端口与接入交换机的连接在进入这个方法前的控制器层已经调用方法执行了,此处不要重复执行了
+		//8.第八步保存带外交换机端口与接入交换机的连接在进入这个方法前的控制器层已经调用方法执行了,此处不要重复执行了,只要记录任务执行详情
+		DevTaskExecute execute = new DevTaskExecute();
+		execute.setId(StringUtil.getUuid());
+		execute.setTaskId(task.getId());
+		execute.setExecuteStep(8);
+		execute.setTaskOrder(8);
+		execute.setTaskDescribe("保存带外交换机端口与接入交换机的连接信息"); 
+		execute.setTaskExecuteState(3);
+		execute.setCreate_user(userName);
+		execute.setTaskExecuteNote(null);
+		deviceAutomationService.updateTask2(task, execute, executeStep, userName);
+		/*
 		json = null;
 		json = addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, userName);
 		if(!json.getSuccess())
-			return;
+			return;*/
 		
 		//9.写入接入交换机配置管理口IP
 		json = null;

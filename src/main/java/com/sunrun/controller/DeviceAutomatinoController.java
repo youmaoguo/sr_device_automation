@@ -303,7 +303,7 @@ public class DeviceAutomatinoController extends BaseController{
 			conn.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
 			conn.setId(StringUtil.getUuid());
 			conn.setModelName(modelName);
-			//addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
+			addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
 			
 			//查询出该任务执行到第几步骤 然后分多线程继续执行之后的步骤（写入接入交换机配置管理口ip、更新ios版本、写入接入交换机配置信息）
 			Integer executeStep = null;
