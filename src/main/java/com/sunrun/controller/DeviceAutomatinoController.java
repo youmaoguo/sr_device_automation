@@ -27,6 +27,8 @@ import com.sunrun.entity.DevExclusiveSwitchboardConn;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
+import com.sunrun.entity.SysSendEmailBean;
+import com.sunrun.entity.SysSendEmailBean.MailConsignee;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
@@ -433,7 +435,8 @@ public class DeviceAutomatinoController extends BaseController{
 		String info = "上线交换机生成邮件内容成功";
 		Integer code = 200;	//200
 		Boolean success = true;
-		Map<String, Object> data = new HashMap<String, Object>();
+		ArrayList data = new ArrayList();
+		
 		if(StringUtils.isEmpty(taskId)){
 			json.setRet_code(400);
 			json.setRet_info("缺少参数");
@@ -442,7 +445,10 @@ public class DeviceAutomatinoController extends BaseController{
 			//返回数据
 			response(json, response, request);
 			return;
-		}
+		} ;
+
+		SysSendEmailBean sysSendEmailBean=new SysSendEmailBean();
+		
 		try{
 			if(!StringUtils.isEmpty(taskId)){
 				String content = StringUtil.emailHeadStr();
@@ -464,9 +470,17 @@ public class DeviceAutomatinoController extends BaseController{
 					}
 				}
 				content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
-				data.put("mailTitle", new Date()+"接入设备连接信息");
-				data.put("mailContxt", content);
-				data.put("mailConsignee", "");	//收件者的邮箱信息 暂时待定？？？
+				sysSendEmailBean.setMailContxt(content);
+				sysSendEmailBean.setMailTitle( new Date()+"接入设备连接信息");
+				 
+				  
+			//	data.put("mailConsignee", "");	//收件者的邮箱信息 暂时待定？？？
+				SysSendEmailBean.MailConsignee mailConsignee=  sysSendEmailBean.new MailConsignee();
+				mailConsignee.setMailConsigneeEmail("123@12.com");
+				mailConsignee.setMailConsigneeName("张三");
+				mailConsignee.setMailConsigneeSelected(1);
+				sysSendEmailBean.mailConsignee.add(mailConsignee);
+				
 			}
 			
 		}catch(Exception e){
@@ -475,10 +489,12 @@ public class DeviceAutomatinoController extends BaseController{
 			logger.error("上线交换机生成邮件内容出错");
 			e.printStackTrace();
 		}
+		data.add(sysSendEmailBean);
+		
 		json.setRet_code(code);
 		json.setRet_info(info);
 		json.setSuccess(success);
-		json.setData(data);
+		json.setData(sysSendEmailBean);
 		//返回数据
 		response(json, response, request); 
 	}
