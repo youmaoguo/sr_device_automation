@@ -20,10 +20,10 @@
 		<if test="info.id != null">
 		    AND id = #{info.id}
 		</if>
-		<if test="info.exclusiveSwitchboardIp != null">
+		<if test="info.exclusiveSwitchboardIp != null and info.exclusiveSwitchboardIp!=''">
 		    AND exclusive_switchboard_ip = #{info.exclusiveSwitchboardIp}
 		</if>
-		<if test="info.exclusiveSwitchboardPort != null">
+		<if test="info.exclusiveSwitchboardPort != null and info.exclusiveSwitchboardPort!=''">
 		    AND exclusive_switchboard_port = #{info.exclusiveSwitchboardPort}
 		</if>
 	</select>
