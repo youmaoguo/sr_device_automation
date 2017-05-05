@@ -41,6 +41,9 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	@Resource
 	private DevIosVersionsMapper devIosVersionsMapper;
 	
+	@Value("${device.subnet}")
+	private String subnet;
+	
 	@Value("${device.host3}")
 	private String device_host3;
 	@Value("${device.port3}")
@@ -219,7 +222,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/Kanban/v1/apply_ip");
-			param.put("subnet", task.getMainSwitchboardIp());	//本系统申请ip的网段(主汇聚交换机ip)
+			param.put("subnet", /*task.getMainSwitchboardIp()*/ subnet);	//本系统申请ip的网段(主汇聚交换机ip)
 			param.put("mount", 1);								//申请数量1
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
