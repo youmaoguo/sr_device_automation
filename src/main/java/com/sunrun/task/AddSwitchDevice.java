@@ -7,10 +7,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sunrun.entity.DevExclusiveSwitchboardConn;
 import com.sunrun.entity.DevOnlineTask;
+import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
 import com.sunrun.util.Json;
+import com.sunrun.util.StringUtil;
 
 /**
  * 添加交换机任务（1.从看板申请ip和vlan；2.看网络是否通；3.ip地址回填；4.判断汇聚交换机端口上是否有配置及端口状态是否为down；5.生成汇聚交换机配置 并记录）
@@ -28,6 +31,7 @@ public class AddSwitchDevice implements Runnable {
 	private DevOnlineTask task;		//任务
 	private String userName;		//登录的用户名
 	private Integer executeStep;	//任务执行到第几步骤
+	private DevExclusiveSwitchboardConn conn;
 	
 	public AddSwitchDevice(){
 		super();
@@ -42,7 +46,7 @@ public class AddSwitchDevice implements Runnable {
 		this.task = task;
 	}
 	
-	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer executeStep){
+	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer executeStep, DevExclusiveSwitchboardConn conn){
 		this.deviceAutomationService = deviceAutomationService;
 		this.addSwitchDeviceService = addSwitchDeviceService;
 		this.thirdPartUrl = thirdPartUrl;
@@ -50,6 +54,7 @@ public class AddSwitchDevice implements Runnable {
 		this.userName = userName;
 		this.task = task;
 		this.executeStep = executeStep;
+		this.conn = conn;
 	}
 	
 	@Override
@@ -118,6 +123,10 @@ public class AddSwitchDevice implements Runnable {
 			return;
 		
 		//7.生成接入交换机配置 并记录（待定）
+		json = null;
+		json = addSwitchDeviceService.CreatAccessPage(thirdPartUrl, auth, task, map, userName);
+		if(!json.getSuccess())
+			return;
 		
 	}
 	
@@ -200,7 +209,22 @@ public class AddSwitchDevice implements Runnable {
 				return;
 		}
 		
-		//8.第八步保存带外交换机端口与接入交换机的连接在进入这个方法前的控制器层已经调用方法执行了,此处不要重复执行了
+		//8.第八步保存带外交换机端口与接入交换机的连接在进入这个方法前的控制器层已经调用方法执行了,此处不要重复执行了,只要记录任务执行详情
+		DevTaskExecute execute = new DevTaskExecute();
+		execute.setId(StringUtil.getUuid());
+		execute.setTaskId(task.getId());
+		execute.setExecuteStep(8);
+		execute.setTaskOrder(8);
+		execute.setTaskDescribe("保存带外交换机端口与接入交换机的连接信息"); 
+		execute.setTaskExecuteState(3);
+		execute.setCreate_user(userName);
+		execute.setTaskExecuteNote(null);
+		deviceAutomationService.updateTask2(task, execute, executeStep, userName);
+		/*
+		json = null;
+		json = addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, userName);
+		if(!json.getSuccess())
+			return;*/
 		
 		//9.写入接入交换机配置管理口IP
 		json = null;

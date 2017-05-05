@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -39,6 +40,140 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	private DevExclusiveSwitchboardConnMapper devExclusiveSwitchboardConnMapper;
 	@Resource
 	private DevIosVersionsMapper devIosVersionsMapper;
+	
+	@Value("${device.subnet}")
+	private String subnet;
+	
+	@Value("${device.host3}")
+	private String device_host3;
+	@Value("${device.port3}")
+	private String device_port3;
+	@Value("${device.user3}")
+	private String device_user3;
+	@Value("${device.password3}")
+	private String device_password3;
+	@Value("${device.type3}")
+	private String device_type3;
+	
+	@Value("${device.main_ip5}")
+	private String main_ip5;
+	@Value("${device.back_ip5}")
+	private String back_ip5;
+	@Value("${device.main_host5}")
+	private String main_host5;
+	@Value("${device.main_user5}")
+	private String main_user5;
+	@Value("${device.main_pwd5}")
+	private String main_pwd5;
+	@Value("${device.back_host5}")
+	private String back_host5;
+	@Value("${device.back_user5}")
+	private String back_user5;
+	@Value("${device.back_pwd5}")
+	private String back_pwd5;
+	
+	@Value("${device.main_ip6}")
+	private String main_ip6;
+	@Value("${device.back_ip6}")
+	private String back_ip6;
+	@Value("${device.main_port6}")
+	private String main_port6;
+	@Value("${device.back_port6}")
+	private String back_port6;
+	@Value("${device.main_host6}")
+	private String main_host6;
+	@Value("${device.back_host6}")
+	private String back_host6;
+	@Value("${device.main_user6}")
+	private String main_user6;
+	@Value("${device.back_user6}")
+	private String back_user6;
+	@Value("${device.main_pwd6}")
+	private String main_pwd6;
+	@Value("${device.back_pwd6}")
+	private String back_pwd6;
+	@Value("${device.type6}")
+	private String type6;
+	
+	@Value("${device.main_ip7}")
+	private String main_ip7;
+	@Value("${device.back_ip7}")
+	private String back_ip7;
+	@Value("${device.main_port7}")
+	private String main_port7;
+	@Value("${device.back_port7}")
+	private String back_port7;
+	@Value("${device.main_host7}")
+	private String main_host7;
+	@Value("${device.back_host7}")
+	private String back_host7;
+	@Value("${device.type7}")
+	private String type7;
+	
+	@Value("${device.host9}")
+	private String host9;
+	@Value("${device.port9}")
+	private Integer port9;
+	@Value("${device.user9}")
+	private String user9;
+	@Value("${device.pwd9}")
+	private String pwd9;
+	@Value("${device.type9}")
+	private String type9;
+	
+	@Value("${device.host10}")
+	private String host10;
+	@Value("${device.port10}")
+	private Integer port10;
+	@Value("${device.user10}")
+	private String user10;
+	@Value("${device.pwd10}")
+	private String pwd10;
+	@Value("${device.type10}")
+	private String type10;
+	@Value("${device.serverIp10}")
+	private String serverIp10;
+	@Value("${device.sourceFileName10}")
+	private String sourceFileName10;
+	@Value("${device.desFileName10}")
+	private String desFileName10;
+	@Value("${device.iosName10}")
+	private String iosName10;
+	
+	@Value("${device.host11}")
+	private String host11;
+	@Value("${device.port11}")
+	private Integer port11;
+	@Value("${device.user11}")
+	private String user11;
+	@Value("${device.pwd11}")
+	private String pwd11;
+	@Value("${device.type11}")
+	private String type11;
+	
+	@Value("${device.host14}")
+	private String host14;
+	@Value("${device.port14}")
+	private Integer port14;
+	@Value("${device.user14}")
+	private String user14;
+	@Value("${device.pwd14}")
+	private String pwd14;
+	@Value("${device.type14}")
+	private String type14;
+	
+	@Value("${device.host15}")
+	private String host15;
+	@Value("${device.port15}")
+	private Integer port15;
+	@Value("${device.user15}")
+	private String user15;
+	@Value("${device.pwd15}")
+	private String pwd15;
+	@Value("${device.type15}")
+	private String type15;
+	
+	
 	
 	@SuppressWarnings("finally")
 	@Override
@@ -87,7 +222,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/Kanban/v1/apply_ip");
-			param.put("subnet", task.getMainSwitchboardIp());	//本系统申请ip的网段(主汇聚交换机ip)
+			param.put("subnet", /*task.getMainSwitchboardIp()*/ subnet);	//本系统申请ip的网段(主汇聚交换机ip)
 			param.put("mount", 1);								//申请数量1
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -142,11 +277,11 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/pingFun");
-			param.put("host", "");
-			param.put("port", "");
-			param.put("user", "");
-			param.put("password", "");
-			param.put("type", "");
+			param.put("host", device_host3);
+			param.put("port", device_port3);
+			param.put("user", device_user3);
+			param.put("password", device_password3);
+			param.put("type", device_type3);
 			
 			String ips = map.get("ip");
 			String[] ip = ips.split(",");
@@ -238,8 +373,14 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/portCheck");
-			param.put("main_switchboard_ip", task.getMainSwitchboardIp());
-			param.put("backup_switchboard_ip", task.getBackupSwitchboardIp());
+			param.put("main_switchboard_ip", /*task.getMainSwitchboardIp()*/ main_ip5);
+			param.put("backup_switchboard_ip", /*task.getBackupSwitchboardIp()*/ back_ip5);
+			param.put("main_host", main_host5);
+			param.put("main_user", main_user5);
+			param.put("main_pwd", main_pwd5);
+			param.put("back_host", back_host5);
+			param.put("back_user", back_user5);
+			param.put("back_pwd", back_pwd5);
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -313,13 +454,19 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/CreatConverPage");
-			param.put("ipPortNameUserPass1", task.getMainSwitchboardIp());//主汇聚交换机ip
-			param.put("ipPortNameUserPass2", task.getBackupSwitchboardIp());//备汇聚交换机ip
-			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主汇聚交换机端口
-			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备汇聚交换机端口
+			param.put("ipPortNameUserPass1", /*task.getMainSwitchboardIp()*/ main_ip6);//主汇聚交换机ip
+			param.put("ipPortNameUserPass2", /*task.getBackupSwitchboardIp()*/ back_ip6);//备汇聚交换机ip
+			param.put("mainSwitchboardPort", /*task.getMainSwitchboardPort()*/ main_port6);//主汇聚交换机端口
+			param.put("backupSwitchboardPort", /*task.getBackupSwitchboardPort()*/ back_port6);//备汇聚交换机端口
+			param.put("main_host6", back_host6);
+			param.put("back_host6", back_host6);
+			param.put("main_user6", main_user6);
+			param.put("back_user6", back_user6);
+			param.put("main_pwd6", main_pwd6);
+			param.put("back_pwd6", back_pwd6);
 			param.put("accHostnmae", task.getHostName());	//接入设备对应的host名称
 			param.put("newip", map.get("ip"));			//在看板系统上申请的IP地址
-			param.put("Type", "");			//接入交换机的设备类型，分别为4948E和5548
+			param.put("Type", type6);			//接入交换机的设备类型，分别为4948E和5548
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -387,15 +534,17 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/CreatAccessPage");
-			param.put("ipPortName1", task.getMainSwitchboardIp());//主ip	???
-			param.put("ipPortName2", task.getBackupSwitchboardIp());//备ip	???
-			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	???
-			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	???
+			param.put("ipPortName1", /*task.getMainSwitchboardIp()*/ main_ip7);//主ip	???
+			param.put("ipPortName2", /*task.getBackupSwitchboardIp()*/ back_ip7);//备ip	???
+			param.put("mainSwitchboardPort", /*task.getMainSwitchboardPort()*/ main_port7);//主端口	???
+			param.put("backupSwitchboardPort", /*task.getBackupSwitchboardPort()*/ back_port7);//备端口	???
+			param.put("main_user7", main_host7);
+			param.put("back_user7", back_host7);
 			param.put("accHostName", task.getHostName());//接入设备对应的host名称
 			param.put("vlanNu", map.get("vlanId"));//接入设备的管理Vlan号
 			param.put("description", "");//接入设备的描述配置信息
 			param.put("newip", map.get("ip"));//在看板系统上申请的IP地址
-			param.put("Type", "");//接入交换机的设备类型，分别为4948E和5548
+			param.put("Type", type7);//接入交换机的设备类型，分别为4948E和5548
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -457,7 +606,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			throw new RuntimeException(e);
 		}finally{
 			//记录任务执行步骤
-			writeProcess(task, 8, info, success, userName, null);
+			//writeProcess(task, 8, info, success, userName, null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -478,11 +627,11 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/managementPort");
-			param.put("host", "");		//交换机的telnet登录IP地址
-			param.put("port", "");		//交换机的telnet登录端口号
-			param.put("user", "");		//交换机的telnet登录账号
-			param.put("password", "");	//交换机的telnet登录密码
-			param.put("type", "");		//交换机的类型，分别为4948E和5548
+			param.put("host", host9);		//交换机的telnet登录IP地址
+			param.put("port", port9);		//交换机的telnet登录端口号
+			param.put("user", user9);		//交换机的telnet登录账号
+			param.put("password", pwd9);	//交换机的telnet登录密码
+			param.put("type", type9);		//交换机的类型，分别为4948E和5548
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -538,15 +687,15 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				if(newVersion.equalsIgnoreCase(task.getCurrentIosVersion())){
 					JSONObject param = new JSONObject();
 					param.put("method_name", "/interchanger/v1/updateIos");
-					param.put("host", "");		//交换机的telnet登录IP地址
-					param.put("port", "");		//交换机的telnet登录端口号
-					param.put("user", "");		//交换机的telnet登录账号
-					param.put("password", "");	//交换机的telnet登录密码
-					param.put("type", "");		//交换机的类型，分别为4948E和5548
-					param.put("serverIp", "");		//更新源服务器的IP
-					param.put("sourceFileName", "");//源文件名
-					param.put("desFileName", "");	//目的文件名
-					param.put("iosName", newVersion);		//IOS名称
+					param.put("host", host10);		//交换机的telnet登录IP地址
+					param.put("port", port10);		//交换机的telnet登录端口号
+					param.put("user", user10);		//交换机的telnet登录账号
+					param.put("password", pwd10);	//交换机的telnet登录密码
+					param.put("type", type10);		//交换机的类型，分别为4948E和5548
+					param.put("serverIp", serverIp10);		//更新源服务器的IP
+					param.put("sourceFileName", sourceFileName10);//源文件名
+					param.put("desFileName", desFileName10);	//目的文件名
+					param.put("iosName", /*newVersion*/ iosName10);		//IOS名称
 					param.put("updateId", task.getId());	//请求需用回调的ID updateId 
 					String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 					Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -604,11 +753,11 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			}
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/writeAccessConfig");
-			param.put("host", "");		//交换机的telnet登录IP地址
-			param.put("port", "");		//交换机的telnet登录端口号
-			param.put("user", "");		//交换机的telnet登录账号
-			param.put("password", "");	//交换机的telnet登录密码
-			param.put("type", "");		//交换机的类型，分别为4948E和5548
+			param.put("host", host11);		//交换机的telnet登录IP地址
+			param.put("port", port11);		//交换机的telnet登录端口号
+			param.put("user", user11);		//交换机的telnet登录账号
+			param.put("password", pwd11);	//交换机的telnet登录密码
+			param.put("type", type11);		//交换机的类型，分别为4948E和5548
 			param.put("commands", configs);	//需要写入接入交换机的命令列表集合
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -753,11 +902,11 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/writeGatherConfig");
-			param.put("host", "");		//交换机的telnet登录IP地址
-			param.put("port", "");		//交换机的telnet登录端口号
-			param.put("user", "");		//交换机的telnet登录账号
-			param.put("password", "");	//交换机的telnet登录密码
-			param.put("type", "");		//交换机的类型，分别为4948E和5548
+			param.put("host", host14);		//交换机的telnet登录IP地址
+			param.put("port", port14);		//交换机的telnet登录端口号
+			param.put("user", user14);		//交换机的telnet登录账号
+			param.put("password", pwd14);	//交换机的telnet登录密码
+			param.put("type", type14);		//交换机的类型，分别为4948E和5548
 			param.put("commands", configs);	//需要写入接入交换机的命令列表集合
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -816,11 +965,11 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/checkConfig");
-			param.put("host", "");		//交换机的telnet登录IP地址
-			param.put("port", "");		//交换机的telnet登录端口号
-			param.put("user", "");		//交换机的telnet登录账号
-			param.put("password", "");	//交换机的telnet登录密码
-			param.put("type", "");		//交换机的类型，分别为4948E和5548
+			param.put("host", host15);		//交换机的telnet登录IP地址
+			param.put("port", port15);		//交换机的telnet登录端口号
+			param.put("user", user15);		//交换机的telnet登录账号
+			param.put("password", pwd15);	//交换机的telnet登录密码
+			param.put("type", type15);		//交换机的类型，分别为4948E和5548
 			param.put("commands", configs);	//需要写入接入交换机的命令列表集合
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);

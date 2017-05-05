@@ -34,6 +34,9 @@
 		<if test="execute.taskId != null">
 		    AND task_id = #{execute.taskId}
 		</if>
+		<if test="execute.executeStep != null">
+		    AND execute_step = #{execute.executeStep}
+		</if>
 	</update>
 	
 	<delete id="deleteDevTaskExecute">
@@ -65,6 +68,9 @@
 		from dev_task_execute where 1=1
 		<if test="taskId != null">
 		    AND task_id = #{taskId}
+		</if>
+		<if test="executeStep != null">
+		    AND execute_step = #{executeStep}
 		</if>
 		<if test="order != null">
 		   ORDER BY task_order DESC

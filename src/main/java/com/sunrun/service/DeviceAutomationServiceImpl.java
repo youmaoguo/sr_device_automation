@@ -224,6 +224,16 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			}
 			//保存每一步步骤执行情况
 			if(execute!=null){
+				//保存前先查询下是否有该步骤，有就重新更新state=0再插入
+				List<DevTaskExecute> li = devTaskExecuteMapper.findTaskExecute(execute.getTaskId(), executeStep, null);
+				if(li!=null && li.size()>0){
+					DevTaskExecute e = new DevTaskExecute();
+					e.setExecuteStep(executeStep);
+					e.setTaskId(execute.getTaskId());
+					e.setState(0);
+					e.setUpdate_user(userName);
+					devTaskExecuteMapper.updateDevTaskExecute(e);
+				}
 				execute.setCreate_user(userName); 
 				devTaskExecuteMapper.saveDevTaskExecute(execute);
 			}
@@ -296,7 +306,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 
 	@Override
 	public List<DevTaskExecute> findTaskExecute(String taskId, String order) {
-		return devTaskExecuteMapper.findTaskExecute(taskId, order);
+		return devTaskExecuteMapper.findTaskExecute(taskId, null, order);
 	}
 
 

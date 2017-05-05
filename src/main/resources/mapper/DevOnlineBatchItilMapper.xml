@@ -116,7 +116,8 @@
 				15 AS taskAllStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS taskCurrentStep,
-				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep ) AS taskCurrentStepDescribe
+				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep 
+				 and create_time = (SELECT max(create_time) from dev_task_execute where task_id=t.id AND execute_step = executeStep)) AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
@@ -148,8 +149,14 @@
 		<if test="sortBy!=null">
 				order by ${sortBy}
 		</if>
+		<if test="sortBy==null">
+				order by createTime
+		</if>
 		<if test="order!=null">
 				${order}
+		</if>
+		<if test="order==null">
+				desc
 		</if>
 		<if test="limit!=null">
 				limit ${limit}
@@ -208,7 +215,8 @@
 				15 AS taskAllStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS taskCurrentStep,
-				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep ) AS taskCurrentStepDescribe
+				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep 
+				 and create_time = (SELECT max(create_time) from dev_task_execute where task_id=t.id AND execute_step = executeStep)) AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id

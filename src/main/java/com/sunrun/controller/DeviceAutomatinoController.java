@@ -321,7 +321,7 @@ public class DeviceAutomatinoController extends BaseController{
 			}else if(switchState==2){
 				executeStep = 14;
 			}
-			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep); 
+			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep, conn); 
 			Thread t = new Thread(addTask);
 			t.start();
 			
