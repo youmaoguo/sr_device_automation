@@ -116,7 +116,7 @@
 				15 AS taskAllStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS taskCurrentStep,
-				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep 
+				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep and update_time is null
 				 and create_time = (SELECT max(create_time) from dev_task_execute where task_id=t.id AND execute_step = executeStep)) AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 
@@ -215,7 +215,7 @@
 				15 AS taskAllStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS taskCurrentStep,
-				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep 
+				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep and update_time is null
 				 and create_time = (SELECT max(create_time) from dev_task_execute where task_id=t.id AND execute_step = executeStep)) AS taskCurrentStepDescribe
 				
 			FROM  dev_online_task t 

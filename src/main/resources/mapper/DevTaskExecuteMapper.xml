@@ -65,7 +65,7 @@
 			create_user AS create_user,
 			state AS state
 		
-		from dev_task_execute where 1=1
+		from dev_task_execute where state=1
 		<if test="taskId != null">
 		    AND task_id = #{taskId}
 		</if>

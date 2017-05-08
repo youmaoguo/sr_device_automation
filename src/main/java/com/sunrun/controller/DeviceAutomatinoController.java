@@ -28,7 +28,6 @@ import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.SysSendEmailBean;
-import com.sunrun.entity.SysSendEmailBean.MailConsignee;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
@@ -319,7 +318,7 @@ public class DeviceAutomatinoController extends BaseController{
 					}
 				}
 			}else if(switchState==2){
-				executeStep = 14;
+				executeStep = 12;
 			}
 			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep, conn); 
 			Thread t = new Thread(addTask);
@@ -498,6 +497,70 @@ public class DeviceAutomatinoController extends BaseController{
 		//返回数据
 		response(json, response, request); 
 	}
+	
+	/**
+	 * 上线交换机生成邮件内容接口
+	 * @param jsonStr
+	 * @param auth
+	 * @param request
+	 * @param response
+	 */
+	/*@RequestMapping(value = "/deviceAutomation/v1/addEmailswitchDeviceEmail", method = {RequestMethod.GET}, produces="application/json")
+	public void addEmailswitchDeviceEmail(@RequestParam(value = "taskId", required = false) String taskId, 
+											HttpServletRequest request,HttpServletResponse response, @RequestHeader("Authorization") String auth){
+		Json json = new Json();
+		String info = "上线交换机生成邮件内容成功";
+		Integer code = 200;	//200
+		Boolean success = true;
+		Map<String, Object> data = new HashMap<String, Object>();
+		if(StringUtils.isEmpty(taskId)){
+			json.setRet_code(400);
+			json.setRet_info("缺少参数");
+			json.setSuccess(false);
+			json.setData(null);
+			//返回数据
+			response(json, response, request);
+			return;
+		}
+		try{
+			if(!StringUtils.isEmpty(taskId)){
+				String content = StringUtil.emailHeadStr();
+				String[] ids = taskId.split(",");	//多个taskId用英文逗号隔开
+				for(int i=0;i<ids.length;i++){
+					List<DevOnlineTask> view = deviceAutomationService.findPort(taskId);
+					if(view!=null && view.size()>0){
+						DevOnlineTask task = view.get(0);
+						content += "<tr height=\"80\" style=\"mso-height-source:userset;height:60.0pt\">";
+						content += "<td height=\"80\" class=\"xl66\" width=\"85\" style=\"height:60.0pt;border-top:none;width:64pt\">"+task.getBrandName()+"</td>";
+						content += "<td class=\"xl66\" width=\"72\" style=\"border-top:none;border-left:none;width:54pt\">"+task.getModelName()+"</td>";
+						content += "<td class=\"xl66\" width=\"125\" style=\"border-top:none;border-left:none;width:94pt\">"+task.getAreaName()+"</td>";
+						content += "<td class=\"xl69\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getMainSwitchboardIp()+"<font class=\"font7\">/"+task.getMainSwitchboardPort()+"</font></td>";
+						content += "<td class=\"xl67\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getBackupSwitchboardIp()+"<font class=\"font7\">/"+task.getBackupSwitchboardPort()+"</font></td>";
+						content += "<td class=\"xl68\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\"><font class=\"font6\">"+task.getDevOnlineRack()+"</font></td>";
+						content += "<td class=\"xl66\" width=\"244\" style=\"border-top:none;border-left:none;width:183pt\">"+task.getHostName()+"</td>";
+						content += "<td class=\"xl66\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getManagerIp()+"</td>";
+						content += "<td class=\"xl66\" width=\"238\" style=\"border-top:none;border-left:none;width:179pt\">"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
+					}
+				}
+				content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
+				data.put("mailTitle", new Date()+"接入设备连接信息");
+				data.put("mailContxt", content);
+				data.put("mailConsignee", "");	//收件者的邮箱信息 暂时待定？？？
+			}
+			
+		}catch(Exception e){
+			code = 500;
+			success = false;
+			logger.error("上线交换机生成邮件内容出错");
+			e.printStackTrace();
+		}
+		json.setRet_code(code);
+		json.setRet_info(info);
+		json.setSuccess(success);
+		json.setData(data);
+		//返回数据
+		response(json, response, request); 
+	}*/
 	
 	
 	/**

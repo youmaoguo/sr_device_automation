@@ -223,7 +223,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/Kanban/v1/apply_ip");
 			param.put("subnet", /*task.getMainSwitchboardIp()*/ subnet);	//本系统申请ip的网段(主汇聚交换机ip)
-			param.put("mount", 1);								//申请数量1
+			param.put("mount", "1");								//申请数量1
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -232,7 +232,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				success = j.getSuccess();
 			}else{
 				org.json.JSONObject obj = new org.json.JSONObject(j.getData().toString());
-				ips = obj.getString("ip");	//多个ip用英文逗号隔开,(主要作用于生成汇聚和接入接入交换机配置信息)
+				ips = obj.getString("ips");	//多个ip用英文逗号隔开,(主要作用于生成汇聚和接入接入交换机配置信息)
 				vlanId = obj.getString("vlanId");
 				data.put("ip", ips);
 				data.put("vlanId", vlanId);
@@ -327,9 +327,9 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		try{
 			JSONObject param = new JSONObject();
-			param.put("method_name", "/interchanger/v1/adminRequestIP");
+			param.put("method_name", "/Kanban/v1/adminRequestIP");
 			param.put("ips", map.get("ip"));//其实就是task的管理口ip
-			param.put("subnet", task.getMainSwitchboardIp());	//本系统申请ip的网段(主汇聚交换机ip)
+			param.put("subnet", /*task.getMainSwitchboardIp()*/ subnet);	//本系统申请ip的网段(主汇聚交换机ip)
 			param.put("state", state);
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -389,7 +389,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				success = j.getSuccess();
 			}else{
 				//解析出取到的所有主备ip对应的端口
-				JSONObject result = (JSONObject) j.getData();
+				//JSONObject result = (JSONObject) j.getData();
+				org.json.JSONObject result = new org.json.JSONObject(j.getData().toString());
 				Object main = result.getJSONArray(task.getMainSwitchboardIp());
 				List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
 				Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
@@ -597,6 +598,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		try{
 			devExclusiveSwitchboardConnMapper.saveSwitchboardConn(conn);
+			deviceAutomationService.updateTask2(task, null, null, userName);
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("保存带外交换机端口与接入交换机的连接信息失败");
@@ -656,7 +658,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(taskId);
 			t.setUpdate_user(userName);
-			writeProcess(t, 9, info, success, userName, data.toString());
+			writeProcess(t, 7, info, success, userName, data.toString());
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -720,7 +722,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 10, info, success, userName, null);
+			writeProcess(t, 8, info, success, userName, null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -783,7 +785,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(taskId);
 			t.setUpdate_user(userName);
-			writeProcess(t, 11, info, success, userName, data.toString());
+			writeProcess(t, 9, info, success, userName, data.toString());
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -832,7 +834,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				t.setId(taskId[i]);
 				t.setUpdate_user(userName);
 				t.setEmailId(id);
-				writeProcess(t, 12, info, success, userName, null);
+				writeProcess(t, 10, info, success, userName, null);
 			}
 			
 			json.setRet_code(code);
