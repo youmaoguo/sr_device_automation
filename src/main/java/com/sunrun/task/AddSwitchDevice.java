@@ -233,8 +233,6 @@ public class AddSwitchDevice implements Runnable {
 			if(!json.getSuccess())
 				return;
 		}
-		//ip地址回填 ，状态是3实分配
-		addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
 		
 		/*//6.生成汇聚交换机配置 并记录
 		if(executeStep!=null && executeStep<=6){
@@ -294,6 +292,8 @@ public class AddSwitchDevice implements Runnable {
 			task.setSwitchState(2);
 			deviceAutomationService.updateTask2(task, null, 11, userName);
 		}
+		//ip地址回填 ，状态是3实分配
+		addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
 		
 	}
 	
