@@ -658,7 +658,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(taskId);
 			t.setUpdate_user(userName);
-			writeProcess(t, 7, info, success, userName, data.toString());
+			writeProcess(t, 7, info, success, userName, data!=null ? data.toString() : null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -997,7 +997,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(taskId);
 			t.setUpdate_user(userName);
-			writeProcess(t, 15, info, success, userName, data.toString());
+			writeProcess(t, 15, info, success, userName, data!=null ? data.toString() : null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -1069,7 +1069,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 15, info, success, userName, data.toString());
+			writeProcess(t, 15, info, success, userName, data!=null ? data.toString() : null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -1124,7 +1124,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 15, info, success, userName, data.toString());
+			writeProcess(t, 15, info, success, userName, data!=null ? data.toString() : null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
