@@ -327,7 +327,7 @@ public class AddSwitchDevice implements Runnable {
 			}else{
 				task.setSwitchState(3);
 			}
-			deviceAutomationService.updateTask2(task, null, 15, userName);
+			deviceAutomationService.updateTask2(task, null, 13, userName);
 			
 		}
 	}

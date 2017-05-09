@@ -997,7 +997,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(taskId);
 			t.setUpdate_user(userName);
-			writeProcess(t, 15, info, success, userName, data!=null ? data.toString() : null);
+			writeProcess(t, 13, info, success, userName, data!=null ? data.toString() : null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -1035,8 +1035,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/writeNewAccessConfig");
 			param.put("deviceBrand", task.getModelName());	//品牌型号，列如cisco,huawei,h3c等
-			param.put("host", "");	//交换机的telnet登录IP地址
-			param.put("type", "");	//交换机的类型，分别为4948E和5548
+			param.put("host", host11);	//交换机的telnet登录IP地址
+			param.put("type", type11);	//交换机的类型，分别为4948E和5548
 			param.put("ipPortName1", task.getMainSwitchboardIp());//主ip	???
 			param.put("ipPortName2", task.getBackupSwitchboardIp());//备ip	???
 			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	???
@@ -1069,7 +1069,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 15, info, success, userName, data!=null ? data.toString() : null);
+			writeProcess(t, 9, info, success, userName, data!=null ? data.toString() : null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -1124,7 +1124,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 15, info, success, userName, data!=null ? data.toString() : null);
+			writeProcess(t, 12, info, success, userName, data!=null ? data.toString() : null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);

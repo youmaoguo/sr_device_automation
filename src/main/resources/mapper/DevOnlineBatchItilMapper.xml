@@ -113,7 +113,7 @@
 				t.switch_state AS switchState,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				t.access_switchboard_check AS accessSwitchboardCheck,
-				15 AS taskAllStep,
+				13 AS taskAllStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS taskCurrentStep,
 				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep and update_time is null
@@ -212,7 +212,7 @@
 				t.switch_state AS switchState,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
-				15 AS taskAllStep,
+				13 AS taskAllStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS taskCurrentStep,
 				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep and update_time is null
