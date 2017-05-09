@@ -272,28 +272,34 @@ public class AddSwitchDevice implements Runnable {
 			return;*/
 		
 		//7.写入接入交换机配置管理口IP
-		json = null;
-		json = addSwitchDeviceService.managementPort(thirdPartUrl, auth, task.getId(), userName);
-		if(!json.getSuccess())
-			return;
+		if(executeStep!=null && executeStep<=7){
+			json = null;
+			json = addSwitchDeviceService.managementPort(thirdPartUrl, auth, task.getId(), userName);
+			if(!json.getSuccess())
+				return;
+		}
 		
 		//8. 查看ios版本是否最新，不是最新需要升级ios版本
-		json = null;
-		json = addSwitchDeviceService.checkIosVersion(thirdPartUrl, auth, task, userName);
-		if(!json.getSuccess())
-			return;
+		if(executeStep!=null && executeStep<=8){
+			json = null;
+			json = addSwitchDeviceService.checkIosVersion(thirdPartUrl, auth, task, userName);
+			if(!json.getSuccess())
+				return;
+		}
 		
 		//9. 写入接入交换机配置
-		json = null;
-		json = addSwitchDeviceService.writeNewAccessConfig(thirdPartUrl, auth, task, userName);
-		if(!json.getSuccess())
-			return;
-		if(json.getSuccess()){
-			task.setSwitchState(2);
-			deviceAutomationService.updateTask2(task, null, 11, userName);
+		if(executeStep!=null && executeStep<=9){
+			json = null;
+			json = addSwitchDeviceService.writeNewAccessConfig(thirdPartUrl, auth, task, userName);
+			if(!json.getSuccess())
+				return;
+			if(json.getSuccess()){
+				task.setSwitchState(2);
+				deviceAutomationService.updateTask2(task, null, 11, userName);
+			}
+			//ip地址回填 ，状态是3实分配
+			addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
 		}
-		//ip地址回填 ，状态是3实分配
-		addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
 		
 	}
 	
