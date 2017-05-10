@@ -11,7 +11,7 @@ import java.util.Date;
 public class DevOnlineItilExecute extends DevOnlineBatchItil {
 
 	private String itilSourceId;  	//'来源ID GEN000002',
-	private Date itilRequestedDate; //'申请时间 日期时间 2015-12-07T14:02:07+00:00',
+	private String itilRequestedDate; //'申请时间 日期时间 2015-12-07T14:02:07+00:00',
 	private String itilSource; 		//'来源 文本 cloud',
 	private String itilOpenedBy;	//'创建人 文本 cmb.int.cloud'
 	
@@ -22,14 +22,15 @@ public class DevOnlineItilExecute extends DevOnlineBatchItil {
 		this.itilSourceId = itilSourceId;
 	}
 	public String getItilRequestedDate() {
-		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		/*SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String s = "";
 		if(itilRequestedDate!=null){
 			s = fmt.format(itilRequestedDate);
 		}
-		return s;
+		return s;*/
+		return itilRequestedDate;
 	}
-	public void setItilRequestedDate(Date itilRequestedDate) {
+	public void setItilRequestedDate(String itilRequestedDate) {
 		this.itilRequestedDate = itilRequestedDate;
 	}
 	public String getItilSource() {
