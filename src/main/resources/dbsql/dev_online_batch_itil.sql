@@ -11,7 +11,7 @@ CREATE TABLE dev_online_batch_itil(
 	itil_requestor varchar(100) comment '申请人 文本 036131 联系人ID，一般为一事通ID',
 	itil_title varchar(400) comment '标题 文本 评估体系平台系统请求',
 	itil_description varchar(1000) comment '申请内容',
-	itil_plannedEnd datetime comment '期望完成时间',
+	itil_plannedEnd varchar(50) comment '期望完成时间',
 	batch_state tinyint default 1 comment '批次状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
 	create_time datetime comment '创建时间',
 	create_user varchar(32) comment '创建人员id',

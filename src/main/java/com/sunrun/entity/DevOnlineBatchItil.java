@@ -23,7 +23,7 @@ public class DevOnlineBatchItil extends BaseEntity {
 	private String itilRequestor;	//'申请人 文本 036131 联系人ID，一般为一事通ID',
 	private String itilTitle;		//'标题 文本 评估体系平台系统请求',
 	private String itilDescription;	//'申请内容',
-	private Date itilPlannedEnd;	//'期望完成时间',
+	private String itilPlannedEnd;	//'期望完成时间',
 	//private Date itilRequestedDate; //'申请时间 日期时间 2015-12-07T14:02:07+00:00',
 	//private String itilSource; 		//'来源 文本 cloud',
 	//private String itilOpenedBy;	//'创建人 文本 cmb.int.cloud'
@@ -100,10 +100,10 @@ public class DevOnlineBatchItil extends BaseEntity {
 	public void setItilDescription(String itilDescription) {
 		this.itilDescription = itilDescription;
 	}
-	public Date getItilPlannedEnd() {
+	public String getItilPlannedEnd() {
 		return itilPlannedEnd;
 	}
-	public void setItilPlannedEnd(Date itilPlannedEnd) {
+	public void setItilPlannedEnd(String itilPlannedEnd) {
 		this.itilPlannedEnd = itilPlannedEnd;
 	}
 	@Override

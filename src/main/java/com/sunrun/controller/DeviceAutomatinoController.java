@@ -272,43 +272,44 @@ public class DeviceAutomatinoController extends BaseController{
 		Boolean success = true;
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
-			int switchState = obj.getIntValue("switchState");
-			String vlan = obj.getString("vlan");
-			String taskId = obj.getString("taskId");
-			String exclusiveSwitchboardIp = obj.getString("exclusiveSwitchboardIp");
-			String exclusiveSwitchboardPort = obj.getString("exclusiveSwitchboardPort");
-			String exclusiveSwitchboardOrder = obj.getString("exclusiveSwitchboardOrder");
-			String brandName = obj.getString("brandName");
-			String modelName = obj.getString("modelName");
-			String currentIosVersion = obj.getString("currentIosVersion");
-			String updateUser = obj.getString("updateUser");
-			String exclusiveSwitchboardInfo = "第"+exclusiveSwitchboardOrder+"口-"+brandName+"-"+modelName;
-			
-			DevOnlineTask task = new DevOnlineTask();
-			task.setSwitchState(switchState);
-			task.setVlan(vlan);
-			task.setId(taskId);
-			task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
-			task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-			task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
-			task.setBrandName(brandName);
-			task.setModelName(modelName);
-			task.setCurrentIosVersion(currentIosVersion);
-			task.setUpdate_user(updateUser);
 			DevExclusiveSwitchboardConn conn = new DevExclusiveSwitchboardConn();
-			conn.setBrandName(brandName);
-			conn.setCreate_user(updateUser);
-			conn.setCurrentIosVersion(currentIosVersion);
-			conn.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
-			conn.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
-			conn.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-			conn.setId(StringUtil.getUuid());
-			conn.setModelName(modelName);
-			addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
-			
+			DevOnlineTask task = new DevOnlineTask();
+			int switchState = obj.getIntValue("switchState");
+
 			//查询出该任务执行到第几步骤 然后分多线程继续执行之后的步骤（写入接入交换机配置管理口ip、更新ios版本、写入接入交换机配置信息）
 			Integer executeStep = null;
 			if(switchState==1){
+				String vlan = obj.getString("vlan");
+				String taskId = obj.getString("taskId");
+				String exclusiveSwitchboardIp = obj.getString("exclusiveSwitchboardIp");
+				String exclusiveSwitchboardPort = obj.getString("exclusiveSwitchboardPort");
+				String exclusiveSwitchboardOrder = obj.getString("exclusiveSwitchboardOrder");
+				String brandName = obj.getString("brandName");
+				String modelName = obj.getString("modelName");
+				String currentIosVersion = obj.getString("currentIosVersion");
+				String updateUser = obj.getString("updateUser");
+				String exclusiveSwitchboardInfo = "第"+exclusiveSwitchboardOrder+"口-"+brandName+"-"+modelName;
+				
+				task.setSwitchState(switchState);
+				task.setVlan(vlan);
+				task.setId(taskId);
+				task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
+				task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
+				task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
+				task.setBrandName(brandName);
+				task.setModelName(modelName);
+				task.setCurrentIosVersion(currentIosVersion);
+				task.setUpdate_user(updateUser);
+				conn.setBrandName(brandName);
+				conn.setCreate_user(updateUser);
+				conn.setCurrentIosVersion(currentIosVersion);
+				conn.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
+				conn.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
+				conn.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
+				conn.setId(StringUtil.getUuid());
+				conn.setModelName(modelName);
+				addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
+				
 				List<DevTaskExecute> li = deviceAutomationService.findTaskExecute(taskId, "execute_step");
 				if(li!=null && li.size()>0){
 					executeStep = li.get(0).getExecuteStep();

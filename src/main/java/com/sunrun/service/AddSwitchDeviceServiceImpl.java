@@ -1041,6 +1041,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("ipPortName2", task.getBackupSwitchboardIp());//备ip	???
 			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	???
 			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	???
+			param.put("main_host", main_host6);
+			param.put("back_host", back_host6);
 			param.put("accHostName", task.getHostName());//接入设备对应的host名称
 			param.put("vlanNu", task.getVlan());//接入设备的管理Vlan号
 			param.put("description", "");//接入设备的描述配置信息
@@ -1091,14 +1093,20 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/writeNewGatherConfig");
 			param.put("deviceBrand", task.getModelName());	//品牌型号，列如cisco,huawei,h3c等
-			param.put("host", "");	//交换机的telnet登录IP地址
-			param.put("type", "");	//汇聚交换机的类型，分别为N7KA、N7KB、65A、65B，四种类型
+			param.put("host", host11);	//交换机的telnet登录IP地址
+			param.put("type", type11);	//汇聚交换机的类型，分别为N7KA、N7KB、65A、65B，四种类型
 			param.put("ipPortNameUserPass1", task.getMainSwitchboardIp());//主ip	???
 			param.put("ipPortNameUserPass2", task.getBackupSwitchboardIp());//备ip	???
 			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	???
 			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	???
+			param.put("main_user", main_user6);
+			param.put("back_user", back_user6);
+			param.put("main_host", main_host6);
+			param.put("back_host", back_host6);
+			param.put("main_pwd", main_pwd6);
+			param.put("back_pwd", back_pwd6);
 			param.put("accHostname", task.getHostName());//接入设备对应的host名称
-			param.put("NewType", "");//接入交换机的设备类型，分别为4948E和5548
+			param.put("NewType", "4948E");//接入交换机的设备类型，分别为4948E和5548
 			param.put("newip", task.getManagerIp());//在看板系统上申请的IP地址
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);

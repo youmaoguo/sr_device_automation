@@ -1,6 +1,8 @@
 package com.sunrun.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -255,7 +257,16 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			paramterObj.put("title", "上线交换机申请itil工单");
 			paramterObj.put("category", "流程管理");
 			paramterObj.put("subcategory", "ITIL系统");
-			paramterObj.put("plannedEnd", itilPlannedEnd);
+			paramterObj.put("businessArea", "其他");
+			paramterObj.put("requestor", "01034090");
+			paramterObj.put("description", "请求新建接口genrequests");
+			paramterObj.put("sourceId", "portal");
+			
+			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			Date d = f.parse(itilPlannedEnd);
+			SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+			String sr = fmt.format(d);
+			paramterObj.put("plannedEnd", sr);
 			String sb = ITILRestfulInterface.createITIL(itil, paramterObj, "POST", "Basic MDEwMzQwOTA6");
 			Json j = JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=0){
