@@ -496,7 +496,7 @@ public class DeviceAutomatinoController extends BaseController{
 					}
 				}
 				content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
-				sysSendEmailBean.setMailContxt(content);
+				sysSendEmailBean.setMailContxt(content.replace("null", ""));
 				sysSendEmailBean.setMailTitle( new Date()+"接入设备连接信息");
 				 
 				  
