@@ -1,5 +1,6 @@
 package com.sunrun.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -279,6 +280,10 @@ public class DeviceAutomatinoController extends BaseController{
 
 			//查询出该任务执行到第几步骤 然后分多线程继续执行之后的步骤（写入接入交换机配置管理口ip、更新ios版本、写入接入交换机配置信息）
 			Integer executeStep = null;
+			List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
+			if(l!=null && l.size()>0){
+				task = l.get(0);
+			}
 			List<DevTaskExecute> li = deviceAutomationService.findTaskExecute(taskId, "execute_step");
 			if(li!=null && li.size()>0){
 				executeStep = li.get(0).getExecuteStep();
@@ -340,16 +345,36 @@ public class DeviceAutomatinoController extends BaseController{
 				
 				addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
 				
-			}else if(switchState==2){
+				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep, conn); 
+				Thread t = new Thread(addTask);
+				t.start();
 				
+			}else if(switchState==2){
+				//当点击执行（写入汇聚配置和做验证）时候，必要要求工单状态是‘已审批’；且当前时间大于等于工单期望完成时间；
+				DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
+				batchView.setId(task.getId());
+				long i = System.currentTimeMillis();
+				DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				Date d = null;
+				if(view!=null && !view.getItilPlannedEnd().equals("") && view.getItilPlannedEnd()!=null){
+					d = fmt.parse(view.getItilPlannedEnd());
+				}
+				
+				if(view==null || StringUtils.isEmpty(view.getItilNumber()) || !view.getItilStatus().equals("已审批") ){
+					code = 500;
+					info = "itil工单未审批";
+					success = false;
+				}else if(d.getTime()<i){
+					code = 500;
+					success = false;
+					info = "未到时候执行，请在"+view.getItilPlannedEnd()+"后执行";
+				}else{
+					AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep, conn); 
+					Thread t = new Thread(addTask);
+					t.start();
+				}
 			}
-			List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
-			if(l!=null && l.size()>0){
-				task = l.get(0);
-			}
-			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep, conn); 
-			Thread t = new Thread(addTask);
-			t.start();
 			
 			
 		}catch(Exception e){

@@ -266,12 +266,12 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		try{
 			JSONObject paramterObj = new JSONObject();
 			paramterObj.put("assignee", "01091231");
-			paramterObj.put("title", "上线交换机申请itil工单");
+			paramterObj.put("title", "测试门户系统上线交换机申请itil工单");
 			paramterObj.put("category", "流程管理");
 			paramterObj.put("subcategory", "ITIL系统");
 			paramterObj.put("businessArea", "其他");
 			paramterObj.put("requestor", "01091231");
-			paramterObj.put("description", "请求新建接口genrequests");
+			paramterObj.put("description", "测试门户系统请求新建接口genrequests");
 			paramterObj.put("sourceId", "portal");
 			
 			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");

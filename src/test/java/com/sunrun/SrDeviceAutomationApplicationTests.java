@@ -1,8 +1,11 @@
 package com.sunrun;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -67,6 +70,19 @@ public class SrDeviceAutomationApplicationTests {
 	
 	
 	public static void main(String[] args) {
+		long i = System.currentTimeMillis();
+		System.out.println(i);
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		try {
+			String k1 = fmt.format(new Date());
+			System.out.println("k1="+k1);
+			Date dd = fmt.parse(k1);
+			System.out.println("dd="+dd);
+			System.out.println("time="+dd.getTime());
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		String[] s1 = {"a","b","c"};
 		List list = java.util.Arrays.asList(s1);
