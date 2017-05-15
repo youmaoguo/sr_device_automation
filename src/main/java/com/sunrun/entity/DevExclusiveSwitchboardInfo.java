@@ -7,11 +7,54 @@ package com.sunrun.entity;
  */
 public class DevExclusiveSwitchboardInfo extends BaseEntity {
 
-	private String exclusiveSwitchboardIp;	//'带外交机ip',
-	private String exclusiveSwitchboardPort;//'带外交机端口',
+	private String exclusiveSwitchboardIp;	//'带外交机ip(console)',
+	private String exclusiveSwitchboardPort;//'带外交机端口(console)',
 	private Integer exclusiveSwitchboardOrder;//'带外交机顺序',
 	private String exclusiveSwitchboardNote;//'带外交机要信息备注',
+	private String telnetType;
+	private String telnetUser;
+	private String telnetPwd;
+	private String telnetPort;
+	private String managerSwitchboardIp;
+	private String exclusiveSwitchboardType;
 	
+	
+	public String getManagerSwitchboardIp() {
+		return managerSwitchboardIp;
+	}
+	public void setManagerSwitchboardIp(String managerSwitchboardIp) {
+		this.managerSwitchboardIp = managerSwitchboardIp;
+	}
+	public String getExclusiveSwitchboardType() {
+		return exclusiveSwitchboardType;
+	}
+	public void setExclusiveSwitchboardType(String exclusiveSwitchboardType) {
+		this.exclusiveSwitchboardType = exclusiveSwitchboardType;
+	}
+	public String getTelnetType() {
+		return telnetType;
+	}
+	public void setTelnetType(String telnetType) {
+		this.telnetType = telnetType;
+	}
+	public String getTelnetUser() {
+		return telnetUser;
+	}
+	public void setTelnetUser(String telnetUser) {
+		this.telnetUser = telnetUser;
+	}
+	public String getTelnetPwd() {
+		return telnetPwd;
+	}
+	public void setTelnetPwd(String telnetPwd) {
+		this.telnetPwd = telnetPwd;
+	}
+	public String getTelnetPort() {
+		return telnetPort;
+	}
+	public void setTelnetPort(String telnetPort) {
+		this.telnetPort = telnetPort;
+	}
 	public String getExclusiveSwitchboardIp() {
 		return exclusiveSwitchboardIp;
 	}
@@ -42,7 +85,10 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity {
 				+ exclusiveSwitchboardIp + ", exclusiveSwitchboardPort="
 				+ exclusiveSwitchboardPort + ", exclusiveSwitchboardOrder="
 				+ exclusiveSwitchboardOrder + ", exclusiveSwitchboardNote="
-				+ exclusiveSwitchboardNote + "]";
+				+ exclusiveSwitchboardNote + ", telnetType=" + telnetType
+				+ ", telnetUser=" + telnetUser + ", telnetPwd=" + telnetPwd
+				+ ", telnetPort=" + telnetPort + "]";
 	}
+	 
 	
 }

@@ -2,6 +2,7 @@ package com.sunrun.service;
 
 import java.util.List;
 
+import com.sunrun.entity.DevAreaSwitchboardIp;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
@@ -133,5 +134,20 @@ public interface DeviceAutomationService {
 	 * @return
 	 */
 	Json findKvmInfo(DevExclusiveSwitchboardInfo info, String thirdPartUrl, String auth);
+	
+	/**
+	 * 查询区域汇聚交换机ip对应
+	 * @param info
+	 * @return
+	 */
+	List<DevAreaSwitchboardIp> findAreaIp(DevAreaSwitchboardIp info);
+	
+	/**
+	 * 查询带外交换机信息
+	 * @param info
+	 * @return
+	 */
+	List<DevExclusiveSwitchboardInfo> findDevExclusiveSwitchboardInfo(DevExclusiveSwitchboardInfo info);
+	
 	
 }

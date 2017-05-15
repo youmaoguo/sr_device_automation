@@ -14,16 +14,23 @@
 			exclusive_switchboard_ip AS exclusiveSwitchboardIp,
 			exclusive_switchboard_port AS exclusiveSwitchboardPort,
 			exclusive_switchboard_order AS exclusiveSwitchboardOrder,
-			exclusive_switchboard_note AS exclusiveSwitchboardNote
+			exclusive_switchboard_note AS exclusiveSwitchboardNote,
+			exclusive_switchboard_type AS exclusiveSwitchboardType,
+			manager_switchboard_ip AS managerSwitchboardIp,
+			telnet_type AS telnetType,
+			telnet_user AS telnetUser,
+			telnet_pwd AS telnetPwd,
+			telnet_port AS telnetPort
+			
 		from dev_exclusive_switchboard_info
 		where 1=1
 		<if test="info.id != null">
 		    AND id = #{info.id}
 		</if>
-		<if test="info.exclusiveSwitchboardIp != null and info.exclusiveSwitchboardIp!=''">
+		<if test="info.exclusiveSwitchboardIp != null and info.exclusiveSwitchboardIp!='' and info.exclusiveSwitchboardIp!='null'">
 		    AND exclusive_switchboard_ip = #{info.exclusiveSwitchboardIp}
 		</if>
-		<if test="info.exclusiveSwitchboardPort != null and info.exclusiveSwitchboardPort!=''">
+		<if test="info.exclusiveSwitchboardPort != null and info.exclusiveSwitchboardPort!='' and info.exclusiveSwitchboardPort!='null'">
 		    AND exclusive_switchboard_port = #{info.exclusiveSwitchboardPort}
 		</if>
 	</select>

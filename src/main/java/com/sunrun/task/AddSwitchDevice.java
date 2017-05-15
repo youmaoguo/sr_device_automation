@@ -88,13 +88,12 @@ public class AddSwitchDevice implements Runnable {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		//Map<String, String> map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
 		if(!json.getSuccess())
 			return;
 		
 		//3.看网络是否通
 		json = null;
-		json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
+		json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 		int code = json.getRet_code();//200:表示网络ping不通，本系统可用；505，表示网络ping通，被占了，本系统不可用; 500，服务器操作交换机时出错
 		if(!json.getSuccess() && code!=200){
 			if(code==505){
@@ -113,7 +112,7 @@ public class AddSwitchDevice implements Runnable {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
+				json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 				if(json.getRet_code()!=200){
 					if(json.getRet_code()==505){
 						addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
@@ -186,7 +185,7 @@ public class AddSwitchDevice implements Runnable {
 		//3.看网络是否通
 		if(executeStep!=null && executeStep<=3){
 			json = null;
-			json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
+			json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 			int code = json.getRet_code();//200:表示网络ping不通，本系统可用；505:表示网络ping通，被占了，本系统不可用; 500，服务器操作交换机时出错
 			if(!json.getSuccess() && code!=200){
 				if(code==505){
@@ -205,7 +204,7 @@ public class AddSwitchDevice implements Runnable {
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
+					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 					if(json.getRet_code()!=200){
 						if(json.getRet_code()==505){
 							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
@@ -237,7 +236,7 @@ public class AddSwitchDevice implements Runnable {
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task.getId(), map, userName);
+					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 					if(json.getRet_code()!=200){
 						if(json.getRet_code()==505){
 							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
@@ -291,7 +290,7 @@ public class AddSwitchDevice implements Runnable {
 			execute.setTaskExecuteState(3);
 			execute.setCreate_user(userName);
 			execute.setTaskExecuteNote(null);
-			deviceAutomationService.updateTask2(task, execute, executeStep, userName);
+			deviceAutomationService.updateTask2(task, execute, 6, userName);
 		}
 		/*
 		json = null;
@@ -302,7 +301,7 @@ public class AddSwitchDevice implements Runnable {
 		//7.写入接入交换机配置管理口IP
 		if(executeStep!=null && executeStep<=7){
 			json = null;
-			json = addSwitchDeviceService.managementPort(thirdPartUrl, auth, task.getId(), userName);
+			json = addSwitchDeviceService.managementPort(thirdPartUrl, auth, task, userName);
 			if(!json.getSuccess())
 				return;
 		}
@@ -340,22 +339,27 @@ public class AddSwitchDevice implements Runnable {
 		if(li!=null && li.size()>0){
 			task = li.get(0);
 			//12.写入汇聚接入交换机配置
-			json = addSwitchDeviceService.writeNewGatherConfig(thirdPartUrl, auth, task, userName);
-			if(!json.getSuccess())
-				return;
+			if(executeStep!=null && executeStep==12){
+				json = addSwitchDeviceService.writeNewGatherConfig(thirdPartUrl, auth, task, userName);
+				if(!json.getSuccess())
+					return;
+			}
 			
 			//13.在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
-			json = null;
-			json = addSwitchDeviceService.checkConfig(thirdPartUrl, auth, task.getId(), userName);
-			if(!json.getSuccess())
-				return;
-			
-			if(json.getSuccess()){
-				task.setSwitchState(4);
-			}else{
-				task.setSwitchState(3);
+			if(executeStep!=null && executeStep<=13){
+				json = null;
+				json = addSwitchDeviceService.checkConfig(thirdPartUrl, auth, task, userName);
+				if(!json.getSuccess())
+					return;
+				
+				if(json.getSuccess()){
+					task.setSwitchState(4);
+				}else{
+					task.setSwitchState(3);
+				}
+				deviceAutomationService.updateTask2(task, null, 13, userName);
 			}
-			deviceAutomationService.updateTask2(task, null, 13, userName);
+			
 			
 		}
 	}

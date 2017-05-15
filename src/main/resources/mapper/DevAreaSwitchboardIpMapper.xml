@@ -10,7 +10,27 @@
 			area_name AS areaName,
 			area_describe AS areaDescribe,
 			main_switchboard_ip AS mainSwitchboardIp,
-			backup_switchboard_ip AS backupSwitchboardIp
+			backup_switchboard_ip AS backupSwitchboardIp,
+			
+			subnet AS subnet,
+			dev_name AS devName,
+			dev_type AS devType,
+			dev_factory AS devFactory,
+			telnet_type AS telnetType,
+			telnet_user AS telnetUser,
+			telnet_pwd AS telnetPwd,
+			telnet_port AS telnetPort,
+			dev_hardware_type AS devHardwareType,
+			dev_manager AS devManager,
+			backup_dev_name AS backupDevName,
+			backup_dev_type AS backupDevType,
+			backup_dev_factory AS backupDevFactory,
+			backup_telnet_type AS backupTelnetType,
+			backup_telnet_user AS backupTelnetUser,
+			backup_telnet_pwd AS backupTelnetPwd,
+			backup_telnet_port backupTelnetPort,
+			backup_dev_hardware_type AS backupDevHardwareType,
+			backup_dev_manager AS backupDevManager
 			
 		from dev_area_switchboard_ip
 		where 1=1

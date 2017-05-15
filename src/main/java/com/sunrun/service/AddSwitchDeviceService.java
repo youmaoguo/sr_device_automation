@@ -31,7 +31,7 @@ public interface AddSwitchDeviceService {
 	 * @param taskId
 	 * @return
 	 */
-	Json pingFun(String thirdPartUrl, String auth, String taskId, Map<String, String> map, String userName);
+	Json pingFun(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName);
 	
 	/**添加设备第4步：
 	 * 网络室管理员申请IP地址，修改IP地址状态（ip地址回填）
@@ -82,10 +82,20 @@ public interface AddSwitchDeviceService {
 	 * 请求写入接入交换机配置管理口IP
 	 * @param thirdPartUrl
 	 * @param auth
-	 * @param taskId
+	 * @param task
 	 * @return
 	 */
-	Json managementPort(String thirdPartUrl, String auth, String taskId, String userName);
+	Json managementPort(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
+	
+	/**
+	 * 查询交换机实际版本
+	 * @param thirdPartUrl
+	 * @param auth
+	 * @param task
+	 * @param userName
+	 * @return
+	 */
+	Json findDeviceIosVersion(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 	
 	/**添加设备第10步：
 	 * 查看ios版本是否最新，不是最新需要升级ios版本
@@ -158,10 +168,10 @@ public interface AddSwitchDeviceService {
 	 * 在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
 	 * @param thirdPartUrl
 	 * @param auth
-	 * @param taskId
+	 * @param task
 	 * @return
 	 */
-	Json checkConfig(String thirdPartUrl, String auth, String taskId, String userName);
+	Json checkConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 
 	
 	

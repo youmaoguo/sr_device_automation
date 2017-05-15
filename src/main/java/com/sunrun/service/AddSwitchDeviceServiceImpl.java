@@ -16,7 +16,9 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sunrun.entity.DevAreaSwitchboardIp;
 import com.sunrun.entity.DevExclusiveSwitchboardConn;
+import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevIosVersions;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevScriptConfig;
@@ -41,138 +43,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	@Resource
 	private DevIosVersionsMapper devIosVersionsMapper;
 	
-	@Value("${device.subnet}")
-	private String subnet;
-	
-	@Value("${device.host3}")
-	private String device_host3;
-	@Value("${device.port3}")
-	private String device_port3;
-	@Value("${device.user3}")
-	private String device_user3;
-	@Value("${device.password3}")
-	private String device_password3;
-	@Value("${device.type3}")
-	private String device_type3;
-	
-	@Value("${device.main_ip5}")
-	private String main_ip5;
-	@Value("${device.back_ip5}")
-	private String back_ip5;
-	@Value("${device.main_host5}")
-	private String main_host5;
-	@Value("${device.main_user5}")
-	private String main_user5;
-	@Value("${device.main_pwd5}")
-	private String main_pwd5;
-	@Value("${device.back_host5}")
-	private String back_host5;
-	@Value("${device.back_user5}")
-	private String back_user5;
-	@Value("${device.back_pwd5}")
-	private String back_pwd5;
-	
-	@Value("${device.main_ip6}")
-	private String main_ip6;
-	@Value("${device.back_ip6}")
-	private String back_ip6;
-	@Value("${device.main_port6}")
-	private String main_port6;
-	@Value("${device.back_port6}")
-	private String back_port6;
-	@Value("${device.main_host6}")
-	private String main_host6;
-	@Value("${device.back_host6}")
-	private String back_host6;
-	@Value("${device.main_user6}")
-	private String main_user6;
-	@Value("${device.back_user6}")
-	private String back_user6;
-	@Value("${device.main_pwd6}")
-	private String main_pwd6;
-	@Value("${device.back_pwd6}")
-	private String back_pwd6;
-	@Value("${device.type6}")
-	private String type6;
-	
-	@Value("${device.main_ip7}")
-	private String main_ip7;
-	@Value("${device.back_ip7}")
-	private String back_ip7;
-	@Value("${device.main_port7}")
-	private String main_port7;
-	@Value("${device.back_port7}")
-	private String back_port7;
-	@Value("${device.main_host7}")
-	private String main_host7;
-	@Value("${device.back_host7}")
-	private String back_host7;
-	@Value("${device.type7}")
-	private String type7;
-	
-	@Value("${device.host9}")
-	private String host9;
-	@Value("${device.port9}")
-	private Integer port9;
-	@Value("${device.user9}")
-	private String user9;
-	@Value("${device.pwd9}")
-	private String pwd9;
-	@Value("${device.type9}")
-	private String type9;
-	
-	@Value("${device.host10}")
-	private String host10;
-	@Value("${device.port10}")
-	private Integer port10;
-	@Value("${device.user10}")
-	private String user10;
-	@Value("${device.pwd10}")
-	private String pwd10;
-	@Value("${device.type10}")
-	private String type10;
-	@Value("${device.serverIp10}")
-	private String serverIp10;
-	@Value("${device.sourceFileName10}")
-	private String sourceFileName10;
-	@Value("${device.desFileName10}")
-	private String desFileName10;
-	@Value("${device.iosName10}")
-	private String iosName10;
-	
-	@Value("${device.host11}")
-	private String host11;
-	@Value("${device.port11}")
-	private Integer port11;
-	@Value("${device.user11}")
-	private String user11;
-	@Value("${device.pwd11}")
-	private String pwd11;
-	@Value("${device.type11}")
-	private String type11;
-	
-	@Value("${device.host14}")
-	private String host14;
-	@Value("${device.port14}")
-	private Integer port14;
-	@Value("${device.user14}")
-	private String user14;
-	@Value("${device.pwd14}")
-	private String pwd14;
-	@Value("${device.type14}")
-	private String type14;
-	
-	@Value("${device.host15}")
-	private String host15;
-	@Value("${device.port15}")
-	private Integer port15;
-	@Value("${device.user15}")
-	private String user15;
-	@Value("${device.pwd15}")
-	private String pwd15;
-	@Value("${device.type15}")
-	private String type15;
-	
+	@Value("${device.serverIp}")
+	private String serverIp;
 	
 	
 	@SuppressWarnings("finally")
@@ -220,10 +92,14 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Map<String, String> data = new HashMap<String, String>();
 		String vlanId = "", ips = "";
 		try{
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/Kanban/v1/apply_ip");
-			param.put("subnet", /*task.getMainSwitchboardIp()*/ subnet);	//本系统申请ip的网段(主汇聚交换机ip)
-			param.put("mount", "1");								//申请数量1
+			param.put("subnet", li.get(0).getSubnet());	//本系统申请ip的网段(根据区域名称查询表'dev_area_switchboard_ip'中subnet)
+			param.put("mount", "1");		//申请数量1
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -269,19 +145,22 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	
 	@SuppressWarnings("finally")
 	@Override
-	public Json pingFun(String thirdPartUrl, String auth, String taskId, Map<String, String> map, String userName) {
+	public Json pingFun(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName) {
 		Json json = new Json();
 		String info = "ip地址ping不通，可用";
 		Integer code = 200;	
 		Boolean success = true;
 		try{
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/pingFun");
-			param.put("host", device_host3);
-			param.put("port", device_port3);
-			param.put("user", device_user3);
-			param.put("password", device_password3);
-			param.put("type", device_type3);
+			param.put("host", task.getMainSwitchboardIp());//主汇聚ip
+			param.put("port", li.get(0).getTelnetPort());
+			param.put("user", li.get(0).getTelnetUser());
+			param.put("password", li.get(0).getTelnetPwd());
+			param.put("type", li.get(0).getDevType());//dev_type
 			
 			String ips = map.get("ip");
 			String[] ip = ips.split(",");
@@ -307,7 +186,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}finally{
 			//记录任务执行步骤
 			DevOnlineTask t = new DevOnlineTask();
-			t.setId(taskId);
+			t.setId(task.getId());
 			t.setUpdate_user(userName);
 			writeProcess(t, 3, info, success, userName, null);
 			
@@ -326,11 +205,22 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 200;	
 		Boolean success = true;
 		try{
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/Kanban/v1/adminRequestIP");
 			param.put("ips", map.get("ip"));//其实就是task的管理口ip
-			param.put("subnet", /*task.getMainSwitchboardIp()*/ subnet);	//本系统申请ip的网段(主汇聚交换机ip)
+			param.put("subnet", li.get(0).getSubnet());	//本系统申请ip的网段(根据区域名称查询表'dev_area_switchboard_ip'中subnet)
 			param.put("state", state);
+			param.put("assignerId", "01009380");//申请人工号
+			param.put("assignerName", "01009380");//申请人姓名
+			param.put("contactId", "01009380");//contactId
+			param.put("contactName", "01009380");//使用人姓名
+			param.put("bizsysName", "portal");//业务系统
+			param.put("bizsysId", "portal");//业务系统ID
+			param.put("description", "portal");
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -371,16 +261,20 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		String mp = "", bp = "";
 		try{
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/portCheck");
-			param.put("main_switchboard_ip", /*task.getMainSwitchboardIp()*/ main_ip5);
-			param.put("backup_switchboard_ip", /*task.getBackupSwitchboardIp()*/ back_ip5);
-			param.put("main_host", main_host5);
-			param.put("main_user", main_user5);
-			param.put("main_pwd", main_pwd5);
-			param.put("back_host", back_host5);
-			param.put("back_user", back_user5);
-			param.put("back_pwd", back_pwd5);
+			param.put("main_switchboard_ip", task.getMainSwitchboardIp());
+			param.put("backup_switchboard_ip", task.getBackupSwitchboardIp());
+			param.put("main_host", li.get(0).getDevName());
+			param.put("main_user", li.get(0).getTelnetUser());
+			param.put("main_pwd", li.get(0).getTelnetPwd());
+			param.put("back_host", li.get(0).getBackupDevName());
+			param.put("back_user", li.get(0).getBackupTelnetUser());
+			param.put("back_pwd", li.get(0).getBackupTelnetPwd());
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -393,16 +287,20 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				org.json.JSONObject result = new org.json.JSONObject(j.getData().toString());
 				Object main = result.getJSONArray(task.getMainSwitchboardIp());
 				List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
+				
 				Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
-				List<String> backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
+				List<String> backuplist = null;
+				if(backup!=null){
+					backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
+				}
 				
 				List<String> mainp = new ArrayList<String>();	//保存数据库中所有使用了的主汇聚端口
 				List<String> backp = new ArrayList<String>();	//保存数据库中所有使用了的备汇聚端口
 				//从数据库查出所有使用了的主备端口，然后分配未使用的端口，
 				List<DevOnlineTask> ports = deviceAutomationService.findPort(null);
 				for(int i=0;i<ports.size();i++){
-					mainp.add(ports.get(i).getMainSwitchboardIp());
-					backp.add(ports.get(i).getBackupSwitchboardIp());
+					mainp.add(ports.get(i).getMainSwitchboardPort());
+					backp.add(ports.get(i).getBackupSwitchboardPort());
 				}
 				int index = 0;
 				for(int i=0;i<mainlist.size();i++){
@@ -411,7 +309,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 						break;
 					}
 				}
-				mp = mainlist.size()>=index+1 ? mainlist.get(index+1) : "";
+				mp = mainlist.size()>=index ? mainlist.get(index) : "";
 				int index2 = 0;
 				for(int i=0;i<backuplist.size();i++){
 					if(!backp.contains(backuplist.get(i))){
@@ -419,7 +317,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 						break;
 					}
 				}
-				bp = backuplist.size()>=index2+1 ? backuplist.get(index2+1) : "";
+				bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
 			}
 			
 		}catch(Exception e){
@@ -448,17 +346,17 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	@SuppressWarnings("finally")
 	@Override
 	public Json CreatConverPage(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName) {
-		Json json = new Json();
+		/*Json json = new Json();
 		String info = "生成汇聚交换机配置 正常";
 		Integer code = 200;	
 		Boolean success = true;
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/CreatConverPage");
-			param.put("ipPortNameUserPass1", /*task.getMainSwitchboardIp()*/ main_ip6);//主汇聚交换机ip
-			param.put("ipPortNameUserPass2", /*task.getBackupSwitchboardIp()*/ back_ip6);//备汇聚交换机ip
-			param.put("mainSwitchboardPort", /*task.getMainSwitchboardPort()*/ main_port6);//主汇聚交换机端口
-			param.put("backupSwitchboardPort", /*task.getBackupSwitchboardPort()*/ back_port6);//备汇聚交换机端口
+			param.put("ipPortNameUserPass1", task.getMainSwitchboardIp() main_ip6);//主汇聚交换机ip
+			param.put("ipPortNameUserPass2", task.getBackupSwitchboardIp() back_ip6);//备汇聚交换机ip
+			param.put("mainSwitchboardPort", task.getMainSwitchboardPort() main_port6);//主汇聚交换机端口
+			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort() back_port6);//备汇聚交换机端口
 			param.put("main_host6", back_host6);
 			param.put("back_host6", back_host6);
 			param.put("main_user6", main_user6);
@@ -522,23 +420,24 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			json.setRet_info(info);
 			json.setSuccess(success);
 			return json;
-		}
+		}*/
+		return null;
 	}
 
 	@SuppressWarnings("finally")
 	@Override
 	public Json CreatAccessPage(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName) {
-		Json json = new Json();
+		/*Json json = new Json();
 		String info = "生成接入交换机配置正常";
 		Integer code = 200;	
 		Boolean success = true;
 		try{
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/CreatAccessPage");
-			param.put("ipPortName1", /*task.getMainSwitchboardIp()*/ main_ip7);//主ip	???
-			param.put("ipPortName2", /*task.getBackupSwitchboardIp()*/ back_ip7);//备ip	???
-			param.put("mainSwitchboardPort", /*task.getMainSwitchboardPort()*/ main_port7);//主端口	???
-			param.put("backupSwitchboardPort", /*task.getBackupSwitchboardPort()*/ back_port7);//备端口	???
+			param.put("ipPortName1", task.getMainSwitchboardIp() main_ip7);//主ip	???
+			param.put("ipPortName2", task.getBackupSwitchboardIp() back_ip7);//备ip	???
+			param.put("mainSwitchboardPort", task.getMainSwitchboardPort() main_port7);//主端口	???
+			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort() back_port7);//备端口	???
 			param.put("main_user7", main_host7);
 			param.put("back_user7", back_host7);
 			param.put("accHostName", task.getHostName());//接入设备对应的host名称
@@ -584,8 +483,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			t.setUpdate_user(userName);
 			writeProcess(t, 7, info, success, userName, null);
 			return json;
-		}
-		
+		}*/
+		return null;
 	}
 
 	@SuppressWarnings("finally")
@@ -597,7 +496,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 200;	
 		Boolean success = true;
 		try{
-			devExclusiveSwitchboardConnMapper.saveSwitchboardConn(conn);
+			if(conn!=null)
+				devExclusiveSwitchboardConnMapper.saveSwitchboardConn(conn);
 			deviceAutomationService.updateTask2(task, null, null, userName);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -620,20 +520,36 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json managementPort(String thirdPartUrl, String auth, String taskId, String userName) {
+	public Json managementPort(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
 		Json json = new Json();
 		String info = "请求写入接入交换机配置管理口IP正常";
 		Integer code = 200;	
 		Boolean success = true;
 		Object data = null;
 		try{
+			/*DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);*/
+			
+			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/managementPort");
-			param.put("host", host9);		//交换机的telnet登录IP地址
-			param.put("port", port9);		//交换机的telnet登录端口号
-			param.put("user", user9);		//交换机的telnet登录账号
-			param.put("password", pwd9);	//交换机的telnet登录密码
-			param.put("type", type9);		//交换机的类型，分别为4948E和5548
+			param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
+			param.put("port", d.getExclusiveSwitchboardPort());		//交换机的telnet登录端口号
+			param.put("type", task.getModelName());		//交换机的类型，分别为4948E和5548
+			
+			//通过带外交换机的ip和端口查询
+			/*DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);*/
+			param.put("user", null);		//交换机的telnet登录账号 没有
+			param.put("password", null);	//交换机的telnet登录密码 没有
+			
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -656,7 +572,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}finally{
 			//记录任务执行步骤
 			DevOnlineTask t = new DevOnlineTask();
-			t.setId(taskId);
+			t.setId(task.getId());
 			t.setUpdate_user(userName);
 			writeProcess(t, 7, info, success, userName, data!=null ? data.toString() : null);
 			
@@ -671,6 +587,38 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
+	public Json findDeviceIosVersion(String thirdPartUrl, String auth, DevOnlineTask task, String userName){
+		Json json = new Json();
+		try{
+			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
+			
+			JSONObject param = new JSONObject();
+			param.put("method_name", "/interchanger/v1/checkIos");
+			param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
+			param.put("port", Integer.parseInt(d.getExclusiveSwitchboardPort()));//交换机的telnet登录端口号
+			param.put("user", d.getTelnetUser()!=null ? d.getTelnetUser() : "");		//交换机的telnet登录账号
+			param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");	//交换机的telnet登录密码
+			param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
+			
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			json = (Json) JSONObject.parseObject(sb, Json.class);
+			if(json.getRet_code()==200){
+				List<String> l = JSONArray.parseArray(json.getData().toString(), String.class);
+				json.setData(l);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("查询交换机实际版本有问题");
+		}
+		return json;
+	}
+	
+	@SuppressWarnings("finally")
+	@Override
 	public Json checkIosVersion(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
 		Json json = new Json();
 		String info = "确认接入交换机ios版本正常";
@@ -678,26 +626,39 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		Object data = null;
 		try{
+			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
+			
 			//根据交换机品牌型号去查出最新的ios版本
 			DevIosVersions version = new DevIosVersions();
 			version.setBrandName(task.getBrandName());
 			version.setModelName(task.getModelName());
 			List<DevIosVersions> li = devIosVersionsMapper.findIosVersion(version);
+			
+			//查询交换机的版本 与最新版本作比较  ???
+			/*Json jj = findDeviceIosVersion(thirdPartUrl, auth, task, userName);
+			if(jj.getRet_code()==200){
+				List<String> l = (List<String>) jj.getData();
+				
+			}*/
+			
 			if(li!=null && li.size()>0){
 				String newVersion = li.get(0).getIosVersion();
 				//如果当前版本和最新版本不一致 则更新当前版本
-				if(newVersion.equalsIgnoreCase(task.getCurrentIosVersion())){
+				if(!newVersion.equalsIgnoreCase(task.getCurrentIosVersion())){
 					JSONObject param = new JSONObject();
 					param.put("method_name", "/interchanger/v1/updateIos");
-					param.put("host", host10);		//交换机的telnet登录IP地址
-					param.put("port", port10);		//交换机的telnet登录端口号
-					param.put("user", user10);		//交换机的telnet登录账号
-					param.put("password", pwd10);	//交换机的telnet登录密码
-					param.put("type", type10);		//交换机的类型，分别为4948E和5548
-					param.put("serverIp", serverIp10);		//更新源服务器的IP
-					param.put("sourceFileName", sourceFileName10);//源文件名
-					param.put("desFileName", desFileName10);	//目的文件名
-					param.put("iosName", /*newVersion*/ iosName10);		//IOS名称
+					param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
+					param.put("port", Integer.parseInt(d.getExclusiveSwitchboardPort()));//交换机的telnet登录端口号
+					param.put("user", d.getTelnetUser()!=null ? d.getTelnetUser() : "");		//交换机的telnet登录账号
+					param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");	//交换机的telnet登录密码
+					param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
+					param.put("serverIp", serverIp);		//更新源服务器的IP 配置文件静态获得
+					param.put("sourceFileName", newVersion);//源文件名 
+					param.put("desFileName", newVersion);	//目的文件名 
+					param.put("iosName", newVersion);		//IOS名称
 					param.put("updateId", task.getId());	//请求需用回调的ID updateId 
 					String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 					Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -736,7 +697,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	@SuppressWarnings("finally")
 	@Override
 	public Json writeAccessConfig(String thirdPartUrl, String auth, String taskId, String userName) {
-		Json json = new Json();
+		/*Json json = new Json();
 		String info = "写入接入交换机配置正常";
 		Integer code = 200;	
 		Boolean success = true;
@@ -792,7 +753,9 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			json.setSuccess(success);
 			json.setData(data);
 			return json;
-		}
+		}*/
+		return null;
+		
 	}
 
 	@SuppressWarnings("finally")
@@ -884,7 +847,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	@SuppressWarnings("finally")
 	@Override
 	public Json writeGatherConfig(String thirdPartUrl, String auth, String taskId, String userName) {
-		Json json = new Json();
+		/*Json json = new Json();
 		String info = "写入汇聚交换机配置正常";
 		Integer code = 200;	
 		Boolean success = true;
@@ -941,38 +904,57 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			json.setSuccess(success);
 			json.setData(data);
 			return json;
-		}
+		}*/
+		return null;
 	}
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json checkConfig(String thirdPartUrl, String auth, String taskId, String userName) {
+	public Json checkConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
 		Json json = new Json();
 		String info = "校验配置正常";
 		Integer code = 200;	
 		Boolean success = true;
 		Object data = null;
 		try{
-			//查询出汇聚交换机配置信息
-			DevScriptConfig config = new DevScriptConfig();
-			config.setDevType(2);
-			config.setObjectId(taskId);
-			config.setScriptOrder(1);
-			List<DevScriptConfig> li = devScriptConfigMapper.findDevScriptConfig(config);
-			List<String> configs = null;
-			for(int i=0;i<li.size();i++){
-				configs = new ArrayList<String>();
-				configs.add(li.get(i).getScriptInfo());
-			}
+			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
+			
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			
+			/*DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> ds = deviceAutomationService.findAreaIp(area);*/
 			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/checkConfig");
-			param.put("host", host15);		//交换机的telnet登录IP地址
-			param.put("port", port15);		//交换机的telnet登录端口号
-			param.put("user", user15);		//交换机的telnet登录账号
-			param.put("password", pwd15);	//交换机的telnet登录密码
-			param.put("type", type15);		//交换机的类型，分别为4948E和5548
-			param.put("commands", configs);	//需要写入接入交换机的命令列表集合
+			/*param.put("host", task.getMainSwitchboardIp());		//交换机的telnet登录IP地址	
+			param.put("port", ds.get(0).getTelnetPort());		//交换机的telnet登录端口号	
+			param.put("user", ds.get(0).getTelnetUser());		//交换机的telnet登录账号	
+			param.put("password", ds.get(0).getTelnetPwd());	//交换机的telnet登录密码	
+			param.put("type", ds.get(0).getDevType());		//交换机的类型，分别为4948E和5548	
+			param.put("commands", "");					//需要写入接入交换机的命令列表集合
+*/			
+			param.put("deviceBrand", task.getBrandName());	//品牌型号，列如cisco,huawei,h3c等
+			param.put("ip", task.getManagerIp());	//交换机的telnet登录IP地址	
+			param.put("ipPortNameUserPass1", task.getMainSwitchboardIp());//主ip	
+			param.put("ipPortNameUserPass2", task.getBackupSwitchboardIp());//备ip	
+			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	
+			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	
+			param.put("main_user", li.get(0).getTelnetUser());
+			param.put("back_user", li.get(0).getBackupTelnetUser());
+			param.put("main_pwd", li.get(0).getTelnetPwd());
+			param.put("back_pwd", li.get(0).getBackupTelnetPwd());
+			param.put("telnet_port", li.get(0).getTelnetPort());
+			param.put("backup_telnet_port", li.get(0).getBackupTelnetPort());
+			param.put("backup_type", li.get(0).getBackupDevType());
+			param.put("type", li.get(0).getDevType());	//汇聚交换机的类型，分别为N7KA、N7KB、65A、65B，四种类型  
+			
+			
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -995,7 +977,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}finally{
 			//记录任务执行步骤
 			DevOnlineTask t = new DevOnlineTask();
-			t.setId(taskId);
+			t.setId(task.getId());
 			t.setUpdate_user(userName);
 			writeProcess(t, 13, info, success, userName, data!=null ? data.toString() : null);
 			
@@ -1032,20 +1014,30 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		Object data = null;
 		try{
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			
+			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/writeNewAccessConfig");
-			param.put("deviceBrand", task.getModelName());	//品牌型号，列如cisco,huawei,h3c等
-			param.put("host", host11);	//交换机的telnet登录IP地址
-			param.put("type", type11);	//交换机的类型，分别为4948E和5548
-			param.put("ipPortName1", task.getMainSwitchboardIp());//主ip	???
-			param.put("ipPortName2", task.getBackupSwitchboardIp());//备ip	???
-			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	???
-			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	???
-			param.put("main_host", main_host6);
-			param.put("back_host", back_host6);
+			param.put("deviceBrand", task.getBrandName());	//品牌型号，列如cisco,huawei,h3c等
+			param.put("host", d.getExclusiveSwitchboardIp());	//交换机的telnet登录IP地址
+			param.put("port", d.getExclusiveSwitchboardPort());//交换机的telnet登录port
+			param.put("type", d.getExclusiveSwitchboardType());	//交换机的类型，分别为4948E和5548
+			param.put("ipPortName1", task.getMainSwitchboardIp());//主ip 
+			param.put("ipPortName2", task.getBackupSwitchboardIp());//备ip 
+			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口 
+			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口 
+			param.put("main_host", li.get(0).getDevName());
+			param.put("back_host", li.get(0).getBackupDevName());
 			param.put("accHostName", task.getHostName());//接入设备对应的host名称
 			param.put("vlanNu", task.getVlan());//接入设备的管理Vlan号
-			param.put("description", "");//接入设备的描述配置信息
+			param.put("description", "网络室门户系统交换机模块请求写入接入交换机配置");//接入设备的描述配置信息
 			param.put("newIp", task.getManagerIp());//在看板系统上申请的IP地址
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -1090,24 +1082,37 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		Object data = null;
 		try{
+			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
+			
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			area.setAreaName(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/writeNewGatherConfig");
-			param.put("deviceBrand", task.getModelName());	//品牌型号，列如cisco,huawei,h3c等
-			param.put("host", host11);	//交换机的telnet登录IP地址
-			param.put("type", type11);	//汇聚交换机的类型，分别为N7KA、N7KB、65A、65B，四种类型
-			param.put("ipPortNameUserPass1", task.getMainSwitchboardIp());//主ip	???
-			param.put("ipPortNameUserPass2", task.getBackupSwitchboardIp());//备ip	???
-			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	???
-			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	???
-			param.put("main_user", main_user6);
-			param.put("back_user", back_user6);
-			param.put("main_host", main_host6);
-			param.put("back_host", back_host6);
-			param.put("main_pwd", main_pwd6);
-			param.put("back_pwd", back_pwd6);
+			param.put("deviceBrand", task.getBrandName());	//品牌型号，列如cisco,huawei,h3c等
+			param.put("host", task.getMainSwitchboardIp());	//交换机的telnet登录IP地址	
+			param.put("type", li.get(0).getDevType());	//汇聚交换机的类型，分别为N7KA、N7KB、65A、65B，四种类型  
+			param.put("ipPortNameUserPass1", task.getMainSwitchboardIp());//主ip	
+			param.put("ipPortNameUserPass2", task.getBackupSwitchboardIp());//备ip	
+			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	
+			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口	
+			param.put("main_user", li.get(0).getTelnetUser());
+			param.put("back_user", li.get(0).getBackupTelnetUser());
+			param.put("main_host", li.get(0).getDevName());
+			param.put("back_host", li.get(0).getBackupDevName());
+			param.put("main_pwd", li.get(0).getTelnetPwd());
+			param.put("back_pwd", li.get(0).getBackupTelnetPwd());
+			param.put("telnet_port", li.get(0).getTelnetPort());
+			param.put("backup_telnet_port", li.get(0).getBackupTelnetPort());
 			param.put("accHostname", task.getHostName());//接入设备对应的host名称
-			param.put("NewType", "4948E");//接入交换机的设备类型，分别为4948E和5548
+			param.put("NewType", task.getModelName());//接入交换机的设备类型，分别为4948E和5548
 			param.put("newip", task.getManagerIp());//在看板系统上申请的IP地址
+			param.put("vlanNu", task.getVlan());
+			param.put("accHostName", task.getHostName());
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){

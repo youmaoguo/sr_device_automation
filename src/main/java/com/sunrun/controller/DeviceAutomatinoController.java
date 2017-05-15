@@ -275,12 +275,20 @@ public class DeviceAutomatinoController extends BaseController{
 			DevExclusiveSwitchboardConn conn = new DevExclusiveSwitchboardConn();
 			DevOnlineTask task = new DevOnlineTask();
 			int switchState = obj.getIntValue("switchState");
+			String taskId = obj.getString("taskId");
 
 			//查询出该任务执行到第几步骤 然后分多线程继续执行之后的步骤（写入接入交换机配置管理口ip、更新ios版本、写入接入交换机配置信息）
 			Integer executeStep = null;
+			List<DevTaskExecute> li = deviceAutomationService.findTaskExecute(taskId, "execute_step");
+			if(li!=null && li.size()>0){
+				executeStep = li.get(0).getExecuteStep();
+				Integer executeState = li.get(0).getTaskExecuteState();
+				if(executeState==3){	//3:成功，就要从下一步开始
+					executeStep += 1;
+				}
+			}
 			if(switchState==1){
 				String vlan = obj.getString("vlan");
-				String taskId = obj.getString("taskId");
 				String exclusiveSwitchboardIp = obj.getString("exclusiveSwitchboardIp");
 				String exclusiveSwitchboardPort = obj.getString("exclusiveSwitchboardPort");
 				String exclusiveSwitchboardOrder = obj.getString("exclusiveSwitchboardOrder");
@@ -288,38 +296,56 @@ public class DeviceAutomatinoController extends BaseController{
 				String modelName = obj.getString("modelName");
 				String currentIosVersion = obj.getString("currentIosVersion");
 				String updateUser = obj.getString("updateUser");
-				String exclusiveSwitchboardInfo = "第"+exclusiveSwitchboardOrder+"口-"+brandName+"-"+modelName;
+				String exclusiveSwitchboardInfo = "";
+				if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
+					exclusiveSwitchboardInfo = "第"+exclusiveSwitchboardOrder+"口-"+brandName+"-"+modelName;
 				
 				task.setSwitchState(switchState);
-				task.setVlan(vlan);
-				task.setId(taskId);
-				task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
-				task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-				task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
-				task.setBrandName(brandName);
-				task.setModelName(modelName);
+				if(!StringUtils.isEmpty(vlan))
+					task.setVlan(vlan);
+				if(!StringUtils.isEmpty(taskId))
+					task.setId(taskId);
+				if(!StringUtils.isEmpty(exclusiveSwitchboardIp))
+					task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
+				if(!StringUtils.isEmpty(exclusiveSwitchboardPort))
+					task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
+				if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
+					task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
+				
+				if(!StringUtils.isEmpty(brandName))
+					task.setBrandName(brandName);
+				if(!StringUtils.isEmpty(modelName))
+					task.setModelName(modelName);
+				if(!StringUtils.isEmpty(currentIosVersion))
 				task.setCurrentIosVersion(currentIosVersion);
 				task.setUpdate_user(updateUser);
-				conn.setBrandName(brandName);
+				
+				if(!StringUtils.isEmpty(brandName))
+					conn.setBrandName(brandName);
 				conn.setCreate_user(updateUser);
-				conn.setCurrentIosVersion(currentIosVersion);
-				conn.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
-				conn.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
-				conn.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
+				if(!StringUtils.isEmpty(currentIosVersion))
+					conn.setCurrentIosVersion(currentIosVersion);
+				if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
+					conn.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
+				if(!StringUtils.isEmpty(exclusiveSwitchboardIp))
+					conn.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
+				if(!StringUtils.isEmpty(exclusiveSwitchboardPort))
+					conn.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
 				conn.setId(StringUtil.getUuid());
-				conn.setModelName(modelName);
+				if(!StringUtils.isEmpty(modelName))
+					conn.setModelName(modelName);
+				if(StringUtils.isEmpty(brandName) || StringUtils.isEmpty(currentIosVersion) || StringUtils.isEmpty(exclusiveSwitchboardInfo)
+						|| StringUtils.isEmpty(exclusiveSwitchboardIp) || StringUtils.isEmpty(exclusiveSwitchboardPort))
+					conn = null;
+				
 				addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
 				
-				List<DevTaskExecute> li = deviceAutomationService.findTaskExecute(taskId, "execute_step");
-				if(li!=null && li.size()>0){
-					executeStep = li.get(0).getExecuteStep();
-					Integer executeState = li.get(0).getTaskExecuteState();
-					if(executeState==3){	//3:成功，就要从下一步开始
-						executeStep += 1;
-					}
-				}
 			}else if(switchState==2){
-				executeStep = 12;
+				
+			}
+			List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
+			if(l!=null && l.size()>0){
+				task = l.get(0);
 			}
 			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep, conn); 
 			Thread t = new Thread(addTask);
@@ -457,16 +483,16 @@ public class DeviceAutomatinoController extends BaseController{
 					List<DevOnlineTask> view = deviceAutomationService.findPort(taskId);
 					if(view!=null && view.size()>0){
 						DevOnlineTask task = view.get(0);
-						content += "<tr height=\"80\" style=\"mso-height-source:userset;height:60.0pt\">";
-						content += "<td height=\"80\" class=\"xl66\" width=\"85\" style=\"height:60.0pt;border-top:none;width:64pt\">"+task.getBrandName()+"</td>";
-						content += "<td class=\"xl66\" width=\"72\" style=\"border-top:none;border-left:none;width:54pt\">"+task.getModelName()+"</td>";
-						content += "<td class=\"xl66\" width=\"125\" style=\"border-top:none;border-left:none;width:94pt\">"+task.getAreaName()+"</td>";
-						content += "<td class=\"xl69\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getMainSwitchboardIp()+"<font class=\"font7\">/"+task.getMainSwitchboardPort()+"</font></td>";
-						content += "<td class=\"xl67\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getBackupSwitchboardIp()+"<font class=\"font7\">/"+task.getBackupSwitchboardPort()+"</font></td>";
-						content += "<td class=\"xl68\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\"><font class=\"font6\">"+task.getDevOnlineRack()+"</font></td>";
-						content += "<td class=\"xl66\" width=\"244\" style=\"border-top:none;border-left:none;width:183pt\">"+task.getHostName()+"</td>";
-						content += "<td class=\"xl66\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getManagerIp()+"</td>";
-						content += "<td class=\"xl66\" width=\"238\" style=\"border-top:none;border-left:none;width:179pt\">"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
+						content += "<tr height='80' style='mso-height-source:userset;height:60.0pt'>";
+						content += "<td height='80' class='xl66' width='85' style='height:60.0pt;border-top:none;width:64pt'>"+task.getBrandName()+"</td>";
+						content += "<td class='xl66' width='72' style='border-top:none;border-left:none;width:54pt'>"+task.getModelName()+"</td>";
+						content += "<td class='xl66' width='125' style='border-top:none;border-left:none;width:94pt'>"+task.getAreaName()+"</td>";
+						content += "<td class='xl69' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getMainSwitchboardIp()+":"+"<font class='font7'>/"+task.getMainSwitchboardPort()+"</font></td>";
+						content += "<td class='xl67' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getBackupSwitchboardIp()+":"+"<font class='font7'>/"+task.getBackupSwitchboardPort()+"</font></td>";
+						content += "<td class='xl68' width='165' style='border-top:none;border-left:none;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
+						content += "<td class='xl66' width='244' style='border-top:none;border-left:none;width:183pt'>"+task.getHostName()+"</td>";
+						content += "<td class='xl66' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getManagerIp()+"</td>";
+						content += "<td class='xl66' width='238' style='border-top:none;border-left:none;width:179pt'>"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
 					}
 				}
 				content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
@@ -531,16 +557,16 @@ public class DeviceAutomatinoController extends BaseController{
 					List<DevOnlineTask> view = deviceAutomationService.findPort(taskId);
 					if(view!=null && view.size()>0){
 						DevOnlineTask task = view.get(0);
-						content += "<tr height=\"80\" style=\"mso-height-source:userset;height:60.0pt\">";
-						content += "<td height=\"80\" class=\"xl66\" width=\"85\" style=\"height:60.0pt;border-top:none;width:64pt\">"+task.getBrandName()+"</td>";
-						content += "<td class=\"xl66\" width=\"72\" style=\"border-top:none;border-left:none;width:54pt\">"+task.getModelName()+"</td>";
-						content += "<td class=\"xl66\" width=\"125\" style=\"border-top:none;border-left:none;width:94pt\">"+task.getAreaName()+"</td>";
-						content += "<td class=\"xl69\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getMainSwitchboardIp()+"<font class=\"font7\">/"+task.getMainSwitchboardPort()+"</font></td>";
-						content += "<td class=\"xl67\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getBackupSwitchboardIp()+"<font class=\"font7\">/"+task.getBackupSwitchboardPort()+"</font></td>";
-						content += "<td class=\"xl68\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\"><font class=\"font6\">"+task.getDevOnlineRack()+"</font></td>";
-						content += "<td class=\"xl66\" width=\"244\" style=\"border-top:none;border-left:none;width:183pt\">"+task.getHostName()+"</td>";
-						content += "<td class=\"xl66\" width=\"165\" style=\"border-top:none;border-left:none;width:124pt\">"+task.getManagerIp()+"</td>";
-						content += "<td class=\"xl66\" width=\"238\" style=\"border-top:none;border-left:none;width:179pt\">"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
+						content += "<tr height='80' style='mso-height-source:userset;height:60.0pt'>";
+						content += "<td height='80' class='xl66' width='85' style='height:60.0pt;border-top:none;width:64pt'>"+task.getBrandName()+"</td>";
+						content += "<td class='xl66' width='72' style='border-top:none;border-left:none;width:54pt'>"+task.getModelName()+"</td>";
+						content += "<td class='xl66' width='125' style='border-top:none;border-left:none;width:94pt'>"+task.getAreaName()+"</td>";
+						content += "<td class='xl69' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>/"+task.getMainSwitchboardPort()+"</font></td>";
+						content += "<td class='xl67' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>/"+task.getBackupSwitchboardPort()+"</font></td>";
+						content += "<td class='xl68' width='165' style='border-top:none;border-left:none;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
+						content += "<td class='xl66' width='244' style='border-top:none;border-left:none;width:183pt'>"+task.getHostName()+"</td>";
+						content += "<td class='xl66' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getManagerIp()+"</td>";
+						content += "<td class='xl66' width='238' style='border-top:none;border-left:none;width:179pt'>"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
 					}
 				}
 				content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
@@ -580,7 +606,8 @@ public class DeviceAutomatinoController extends BaseController{
 			DevExclusiveSwitchboardInfo bean = new DevExclusiveSwitchboardInfo();
 			bean.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
 			bean.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-			json = deviceAutomationService.findKvmInfo(bean, thirdPartUrl, auth);
+			//json = deviceAutomationService.findKvmInfo(bean, thirdPartUrl, auth);
+			json.setSuccess(true);json.setRet_code(200);json.setData(null);json.setRet_info("ok");
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error(json.getRet_info());
@@ -592,6 +619,51 @@ public class DeviceAutomatinoController extends BaseController{
 		response(json, response, request);
 	}
 	
+	/**
+	 * ios版本回调
+	 * @param request
+	 * @param response
+	 * @param jsonStr
+	 * @param auth
+	 */
+	@RequestMapping(value = "/deviceAutomation/v1/callbackIosInfo", method = RequestMethod.POST, consumes="application/json", produces="application/json")
+	public void callbackIosinfo(HttpServletRequest request, HttpServletResponse response,@RequestBody String jsonStr, @RequestHeader("Authorization") String auth){
+		Json json = new Json();
+		try{
+			JSONObject obj = JSONObject.parseObject(jsonStr);
+			Integer code = obj.getIntValue("ret_code");
+			String info = obj.getString("ret_info");
+			String taskId = obj.getString("taskId");
+			logger.info("ios版本回调入参事："+jsonStr.toString());
+			
+			DevOnlineTask task = new DevOnlineTask();
+			task.setId(taskId);
+			task.setAccessVersionWrite(code==201 ? 1 : 2);
+			
+			DevTaskExecute execute = new DevTaskExecute();
+			execute.setId(StringUtil.getUuid());
+			execute.setTaskId(task.getId());
+			execute.setExecuteStep(8);
+			execute.setTaskOrder(8);
+			execute.setTaskDescribe(code==201 ? "ios版本回调成功" : "ios版本回调失败"); 
+			execute.setTaskExecuteState(code==201 ? 3 : 4);
+			execute.setCreate_user("");
+			execute.setTaskExecuteNote(null);
+			deviceAutomationService.updateTask2(task, execute, 8, "");
+			
+			json.setRet_code(201);
+			json.setRet_info("ios版本回调成功");
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error(json.getRet_info());
+			json.setRet_code(500);
+			json.setRet_info("ios版本回调出错了");
+			json.setSuccess(false);
+		}
+		//返回数据
+		response(json, response, request);
+		
+	}
 	
 
 }

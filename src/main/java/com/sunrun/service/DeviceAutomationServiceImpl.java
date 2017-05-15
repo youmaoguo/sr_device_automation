@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sunrun.entity.DevAreaSwitchboardIp;
 import com.sunrun.entity.DevBrandModel;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineBatchItil;
@@ -22,6 +23,7 @@ import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevOnlineTaskItil;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
+import com.sunrun.mapper.DevAreaSwitchboardIpMapper;
 import com.sunrun.mapper.DevBrandModelMapper;
 import com.sunrun.mapper.DevExclusiveSwitchboardConnMapper;
 import com.sunrun.mapper.DevExclusiveSwitchboardInfoMapper;
@@ -55,6 +57,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	private DevExclusiveSwitchboardInfoMapper devExclusiveSwitchboardInfoMapper;
 	@Resource
 	private DevBrandModelMapper devBrandModelMapper; 
+	@Resource
+	private DevAreaSwitchboardIpMapper devAreaSwitchboardIpMapper;
 	
 	@Transactional
 	@Override
@@ -268,7 +272,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			String sr = fmt.format(d);
 			paramterObj.put("plannedEnd", sr);
 			String sb = ITILRestfulInterface.createITIL(itil, paramterObj, "POST", "Basic MDEwMzQwOTA6");
-			Json j = JSONObject.parseObject(sb, Json.class);
+			System.out.println(sb.toString());
+			Json j = JSONObject.parseObject(sb.toString(), Json.class);
 			if(j.getRet_code()!=0){
 				b = false;
 			}else{
@@ -337,8 +342,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				param.put("method_name", "/interchanger/v1/checkModel");
 				param.put("host", d.getExclusiveSwitchboardIp());
 				param.put("port", d.getExclusiveSwitchboardPort());
-				param.put("user", "");
-				param.put("password", "");
+				param.put("user", d.getTelnetUser()!=null ?d.getTelnetUser() : null);
+				param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : null);
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "post", auth);
 				Json json = JSONObject.parseObject(sb, Json.class);
 				if(json.getRet_code()==200){
@@ -379,6 +384,18 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		j.setSuccess(success);
 		j.setData(li); 
 		return j;
+	}
+
+
+	@Override
+	public List<DevAreaSwitchboardIp> findAreaIp(DevAreaSwitchboardIp info) {
+		return devAreaSwitchboardIpMapper.findAreaIp(info);
+	}
+
+
+	@Override
+	public List<DevExclusiveSwitchboardInfo> findDevExclusiveSwitchboardInfo(DevExclusiveSwitchboardInfo info) {
+		return devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
 	}
 	
 
