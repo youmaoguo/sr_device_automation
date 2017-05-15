@@ -2,6 +2,7 @@ package com.sunrun.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -41,6 +43,12 @@ import com.sunrun.util.StringUtil;
 @Service("deviceAutomationService")
 public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	private static final Logger logger = LoggerFactory.getLogger(DeviceAutomationServiceImpl.class);
+	
+	@Value("${itil.user}")
+	private String itilUser;
+	@Value("${itil.pwd}")
+	private String itilPwd;
+	
 	@Resource
 	private DevOnlineBatchItilMapper devOnlineBatchItilMapper;
 	@Resource
@@ -257,12 +265,12 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		boolean b = true;
 		try{
 			JSONObject paramterObj = new JSONObject();
-			paramterObj.put("assignee", "01034090");
+			paramterObj.put("assignee", "01091231");
 			paramterObj.put("title", "上线交换机申请itil工单");
 			paramterObj.put("category", "流程管理");
 			paramterObj.put("subcategory", "ITIL系统");
 			paramterObj.put("businessArea", "其他");
-			paramterObj.put("requestor", "01034090");
+			paramterObj.put("requestor", "01091231");
 			paramterObj.put("description", "请求新建接口genrequests");
 			paramterObj.put("sourceId", "portal");
 			
@@ -271,13 +279,13 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			String sr = fmt.format(d);
 			paramterObj.put("plannedEnd", sr);
-			String sb = ITILRestfulInterface.createITIL(itil, paramterObj, "POST", "Basic MDEwMzQwOTA6");
+			String sb = ITILRestfulInterface.createITIL(itil, paramterObj, "POST", StringUtil.basic64Encord(itilUser, itilPwd));
 			System.out.println(sb.toString());
 			Json j = JSONObject.parseObject(sb.toString(), Json.class);
-			if(j.getRet_code()!=0){
+			if(j.getRet_code()!=200 || j.getSuccess()==false){
 				b = false;
 			}else{
-				ItilGenrequestBo bo = (ItilGenrequestBo) j.getData();
+				ItilGenrequestBo bo = JSONObject.parseObject(j.getData().toString(), ItilGenrequestBo.class);
 				DevOnlineBatchItil it = new DevOnlineBatchItil();
 				it.setItilNumber(!StringUtils.isEmpty(bo.getNumber()) ? bo.getNumber() : null);
 				it.setItilAssignee(!StringUtils.isEmpty(bo.getAssignee()) ? bo.getAssignee() : null);
@@ -287,7 +295,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				it.setItilStatus(!StringUtils.isEmpty(bo.getStatus()) ? bo.getStatus() : null);
 				it.setItilRequestor(!StringUtils.isEmpty(bo.getRequestor()) ? bo.getRequestor() : null);
 				it.setItilTitle(!StringUtils.isEmpty(bo.getTitle()) ? bo.getTitle() : null);
-				it.setItilDescription(!StringUtils.isEmpty(bo.getDescription()) ? bo.getDescription().toString() : null);
+				it.setItilDescription(!StringUtils.isEmpty(bo.getDescription()) ? Arrays.toString(bo.getDescription()) : null);
 				it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getPlannedEnd()) ? bo.getPlannedEnd() : null);
 				it.setId(StringUtil.getUuid());
 				it.setCreate_user(updateUser);
