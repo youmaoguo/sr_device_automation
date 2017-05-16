@@ -75,6 +75,7 @@ public class DeviceAutomatinoController extends BaseController{
 		String info = "添加交换机设备成功";
 		Integer code = 201;	//201:用户新建或修改数据成功
 		Boolean success = true;
+		logger.info("添加上线交换机设备addSwitchDevice接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String brandName = obj.getString("brandName");
@@ -159,7 +160,7 @@ public class DeviceAutomatinoController extends BaseController{
 		String info = "查询批次任务交换机设备成功";
 		Integer code = 200;	//200:用户查询数据成功
 		Boolean success = true;
-		System.out.println("========"+ request.getQueryString());
+		logger.info("查询task任务findSwitchDevice接口入参是:"+ request.getQueryString());
 		try{
 			List<DevOnlineBatchTaskView> list = new ArrayList<DevOnlineBatchTaskView>();
 			DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
@@ -213,6 +214,7 @@ public class DeviceAutomatinoController extends BaseController{
 		String info = "删除成功";
 		Integer code = 201;	//201:用户新建或修改数据成功
 		Boolean success = true;
+		logger.info("删除交换机设备deleteSwitchDevice接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String updateUser = obj.getString("updateUser");
@@ -271,6 +273,7 @@ public class DeviceAutomatinoController extends BaseController{
 		String info = "执行上线交换机成功";
 		Integer code = 201;	//201:用户新建或修改数据成功
 		Boolean success = true;
+		logger.info("执行上线交换机executeSwitchDevice接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			DevExclusiveSwitchboardConn conn = new DevExclusiveSwitchboardConn();
@@ -400,6 +403,7 @@ public class DeviceAutomatinoController extends BaseController{
 	@RequestMapping(value = "/deviceAutomation/v1/switchDeviceITIL", method = {RequestMethod.POST}, produces="application/json", consumes="application/json")
 	public void switchDeviceITIL(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, HttpServletRequest request,HttpServletResponse response){
 		Json json = new Json();
+		logger.info("上线交换机ITIL工单switchDeviceITIL接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String itilPlannedEnd = obj.getString("itilPlannedEnd");
@@ -433,6 +437,7 @@ public class DeviceAutomatinoController extends BaseController{
 		Integer code = 200;	//200
 		Boolean success = true;
 		Map<String, Object> data = new HashMap<String, Object>();
+		logger.info("上线交换机邮件发送sendEmailswitchDevice接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			JSONArray arr = obj.getJSONArray("taskId");
@@ -442,6 +447,7 @@ public class DeviceAutomatinoController extends BaseController{
 			String title = obj.getString("mailTitle");
 			String content = obj.getString("mailContxt");
 			JSONArray array = obj.getJSONArray("mailConsignee");
+			String userName = obj.getString("email");
 			String emails = "";//收件人邮箱
 			String names = "";
 			for(int i=0;i<array.size();i++){
@@ -453,7 +459,7 @@ public class DeviceAutomatinoController extends BaseController{
 			}
 			
 			//调用sr_public工程发送邮件通过接口方法
-			Json j = addSwitchDeviceService.SendEmailswitchDevice(sendEmail, auth, taskId, emails, names, title, content, "");
+			Json j = addSwitchDeviceService.SendEmailswitchDevice(sendEmail, auth, taskId, emails, names, title, content, userName);
 			code = j.getRet_code();
 			info = j.getRet_info();
 			success = j.getSuccess();
@@ -482,6 +488,7 @@ public class DeviceAutomatinoController extends BaseController{
 	@RequestMapping(value = "/deviceAutomation/v1/addEmailswitchDeviceEmail", method = {RequestMethod.GET}, produces="application/json")
 	public void addEmailswitchDeviceEmail(@RequestParam(value = "taskId", required = false) String taskId, 
 											HttpServletRequest request,HttpServletResponse response/*, @RequestHeader("Authorization") String auth*/){
+		logger.info("上线交换机生成邮件内容addEmailswitchDeviceEmail接口入参是："+request.getQueryString());
 		Json json = new Json();
 		String info = "上线交换机生成邮件内容成功";
 		Integer code = 200;	//200
@@ -496,7 +503,7 @@ public class DeviceAutomatinoController extends BaseController{
 			//返回数据
 			response(json, response, request);
 			return;
-		} ;
+		}
 
 		SysSendEmailBean sysSendEmailBean=new SysSendEmailBean();
 		
@@ -527,8 +534,8 @@ public class DeviceAutomatinoController extends BaseController{
 				  
 			//	data.put("mailConsignee", "");	//收件者的邮箱信息 暂时待定？？？
 				SysSendEmailBean.MailConsignee mailConsignee=  sysSendEmailBean.new MailConsignee();
-				mailConsignee.setMailConsigneeEmail("123@12.com");
-				mailConsignee.setMailConsigneeName("张三");
+				mailConsignee.setMailConsigneeEmail("xubocmb@cmbchina.com");
+				mailConsignee.setMailConsigneeName("许博");
 				mailConsignee.setMailConsigneeSelected(1);
 				sysSendEmailBean.mailConsignee.add(mailConsignee);
 				
@@ -627,6 +634,7 @@ public class DeviceAutomatinoController extends BaseController{
 						@RequestParam(value = "exclusiveSwitchboardIp", required = false) String exclusiveSwitchboardIp,
 						@RequestParam(value = "exclusiveSwitchboardPort", required = false) String exclusiveSwitchboardPort){
 		Json json = new Json();
+		logger.info("kvm接口所对应的设备型号信息kvmInfo接口入参是："+request.getQueryString());
 		try{
 			DevExclusiveSwitchboardInfo bean = new DevExclusiveSwitchboardInfo();
 			bean.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
@@ -654,6 +662,7 @@ public class DeviceAutomatinoController extends BaseController{
 	@RequestMapping(value = "/deviceAutomation/v1/callbackIosInfo", method = RequestMethod.POST, consumes="application/json", produces="application/json")
 	public void callbackIosinfo(HttpServletRequest request, HttpServletResponse response,@RequestBody String jsonStr, @RequestHeader("Authorization") String auth){
 		Json json = new Json();
+		logger.info("ios版本回调callbackIosInfo接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			Integer code = obj.getIntValue("ret_code");

@@ -23,6 +23,7 @@ import com.sunrun.entity.DevIosVersions;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevScriptConfig;
 import com.sunrun.entity.DevTaskExecute;
+import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.mapper.DevExclusiveSwitchboardConnMapper;
 import com.sunrun.mapper.DevIosVersionsMapper;
 import com.sunrun.mapper.DevScriptConfigMapper;
@@ -815,6 +816,23 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 201;	
 		Boolean success = true;
 		try{
+			//每隔task任务不能重复申请itil
+			for(int i=0;i<taskId.length;i++){
+				DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
+				batchView.setId(taskId[i]);
+				DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
+				if(view!=null && !StringUtils.isEmpty(view.getItilNumber())){
+					success = false;
+					break;
+				}
+			}
+			if(!success){
+				json.setRet_code(500);
+				json.setRet_info("已有工单号的task任务不能重复申请ITIL");
+				json.setSuccess(false);
+				return json;
+			}
+			
 			boolean b = deviceAutomationService.switchDeviceITIL(thirdPartUrl, itilPlannedEnd, userName, taskId);
 			if(!b){
 				info = "上线交换机ITIL工单申请程序不正常";
