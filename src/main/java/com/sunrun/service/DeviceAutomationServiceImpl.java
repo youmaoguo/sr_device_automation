@@ -49,6 +49,9 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	@Value("${itil.pwd}")
 	private String itilPwd;
 	
+	@Value("${itil.wsURL}")
+	private String wsURL;
+	
 	@Resource
 	private DevOnlineBatchItilMapper devOnlineBatchItilMapper;
 	@Resource
@@ -259,9 +262,9 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		return b;
 	}
  
-	@Transactional
+	/*@Transactional
 	@Override
-	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId) {
+	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId, String usercode) {
 		boolean b = true;
 		try{
 			JSONObject paramterObj = new JSONObject();
@@ -316,6 +319,46 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("申请ITIL工单处理业务出错");
+			return false;
+		}
+		return b;
+	}*/
+	
+	@Transactional
+	@Override
+	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId, String usercode) {
+		boolean b = true;
+		try{
+			String sb = ITILRestfulInterface.createChangeITIL(wsURL, usercode, "", itilPlannedEnd);
+			Json j = JSONObject.parseObject(sb, Json.class);
+			if(j.getRet_code()!=201 || j.getSuccess()==false){
+				b = false;
+			}else{
+				JSONObject bo = JSONObject.parseObject(j.getData().toString());
+				DevOnlineBatchItil it = new DevOnlineBatchItil();
+				it.setItilNumber(!StringUtils.isEmpty(bo.getString("getChangeNumber")) ? bo.getString("getChangeNumber") : null);
+				it.setItilAssignee(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
+				it.setItilStatus(!StringUtils.isEmpty(bo.getString("cMBStatus")) ? bo.getString("cMBStatus") : null);
+				it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getString("plannedEndDate")) ? bo.getString("plannedEndDate") : null);
+				it.setId(StringUtil.getUuid());
+				it.setCreate_user(updateUser);
+				//往工单批次表插入数据
+				devOnlineBatchItilMapper.saveDevOnlineBatch(it); 
+				
+				//往工单和任务对应关系表插入数据
+				for(int i=0;i<taskId.length;i++){
+					DevOnlineTaskItil taskItil = new DevOnlineTaskItil();
+					taskItil.setId(StringUtil.getUuid());
+					taskItil.setDevOnlineTaskId(taskId[i]);
+					taskItil.setItilNumber(bo.getString("getChangeNumber"));
+					taskItil.setCreate_user(updateUser);
+					devOnlineTaskItilMapper.saveTaskItil(taskItil);
+				}
+				
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("申请ITIL变更工单处理业务出错");
 			return false;
 		}
 		return b;

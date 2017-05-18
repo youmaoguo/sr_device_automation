@@ -143,7 +143,7 @@ public interface AddSwitchDeviceService {
 	 * @param taskId
 	 * @return
 	 */
-	Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String[] taskId, String userName);
+	Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String[] taskId, String userName, String usercode);
 	
 	/**添加设备第14步：
 	 * 写入汇聚交换机配置

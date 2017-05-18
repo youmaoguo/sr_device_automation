@@ -810,7 +810,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String[] taskId, String userName) {
+	public Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String[] taskId, String userName, String usercode) {
 		Json json = new Json();
 		String info = "上线交换机ITIL工单申请正常";
 		Integer code = 201;	
@@ -833,7 +833,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				return json;
 			}
 			
-			boolean b = deviceAutomationService.switchDeviceITIL(thirdPartUrl, itilPlannedEnd, userName, taskId);
+			boolean b = deviceAutomationService.switchDeviceITIL(thirdPartUrl, itilPlannedEnd, userName, taskId, usercode);
 			if(!b){
 				info = "上线交换机ITIL工单申请程序不正常";
 				code = 500;
