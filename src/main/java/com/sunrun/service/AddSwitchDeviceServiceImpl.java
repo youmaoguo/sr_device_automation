@@ -779,7 +779,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("log", content);
 			
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
-			Json j = (Json) JSONObject.parseArray(sb, Json.class);
+			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			code = j.getRet_code();
 			info = j.getRet_info();
 			success = j.getSuccess();

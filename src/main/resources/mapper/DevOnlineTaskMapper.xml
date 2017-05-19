@@ -105,11 +105,11 @@
 				t.access_version_write AS accessVersionWrite,
 				t.switch_state AS switchState,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
-				t.access_switchboard_check AS accessSwitchboardCheck,
+				t.access_switchboard_check AS accessSwitchboardCheck<!-- ,
 				e.execute_step AS executeStep,
-				e.execute_step AS taskCurrentStep
+				e.execute_step AS taskCurrentStep -->
 				
-			FROM  dev_online_task t  LEFT JOIN dev_task_execute e  ON e.task_id = t.id 
+			FROM  dev_online_task t <!--  LEFT JOIN dev_task_execute e  ON e.task_id = t.id  -->
 			WHERE t.state=1  
 		) taskView	where 1=1 
 		<if test="taskView.taskId!=null">

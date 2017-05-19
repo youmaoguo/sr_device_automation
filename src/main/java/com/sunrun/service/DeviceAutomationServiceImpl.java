@@ -329,7 +329,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId, String usercode) {
 		boolean b = true;
 		try{
-			String sb = ITILRestfulInterface.createChangeITIL(wsURL, usercode, "", itilPlannedEnd);
+			String sb = ITILRestfulInterface.createChangeITIL(wsURL, usercode,  itilUser, itilPwd, itilPlannedEnd);
 			Json j = JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=201 || j.getSuccess()==false){
 				b = false;

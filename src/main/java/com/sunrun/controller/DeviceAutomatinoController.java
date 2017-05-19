@@ -171,15 +171,14 @@ public class DeviceAutomatinoController extends BaseController{
 				if(switchState!=null){	//设备添加状态 1：设备准备；2：汇聚设备配制；3：异常工单;4:成功工单 
 					batchView.setSwitchState(switchState); 
 				}
-				list = deviceAutomationService.findDevBatchTask(batchView, like, sortBy, order, page(currentPage, pageSize));
+				
 			}else{	//查询任务具体信息
 				if(taskId!=null && !"".equals(taskId) && executeStep!=null && executeStep!=0){
 					batchView.setId(taskId);
 					batchView.setExecuteStep(executeStep); 
 				}
-				DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
-				list.add(view);
 			}
+			list = deviceAutomationService.findDevBatchTask(batchView, like, sortBy, order, page(currentPage, pageSize));
 			Map<Object, Object> collect = new HashMap<Object, Object>();
 			collect.put("total", (list!=null && list.size()>0) ? list.size() : 0);
 			collect.put("pagesize", setPageSize(currentPage, pageSize, list));
