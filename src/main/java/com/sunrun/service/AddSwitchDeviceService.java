@@ -40,7 +40,7 @@ public interface AddSwitchDeviceService {
 	 * @param task
 	 * @return
 	 */
-	Json adminRequestIP(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName, int state);
+	Json adminRequestIP(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName, int state, String usercode);
 
 	/**添加设备第5步：
 	 * 判断汇聚交换机端口上是否有配置及端口状态是否为down

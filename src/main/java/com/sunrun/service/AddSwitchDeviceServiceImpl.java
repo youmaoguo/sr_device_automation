@@ -200,7 +200,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json adminRequestIP(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName, int state) {
+	public Json adminRequestIP(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName, int state, String usercode) {
 		Json json = new Json();
 		String info = "ip地址回填成功";
 		Integer code = 200;	
@@ -215,13 +215,13 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("ips", map.get("ip"));//其实就是task的管理口ip
 			param.put("subnet", li.get(0).getSubnet());	//本系统申请ip的网段(根据区域名称查询表'dev_area_switchboard_ip'中subnet)
 			param.put("state", state);
-			param.put("assignerId", "01009380");//申请人工号
-			param.put("assignerName", "01009380");//申请人姓名
-			param.put("contactId", "01009380");//contactId
-			param.put("contactName", "01009380");//使用人姓名
-			param.put("bizsysName", "portal");//业务系统
+			param.put("assignerId", usercode);//申请人工号
+			param.put("assignerName", usercode);//申请人姓名
+			param.put("contactId", usercode);//contactId
+			param.put("contactName", userName);//使用人姓名
+			param.put("bizsysName", "门户portal");//业务系统
 			param.put("bizsysId", "portal");//业务系统ID
-			param.put("description", "portal");
+			param.put("description", "门户portal项目交换机模块回填ip");
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -548,8 +548,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
 			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
 			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);*/
-			param.put("user", null);		//交换机的telnet登录账号 没有
-			param.put("password", null);	//交换机的telnet登录密码 没有
+			param.put("user", "");		//交换机的telnet登录账号 没有
+			param.put("password", "");	//交换机的telnet登录密码 没有
 			
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);

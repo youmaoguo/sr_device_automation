@@ -78,6 +78,9 @@ public class DeviceAutomatinoController extends BaseController{
 		logger.info("添加上线交换机设备addSwitchDevice接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
+			
+			String updateUser = obj.getString("updateUser");
+			String usercode = obj.getString("usercode");
 			String brandName = obj.getString("brandName");
 			String modelName = obj.getString("modelName");
 			String areaName = obj.getString("areaName");
@@ -105,7 +108,7 @@ public class DeviceAutomatinoController extends BaseController{
 			success = json.getSuccess();
 			
 			//先保存这条数据的基本信息，然后分线程去执行剩下的步骤
-			AddSwitchDevice addSwitchDevice = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "");
+			AddSwitchDevice addSwitchDevice = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, usercode);
 			Thread t = new Thread(addSwitchDevice);
 	        t.start();
 			
@@ -217,6 +220,7 @@ public class DeviceAutomatinoController extends BaseController{
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String updateUser = obj.getString("updateUser");
+			String usercode = obj.getString("usercode");
 			String taskId = obj.getString("taskId");		//任务Id
 			
 			//删除任务
@@ -227,7 +231,7 @@ public class DeviceAutomatinoController extends BaseController{
 				if(l!=null && l.size()>0){
 					 Map<String, String> map = new HashMap<String, String>();
 					 map.put("ip", l.get(0).getManagerIp());
-					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, l.get(0), map, updateUser, 2);
+					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, l.get(0), map, updateUser, 2, usercode);
 				}
 				
 				success = deviceAutomationService.deleteTask(taskId);
@@ -279,6 +283,8 @@ public class DeviceAutomatinoController extends BaseController{
 			DevOnlineTask task = new DevOnlineTask();
 			int switchState = obj.getIntValue("switchState");
 			String taskId = obj.getString("taskId");
+			String usercode = obj.getString("usercode");//用户编号：如 ：01091231
+			String updateUser = obj.getString("updateUser");
 
 			//查询出该任务执行到第几步骤 然后分多线程继续执行之后的步骤（写入接入交换机配置管理口ip、更新ios版本、写入接入交换机配置信息）
 			Integer executeStep = null;
@@ -302,7 +308,6 @@ public class DeviceAutomatinoController extends BaseController{
 				String brandName = obj.getString("brandName");
 				String modelName = obj.getString("modelName");
 				String currentIosVersion = obj.getString("currentIosVersion");
-				String updateUser = obj.getString("updateUser");
 				String exclusiveSwitchboardInfo = "";
 				if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
 					exclusiveSwitchboardInfo = "第"+exclusiveSwitchboardOrder+"口-"+brandName+"-"+modelName;
@@ -347,7 +352,7 @@ public class DeviceAutomatinoController extends BaseController{
 				
 				addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
 				
-				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep, conn); 
+				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, executeStep, usercode); 
 				Thread t = new Thread(addTask);
 				t.start();
 				
@@ -372,7 +377,7 @@ public class DeviceAutomatinoController extends BaseController{
 					success = false;
 					info = "未到时候执行，请在"+view.getItilPlannedEnd()+"后执行";
 				}else{
-					AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, "", executeStep, conn); 
+					AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, executeStep, usercode); 
 					Thread t = new Thread(addTask);
 					t.start();
 				}

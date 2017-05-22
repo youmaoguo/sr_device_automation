@@ -32,22 +32,23 @@ public class AddSwitchDevice implements Runnable {
 	private DevOnlineTask task;		//任务
 	private String userName;		//登录的用户名
 	private Integer executeStep;	//任务执行到第几步骤
-	private DevExclusiveSwitchboardConn conn;
+	private String usercode;		//用户编号 如：01091231
 	
 	public AddSwitchDevice(){
 		super();
 	}
 	
-	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName){
+	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, String usercode){
 		this.deviceAutomationService = deviceAutomationService;
 		this.addSwitchDeviceService = addSwitchDeviceService;
 		this.thirdPartUrl = thirdPartUrl;
 		this.auth = auth;
 		this.userName = userName;
 		this.task = task;
+		this.usercode = usercode;
 	}
 	
-	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer executeStep, DevExclusiveSwitchboardConn conn){
+	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer executeStep, String usercode){
 		this.deviceAutomationService = deviceAutomationService;
 		this.addSwitchDeviceService = addSwitchDeviceService;
 		this.thirdPartUrl = thirdPartUrl;
@@ -55,7 +56,7 @@ public class AddSwitchDevice implements Runnable {
 		this.userName = userName;
 		this.task = task;
 		this.executeStep = executeStep;
-		this.conn = conn;
+		this.usercode = usercode;
 	}
 	
 	@Override
@@ -98,7 +99,7 @@ public class AddSwitchDevice implements Runnable {
 		if(!json.getSuccess() && code!=200){
 			if(code==505){
 				//网络ping通，被占了，回填不可用状态
-				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 				//重新申请ip,vlan
 				json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
 				//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
@@ -115,7 +116,7 @@ public class AddSwitchDevice implements Runnable {
 				json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 				if(json.getRet_code()!=200){
 					if(json.getRet_code()==505){
-						addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+						addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 					}
 					return;
 				}
@@ -124,7 +125,7 @@ public class AddSwitchDevice implements Runnable {
 		
 		//4.ip地址回填
 		json = null;
-		json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1);
+		json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1, usercode);
 		if(!json.getSuccess())
 			return;
 		
@@ -134,7 +135,7 @@ public class AddSwitchDevice implements Runnable {
 		if(!json.getSuccess())
 			return;
 		//ip地址回填 ，状态是3实分配
-		addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
+		//addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
 		
 		/*//6.生成汇聚交换机配置 并记录
 		json = null;
@@ -190,7 +191,7 @@ public class AddSwitchDevice implements Runnable {
 			if(!json.getSuccess() && code!=200){
 				if(code==505){
 					//网络ping通，被占了，回填不可用状态
-					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 					//重新申请ip,vlan
 					json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
 					//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
@@ -207,7 +208,7 @@ public class AddSwitchDevice implements Runnable {
 					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 					if(json.getRet_code()!=200){
 						if(json.getRet_code()==505){
-							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 						}
 						return;
 					}
@@ -239,7 +240,7 @@ public class AddSwitchDevice implements Runnable {
 					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 					if(json.getRet_code()!=200){
 						if(json.getRet_code()==505){
-							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1);
+							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 						}
 						return;
 					}
@@ -248,7 +249,7 @@ public class AddSwitchDevice implements Runnable {
 			}
 			
 			json = null;
-			json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1);
+			json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1, usercode);
 			if(!json.getSuccess())
 				return;
 		}
@@ -325,7 +326,7 @@ public class AddSwitchDevice implements Runnable {
 				deviceAutomationService.updateTask2(task, null, 11, userName);
 			}
 			//ip地址回填 ，状态是3实分配
-			addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
+			addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3, usercode);
 		}
 		
 	}
