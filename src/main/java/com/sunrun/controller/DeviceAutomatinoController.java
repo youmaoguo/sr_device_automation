@@ -100,6 +100,7 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setBackupSwitchboardIp(backupSwitchboardIp);
 			task.setSwitchState(1);
 			task.setState(1);
+			task.setCreate_user(updateUser);
 			String uuid = StringUtil.getUuid();
 			task.setId(uuid);
 			json = addSwitchDeviceService.saveDeviceBaseInfo(task, "");
@@ -573,7 +574,7 @@ public class DeviceAutomatinoController extends BaseController{
 			DevExclusiveSwitchboardInfo bean = new DevExclusiveSwitchboardInfo();
 			bean.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
 			bean.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-			//json = deviceAutomationService.findKvmInfo(bean, thirdPartUrl, auth);
+			json = deviceAutomationService.findKvmInfo(bean, thirdPartUrl, auth);
 			json.setSuccess(true);json.setRet_code(200);json.setData(null);json.setRet_info("ok");
 		}catch(Exception e){
 			e.printStackTrace();
