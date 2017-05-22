@@ -352,7 +352,7 @@ public class DeviceAutomatinoController extends BaseController{
 				t.start();
 				
 			}else if(switchState==2){
-				//当点击执行（写入汇聚配置和做验证）时候，必要要求工单状态是‘已审批’；且当前时间大于等于工单期望完成时间；
+				//当点击执行（写入汇聚配置和做验证）时候，必要要求工单状态是‘实施’；且当前时间大于等于工单期望完成时间,且在晚上19:00后；
 				DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
 				batchView.setId(task.getId());
 				long i = System.currentTimeMillis();
@@ -363,11 +363,11 @@ public class DeviceAutomatinoController extends BaseController{
 					d = fmt.parse(view.getItilPlannedEnd());
 				}
 				
-				if(view==null || StringUtils.isEmpty(view.getItilNumber()) || !view.getItilStatus().equals("已审批") ){
+				if(view==null || StringUtils.isEmpty(view.getItilNumber()) || !view.getItilStatus().trim().equals("实施") ){
 					code = 500;
 					info = "itil工单未审批";
 					success = false;
-				}else if(d.getTime()<i){
+				}else if(d.getTime()<i && d.getHours()>=19 && d.getMinutes()>0){
 					code = 500;
 					success = false;
 					info = "未到时候执行，请在"+view.getItilPlannedEnd()+"后执行";

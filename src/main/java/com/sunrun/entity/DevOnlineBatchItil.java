@@ -19,7 +19,7 @@ public class DevOnlineBatchItil extends BaseEntity {
 	private String itilCategory;	//' 类别 文本 流程管理',
 	private String itilSubcategory;	//'子类别 文本 ITIL系统',
 	private String itilBusinessArea;//'小类别 文本 其他',
-	private String itilStatus;		//'状态 文本 待审批 系统自动生成，无需填写',
+	private String itilStatus;		//'状态 文本系统自动生成，无需填写【登记》审批》实施》关闭】',
 	private String itilRequestor;	//'申请人 文本 036131 联系人ID，一般为一事通ID',
 	private String itilTitle;		//'标题 文本 评估体系平台系统请求',
 	private String itilDescription;	//'申请内容',
