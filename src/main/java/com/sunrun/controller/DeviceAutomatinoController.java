@@ -510,25 +510,8 @@ public class DeviceAutomatinoController extends BaseController{
 		}
 		try{
 			if(!StringUtils.isEmpty(taskId)){
-				String content = StringUtil.emailHeadStr();
 				String[] ids = taskId.split(",");	//多个taskId用英文逗号隔开
-				for(int i=0;i<ids.length;i++){
-					List<DevOnlineTask> view = deviceAutomationService.findPort(taskId);
-					if(view!=null && view.size()>0){
-						DevOnlineTask task = view.get(0);
-						content += "<tr height='80' style='mso-height-source:userset;height:25.0pt'>";
-						content += "<td height='80' class='xl66' width='85' style='height:25.0pt;border-top:none;width:64pt'>"+task.getBrandName()+"</td>";
-						content += "<td class='xl66' width='72' style='border-top:none;border-left:none;width:54pt'>"+task.getModelName()+"</td>";
-						content += "<td class='xl66' width='125' style='border-top:none;border-left:none;width:94pt'>"+task.getAreaName()+"</td>";
-						content += "<td class='xl69' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>:"+task.getMainSwitchboardPort()+"</font></td>";
-						content += "<td class='xl67' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>:"+task.getBackupSwitchboardPort()+"</font></td>";
-						content += "<td class='xl68' width='165' style='border-top:none;border-left:none;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
-						content += "<td class='xl66' width='244' style='border-top:none;border-left:none;width:183pt'>"+task.getHostName()+"</td>";
-						content += "<td class='xl66' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getManagerIp()+"</td>";
-						content += "<td class='xl66' width='238' style='border-top:none;border-left:none;width:179pt'>"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
-					}
-				}
-				content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
+				String content = deviceAutomationService.concatDeviceInfo(ids);
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				data.put("mailTitle","设备自动化上线连接信息-"+fmt.format(new Date()));
 				data.put("mailContxt", content.replace("null", ""));

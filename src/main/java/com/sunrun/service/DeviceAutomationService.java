@@ -149,5 +149,12 @@ public interface DeviceAutomationService {
 	 */
 	List<DevExclusiveSwitchboardInfo> findDevExclusiveSwitchboardInfo(DevExclusiveSwitchboardInfo info);
 	
+	/**
+	 * 组装task设备信息
+	 * @param taskIds
+	 * @return
+	 */
+	String concatDeviceInfo(String[] taskIds);
+	
 	
 }
