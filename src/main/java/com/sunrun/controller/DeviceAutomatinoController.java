@@ -520,8 +520,8 @@ public class DeviceAutomatinoController extends BaseController{
 						content += "<td height='80' class='xl66' width='85' style='height:25.0pt;border-top:none;width:64pt'>"+task.getBrandName()+"</td>";
 						content += "<td class='xl66' width='72' style='border-top:none;border-left:none;width:54pt'>"+task.getModelName()+"</td>";
 						content += "<td class='xl66' width='125' style='border-top:none;border-left:none;width:94pt'>"+task.getAreaName()+"</td>";
-						content += "<td class='xl69' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>/"+task.getMainSwitchboardPort()+"</font></td>";
-						content += "<td class='xl67' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>/"+task.getBackupSwitchboardPort()+"</font></td>";
+						content += "<td class='xl69' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>:"+task.getMainSwitchboardPort()+"</font></td>";
+						content += "<td class='xl67' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>:"+task.getBackupSwitchboardPort()+"</font></td>";
 						content += "<td class='xl68' width='165' style='border-top:none;border-left:none;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
 						content += "<td class='xl66' width='244' style='border-top:none;border-left:none;width:183pt'>"+task.getHostName()+"</td>";
 						content += "<td class='xl66' width='165' style='border-top:none;border-left:none;width:124pt'>"+task.getManagerIp()+"</td>";
@@ -532,7 +532,7 @@ public class DeviceAutomatinoController extends BaseController{
 				data.put("mailTitle", new Date()+"接入设备连接信息");
 				data.put("mailContxt", content.replace("null", ""));
 				JSONObject o = new JSONObject();
-				o.put("mailConsigneeName", "许博");
+				o.put("mailConsigneeName", "xubocmb");
 				o.put("mailConsigneeEmail", "xubocmb@cmbchina.com");
 				o.put("mailConsigneeSelected", 1);
 				List<Object> l = new ArrayList<Object>();
