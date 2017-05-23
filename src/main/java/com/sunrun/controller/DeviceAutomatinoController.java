@@ -529,7 +529,8 @@ public class DeviceAutomatinoController extends BaseController{
 					}
 				}
 				content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
-				data.put("mailTitle", new Date()+"接入设备连接信息");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				data.put("mailTitle","设备自动化上线连接信息-"+fmt.format(new Date()));
 				data.put("mailContxt", content.replace("null", ""));
 				JSONObject o = new JSONObject();
 				o.put("mailConsigneeName", "xubocmb");
