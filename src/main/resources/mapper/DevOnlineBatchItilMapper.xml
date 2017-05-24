@@ -63,6 +63,19 @@
 		from dev_online_batch_itil
 		where id = #{id}
 	</select>
+	
+	<select id="findItilStatus" resultType="com.sunrun.entity.DevOnlineBatchItil">
+		select 
+			 id AS id,
+			 itil_number AS itilNumber,
+			 itil_status AS itilStatus,
+			 itil_requestor AS itilRequestor,
+			 itil_title AS itilTitle,
+			 itil_description AS itilDescription,
+			 itil_plannedEnd AS itilPlannedEnd
+		from dev_online_batch_itil 
+		where 1=1 and itil_status like '%审核%' or  itil_status like '%登记%'
+	</select>
 
 	<select id="findItilTask" resultType="com.sunrun.entity.view.DevOnlineBatchTaskView">
 		SELECT * from(

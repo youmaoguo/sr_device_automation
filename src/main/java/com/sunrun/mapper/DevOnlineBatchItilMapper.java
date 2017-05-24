@@ -65,5 +65,11 @@ public interface DevOnlineBatchItilMapper {
 	 */
 	Integer countItilTask(@Param("taskView") DevOnlineBatchTaskView taskView,
 			@Param("like") String like, @Param("sortBy") String sortBy, @Param("order") String order, @Param("limit") String limit);
+	
+	/**
+	 * 统计itil还未完成审批的单子（包含‘登记’和‘审批’2种状态）
+	 * @return
+	 */
+	List<DevOnlineBatchItil> findItilStatus();
 
 }

@@ -1,9 +1,6 @@
 package com.sunrun.service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +32,6 @@ import com.sunrun.mapper.DevOnlineTaskItilMapper;
 import com.sunrun.mapper.DevOnlineTaskMapper;
 import com.sunrun.mapper.DevTaskExecuteMapper;
 import com.sunrun.util.ITILRestfulInterface;
-import com.sunrun.util.ItilGenrequestBo;
 import com.sunrun.util.Json;
 import com.sunrun.util.RestfulRequestUtil;
 import com.sunrun.util.StringUtil;
@@ -472,6 +468,12 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		}
 		content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
 		return content;
+	}
+
+
+	@Override
+	public List<DevOnlineBatchItil> findItilStatus() {
+		return devOnlineBatchItilMapper.findItilStatus();
 	}
 	
 

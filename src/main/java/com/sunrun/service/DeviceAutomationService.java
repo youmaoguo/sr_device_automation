@@ -156,5 +156,11 @@ public interface DeviceAutomationService {
 	 */
 	String concatDeviceInfo(String[] taskIds);
 	
+	/**
+	 * 统计itil还未完成审批的单子（包含‘登记’和‘审批’2种状态）
+	 * @return
+	 */
+	List<DevOnlineBatchItil> findItilStatus();
+	
 	
 }

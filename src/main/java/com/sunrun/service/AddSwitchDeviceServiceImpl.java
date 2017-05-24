@@ -816,7 +816,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 201;	
 		Boolean success = true;
 		try{
-			//每隔task任务不能重复申请itil
+			//每个task任务不能重复申请itil
 			for(int i=0;i<taskId.length;i++){
 				DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
 				batchView.setId(taskId[i]);
