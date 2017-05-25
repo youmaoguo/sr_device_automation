@@ -497,8 +497,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 200;	
 		Boolean success = true;
 		try{
-			if(conn!=null)
-				devExclusiveSwitchboardConnMapper.saveSwitchboardConn(conn);
+			/*if(conn!=null)
+				devExclusiveSwitchboardConnMapper.saveSwitchboardConn(conn);*/
 			deviceAutomationService.updateTask2(task, null, null, userName);
 		}catch(Exception e){
 			e.printStackTrace();

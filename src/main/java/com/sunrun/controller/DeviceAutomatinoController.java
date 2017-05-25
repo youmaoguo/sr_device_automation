@@ -559,7 +559,6 @@ public class DeviceAutomatinoController extends BaseController{
 			bean.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
 			bean.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
 			json = deviceAutomationService.findKvmInfo(bean, thirdPartUrl, auth);
-			json.setSuccess(true);json.setRet_code(200);json.setData(null);json.setRet_info("ok");
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error(json.getRet_info());
