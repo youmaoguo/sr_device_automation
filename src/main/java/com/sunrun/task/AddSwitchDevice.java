@@ -81,7 +81,7 @@ public class AddSwitchDevice implements Runnable {
 		String sb = json.getData().toString();	//map中存放了ip和vlanId
 		try {
 			org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-			String ip = obj1.getString("ips");
+			String ip = obj1.getString("ip");
 			String vlanId = obj1.getString("vlanId");
 			map.put("ip", ip);
 			map.put("vlanId", vlanId);
@@ -105,7 +105,7 @@ public class AddSwitchDevice implements Runnable {
 				sb = json.getData().toString();	//map中存放了ip和vlanId
 				try {
 					org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-					String ip = obj1.getString("ips");
+					String ip = obj1.getString("ip");
 					String vlanId = obj1.getString("vlanId");
 					map.put("ip", ip);
 					map.put("vlanId", vlanId);
@@ -171,7 +171,7 @@ public class AddSwitchDevice implements Runnable {
 			String sb = json.getData().toString();	//map中存放了ip和vlanId
 			try {
 				org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-				String ip = obj1.getString("ips");
+				String ip = obj1.getString("ip");
 				String vlanId = obj1.getString("vlanId");
 				map.put("ip", ip);
 				map.put("vlanId", vlanId);
@@ -197,7 +197,7 @@ public class AddSwitchDevice implements Runnable {
 					String sb = json.getData().toString();	//map中存放了ip和vlanId
 					try {
 						org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-						String ip = obj1.getString("ips");
+						String ip = obj1.getString("ip");
 						String vlanId = obj1.getString("vlanId");
 						map.put("ip", ip);
 						map.put("vlanId", vlanId);
@@ -229,7 +229,7 @@ public class AddSwitchDevice implements Runnable {
 					String sb = json.getData().toString();	//map中存放了ip和vlanId
 					try {
 						org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-						String ip = obj1.getString("ips");
+						String ip = obj1.getString("ip");
 						String vlanId = obj1.getString("vlanId");
 						map.put("ip", ip);
 						map.put("vlanId", vlanId);
