@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -397,6 +398,11 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				if(json.getRet_code()==200){
 					Map<Object, Object> map = (Map<Object, Object>) json.getData();
 					String model = map.get("model").toString();
+					JSONArray iosList = (JSONArray) map.get("iosList");
+					String ios = "";
+					for(int z=0;z<iosList.length();z++){
+						ios += iosList.get(z) + ",";
+					}
 					//在根据model去查询品牌型号表
 					DevBrandModel bean = new DevBrandModel();
 					bean.setModelName(model);
@@ -410,7 +416,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					obj.put("exclusiveSwitchboardOrder", d.getExclusiveSwitchboardOrder());
 					obj.put("brandName", bean.getBrandName());
 					obj.put("modelName", bean.getModelName());
-					obj.put("currentIosVersion", bean.getIosVersion());
+					obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
 					li.add(obj);
 				}else{
 					code = json.getRet_code();

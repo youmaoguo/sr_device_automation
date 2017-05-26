@@ -644,11 +644,11 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				List<String> l = (List<String>) jj.getData();
 				
 			}*/
-			
+			String[] currentIosVersion = task.getCurrentIosVersion().split(",");
 			if(li!=null && li.size()>0){
 				String newVersion = li.get(0).getIosVersion();
 				//如果当前版本和最新版本不一致 则更新当前版本
-				if(!newVersion.equalsIgnoreCase(task.getCurrentIosVersion())){
+				if(!task.getCurrentIosVersion().contains(newVersion)){
 					JSONObject param = new JSONObject();
 					param.put("method_name", "/interchanger/v1/updateIos");
 					param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
@@ -658,8 +658,14 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 					param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
 					param.put("serverIp", serverIp);		//更新源服务器的IP 配置文件静态获得
 					param.put("sourceFileName", newVersion);//源文件名 
-					param.put("desFileName", newVersion);	//目的文件名 
-					param.put("iosName", newVersion);		//IOS名称
+					
+					if(d.getExclusiveSwitchboardType().equals("5548")){
+						param.put("desFileName", currentIosVersion[0]);	//目的文件名 
+						param.put("iosName", currentIosVersion[1]);		//IOS名称
+					}else if(d.getExclusiveSwitchboardType().equals("4948E")){
+						param.put("desFileName", newVersion);	//目的文件名 
+						param.put("iosName", newVersion);		//IOS名称
+					}
 					param.put("updateId", task.getId());	//请求需用回调的ID updateId 
 					String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 					Json j = (Json) JSONObject.parseObject(sb, Json.class);
