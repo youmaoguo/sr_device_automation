@@ -103,7 +103,7 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setCreate_user(updateUser);
 			String uuid = StringUtil.getUuid();
 			task.setId(uuid);
-			json = addSwitchDeviceService.saveDeviceBaseInfo(task, "");
+			json = addSwitchDeviceService.saveDeviceBaseInfo(task, null);
 			code = json.getRet_code();
 			info = json.getRet_info();
 			success = json.getSuccess();
@@ -373,7 +373,7 @@ public class DeviceAutomatinoController extends BaseController{
 					code = 500;
 					info = "itil工单未审批";
 					success = false;
-				}else if(d.getTime()<i && d.getHours()>=19 && d.getMinutes()>0){
+				}else if(d.getTime()<i/* && d.getHours()>=19 && d.getMinutes()>0*/){
 					code = 500;
 					success = false;
 					info = "未到时候执行，请在"+view.getItilPlannedEnd()+"后执行";

@@ -1006,6 +1006,54 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			return json;
 		}
 	}
+	
+	@SuppressWarnings("finally")
+	@Override
+	public Json checkNewConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
+		Json json = new Json();
+		String info = "校验配置正常";
+		Integer code = 200;	
+		Boolean success = true;
+		try{
+			JSONObject param = new JSONObject();
+			param.put("method_name", "/interchanger/v1/checkNewConfig");
+			param.put("device_manuf", task.getBrandName());//设备品牌
+			param.put("device_type", task.getModelName());//设备类型
+			param.put("device_area", task.getAreaName());//设备区域
+			param.put("master_switch", task.getMainSwitchboardIp());//主汇聚交换机
+			param.put("slave_switch", task.getBackupSwitchboardIp());//备汇集交换机
+			param.put("device_location", task.getDevOnlineRack());//上线机架位置
+			param.put("name", task.getHostName());//设备名称
+			param.put("ipaddr", task.getManagerIp());//设置IP
+			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
+			
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			//测试环境： http://10.1.251.234/neteagle3/services/newdevice/newdevice.action
+			//生产环境： http://10.1.251.238/neteagle3/services/newdevice/newdevice.action
+			json = (Json) JSONObject.parseObject(sb, Json.class);
+			code = json.getRet_code();
+			success = json.getSuccess();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("校验配置不正常");
+			info = "校验配置不正常";
+			code = 500;
+			success = false;
+			throw new RuntimeException(e);
+		}finally{
+			//记录任务执行步骤
+			DevOnlineTask t = new DevOnlineTask();
+			t.setId(task.getId());
+			t.setUpdate_user(userName);
+			writeProcess(t, 13, info, success, userName, null);
+			
+			json.setRet_code(code);
+			json.setRet_info(info);
+			json.setSuccess(success);
+			return json;
+		}
+	}
 
 	/**
 	 * 记录任务执行步骤
@@ -1164,5 +1212,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			return json;
 		}
 	}
+
+	
 	
 }

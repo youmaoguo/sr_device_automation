@@ -348,7 +348,8 @@ public class AddSwitchDevice implements Runnable {
 			//13.在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
 			if(executeStep!=null && executeStep<=13){
 				json = null;
-				json = addSwitchDeviceService.checkConfig(thirdPartUrl, auth, task, userName);
+				//json = addSwitchDeviceService.checkConfig(thirdPartUrl, auth, task, userName);
+				json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName);
 				if(!json.getSuccess())
 					return;
 				

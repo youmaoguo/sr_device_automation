@@ -172,6 +172,15 @@ public interface AddSwitchDeviceService {
 	 * @return
 	 */
 	Json checkConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
+	
+	/**添加设备第15步：(new)
+	 * 在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错(new)
+	 * @param thirdPartUrl
+	 * @param auth
+	 * @param task
+	 * @return
+	 */
+	Json checkNewConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 
 	
 	
