@@ -645,6 +645,15 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				
 			}*/
 			String[] currentIosVersion = task.getCurrentIosVersion().split(",");
+			String sourceFileName = "", iosName = "";
+			for(int i=0;i<currentIosVersion.length;i++){
+				if(currentIosVersion[i].contains("kickstart")){
+					sourceFileName = currentIosVersion[i];
+				}
+				if(!currentIosVersion[i].contains("kickstart")){
+					iosName = currentIosVersion[i];
+				}
+			}
 			if(li!=null && li.size()>0){
 				String newVersion = li.get(0).getIosVersion();
 				//如果当前版本和最新版本不一致 则更新当前版本
@@ -657,13 +666,14 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 					param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");	//交换机的telnet登录密码
 					param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
 					param.put("serverIp", serverIp);		//更新源服务器的IP 配置文件静态获得
-					param.put("sourceFileName", newVersion);//源文件名 
 					
 					if(d.getExclusiveSwitchboardType().equals("5548")){
-						param.put("desFileName", currentIosVersion[0]);	//目的文件名 
-						param.put("iosName", currentIosVersion[1]);		//IOS名称
+						param.put("desFileName", iosName);	//目的文件名 
+						param.put("sourceFileName", sourceFileName);//源文件名 
+						param.put("iosName", iosName);		//IOS名称
 					}else if(d.getExclusiveSwitchboardType().equals("4948E")){
-						param.put("desFileName", newVersion);	//目的文件名 
+						param.put("desFileName", newVersion);	//目的文件名 						
+						param.put("sourceFileName", newVersion);//源文件名 
 						param.put("iosName", newVersion);		//IOS名称
 					}
 					param.put("updateId", task.getId());	//请求需用回调的ID updateId 

@@ -55,11 +55,5 @@ public class UpdateChangeITILStatus {
         logger.info("每10分钟执行一次查询变更itil工单状态。结束。");  
     }    
   
-    @Scheduled(fixedRate=20000)  
-    public void testTasks() {      
-        logger.info("每20秒执行一次。开始……");  
-        //statusTask.healthCheck();  
-        logger.info("每20秒执行一次。结束。");  
-    }    
 
 }

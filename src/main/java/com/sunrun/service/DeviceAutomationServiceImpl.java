@@ -396,12 +396,13 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "post", auth);
 				Json json = JSONObject.parseObject(sb, Json.class);
 				if(json.getRet_code()==200){
-					Map<Object, Object> map = (Map<Object, Object>) json.getData();
-					String model = map.get("model").toString();
-					JSONArray iosList = (JSONArray) map.get("iosList");
+					
+					JSONObject oo = JSONObject.parseObject(json.getData().toString());
+					String model = oo.get("model").toString();
+					JSONArray iosList = (JSONArray) oo.get("iosList");
 					String ios = "";
 					for(int z=0;z<iosList.length();z++){
-						ios += iosList.get(z) + ",";
+						ios += iosList.get(z).toString() + ",";
 					}
 					//在根据model去查询品牌型号表
 					DevBrandModel bean = new DevBrandModel();
