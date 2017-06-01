@@ -88,8 +88,11 @@ public class AddSwitchDevice implements Runnable {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		if(!json.getSuccess())
+		if(!json.getSuccess()){
+			task.setSwitchState(3);
+			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
+		}
 		
 		//3.看网络是否通
 		json = null;
@@ -117,6 +120,8 @@ public class AddSwitchDevice implements Runnable {
 					if(json.getRet_code()==505){
 						addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 					}
+					task.setSwitchState(3);
+					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
 				}
 			}
@@ -125,14 +130,20 @@ public class AddSwitchDevice implements Runnable {
 		//4.ip地址回填
 		json = null;
 		json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1, usercode);
-		if(!json.getSuccess())
+		if(!json.getSuccess()){
+			task.setSwitchState(3);
+			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
+		}
 		
 		//5.判断汇聚交换机端口上是否有配置及端口状态是否为down；
 		json = null;
 		json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
-		if(!json.getSuccess())
+		if(!json.getSuccess()){
+			task.setSwitchState(3);
+			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
+		}
 		//ip地址回填 ，状态是3实分配
 		//addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
 		
@@ -178,8 +189,11 @@ public class AddSwitchDevice implements Runnable {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			if(!json.getSuccess())
+			if(!json.getSuccess()){
+				task.setSwitchState(3);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}
 		}
 		
 		//3.看网络是否通
@@ -209,6 +223,8 @@ public class AddSwitchDevice implements Runnable {
 						if(json.getRet_code()==505){
 							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 						}
+						task.setSwitchState(3);
+						deviceAutomationService.updateTask2(task, null, null, userName);
 						return;
 					}
 				}
@@ -249,16 +265,22 @@ public class AddSwitchDevice implements Runnable {
 			
 			json = null;
 			json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1, usercode);
-			if(!json.getSuccess())
+			if(!json.getSuccess()){
+				task.setSwitchState(3);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}
 		}
 		
 		//5.判断汇聚交换机端口上是否有配置及端口状态是否为down；
 		if(executeStep!=null && executeStep<=5){
 			json = null;
 			json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
-			if(!json.getSuccess())
+			if(!json.getSuccess()){
+				task.setSwitchState(3);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}
 		}
 		
 		/*//6.生成汇聚交换机配置 并记录
@@ -302,24 +324,33 @@ public class AddSwitchDevice implements Runnable {
 		if(executeStep!=null && executeStep<=7){
 			json = null;
 			json = addSwitchDeviceService.managementPort(thirdPartUrl, auth, task, userName);
-			if(!json.getSuccess())
+			if(!json.getSuccess()){
+				task.setSwitchState(3);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}
 		}
 		
 		//8. 查看ios版本是否最新，不是最新需要升级ios版本
 		if(executeStep!=null && executeStep<=8){
 			json = null;
 			json = addSwitchDeviceService.checkIosVersion(thirdPartUrl, auth, task, userName);
-			if(!json.getSuccess())
+			if(!json.getSuccess()){
+				task.setSwitchState(3);
+				deviceAutomationService.updateTask2(task, null, null, userName);				
 				return;
+			}
 		}
 		
 		//9. 写入接入交换机配置
 		if(executeStep!=null && executeStep<=9){
 			json = null;
 			json = addSwitchDeviceService.writeNewAccessConfig(thirdPartUrl, auth, task, userName);
-			if(!json.getSuccess())
+			if(!json.getSuccess()){
+				task.setSwitchState(3);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}
 			if(json.getSuccess()){
 				task.setSwitchState(2);
 				deviceAutomationService.updateTask2(task, null, 11, userName);
@@ -341,8 +372,11 @@ public class AddSwitchDevice implements Runnable {
 			//12.写入汇聚接入交换机配置
 			if(executeStep!=null && executeStep==12){
 				json = addSwitchDeviceService.writeNewGatherConfig(thirdPartUrl, auth, task, userName);
-				if(!json.getSuccess())
+				if(!json.getSuccess()){
+					task.setSwitchState(3);
+					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
+				}
 			}
 			
 			//13.在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
@@ -350,8 +384,11 @@ public class AddSwitchDevice implements Runnable {
 				json = null;
 				//json = addSwitchDeviceService.checkConfig(thirdPartUrl, auth, task, userName);
 				json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName);
-				if(!json.getSuccess())
+				if(!json.getSuccess()){
+					task.setSwitchState(3);
+					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
+				}
 				
 				if(json.getSuccess()){
 					task.setSwitchState(4);

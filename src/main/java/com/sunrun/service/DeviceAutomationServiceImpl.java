@@ -98,9 +98,15 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	public boolean deleteTask(String id) {
 		boolean b = true;
 		try{
-			devOnlineTaskItilMapper.deleteTaskItil(id, null); 		//删除task与ITIL对应关系
-			devTaskExecuteMapper.deleteDevTaskExecute(null, id);	//删除该任务在具体执行情况表中的数据
-			devOnlineTaskMapper.deleteDevOnlineTask(id, null);		//再删除任务表
+			devOnlineTaskItilMapper.updateTaskItil(id, null, 0); 		//删除task与ITIL对应关系
+			DevTaskExecute execute = new DevTaskExecute();
+			execute.setTaskId(id);
+			execute.setState(0);
+			devTaskExecuteMapper.updateDevTaskExecute(execute);	//删除该任务在具体执行情况表中的数据
+			DevOnlineTask task = new DevOnlineTask();
+			task.setId(id);
+			task.setState(0);
+			devOnlineTaskMapper.updateDevOnlineTask(task);		//再删除任务表
 		}catch(Exception e){
 			b = false;
 			e.printStackTrace();

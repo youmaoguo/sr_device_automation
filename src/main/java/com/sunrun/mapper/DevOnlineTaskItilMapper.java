@@ -37,4 +37,12 @@ public interface DevOnlineTaskItilMapper {
 	 */
 	void deleteTaskItil(@Param("taskId") String taskId, @Param("itilNumber") String itilNumber);
 	
+	/**
+	 * 修改
+	 * @param taskId
+	 * @param itilNumber
+	 * @param state
+	 */
+	void updateTaskItil(@Param("taskId") String taskId, @Param("itilNumber") String itilNumber, @Param("state") Integer state);
+	
 }

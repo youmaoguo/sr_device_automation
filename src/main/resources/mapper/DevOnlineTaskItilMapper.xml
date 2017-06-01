@@ -41,4 +41,19 @@
 		</if>
 	</delete>
 	
+	<update id="updateTaskItil" >
+		update dev_online_task_itil
+		<trim prefix="set" suffixOverrides=",">
+				update_time = now(),
+				<if test="state != null">state=#{state},</if>
+			</trim>
+		where 1=1  and state=1
+		<if test="itilNumber != null">
+			and itil_number = #{itilNumber}
+		</if>
+		<if test="taskId != null">
+			and dev_online_task_id = #{taskId}
+		</if>
+	</update>
+	
 </mapper>

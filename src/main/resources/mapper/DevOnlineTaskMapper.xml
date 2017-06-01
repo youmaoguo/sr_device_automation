@@ -58,7 +58,7 @@
 				<if test="task.accessSwitchboardCheck != null">access_switchboard_check=#{task.accessSwitchboardCheck},</if>
 				<if test="task.accessSwitchboardCheckInfo != null">access_switchboard_check_info=#{task.accessSwitchboardCheckInfo},</if>
 			</trim>
-		where 1=1 
+		where 1=1 and state=1
 		<if test="task.id != null"> 
 		    AND id = #{task.id}
 		</if>
@@ -155,7 +155,7 @@
 			t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 			t.access_switchboard_check AS accessSwitchboardCheck
 			
-		from dev_online_task t where 1=1
+		from dev_online_task t where state=1
 		<if test="id!=null">
 		    AND t.id = #{id}
 		</if>
