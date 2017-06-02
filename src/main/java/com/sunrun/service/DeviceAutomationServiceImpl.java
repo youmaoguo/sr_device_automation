@@ -334,7 +334,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId, String usercode) {
 		boolean b = true;
 		try{
-			String description = concatDeviceInfo(taskId);
+			String description = concatDeviceItilInfo(taskId);
 			String sb = ITILRestfulInterface.createChangeITIL(wsURL, usercode,  itilUser, itilPwd, itilPlannedEnd, description);
 			Json j = JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=201 || j.getSuccess()==false){
@@ -483,6 +483,23 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		}
 		content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
 		return content;
+	}
+	
+	@Override
+	public String concatDeviceItilInfo(String[] ids){
+		String s = "共"+ids.length+"条设备上线信息:\n";
+		for(int i=0;i<ids.length;i++){
+			List<DevOnlineTask> view = findPort(ids[i]);
+			if(view!=null && view.size()>0){
+				DevOnlineTask task = view.get(0);
+				s += (i+1) + "、设备品牌:"+task.getBrandName() + ",型号:"+task.getModelName()+",区域:"+task.getAreaName()+
+						",主汇聚交机:"+task.getMainSwitchboardIp()+",主汇聚交机端口:"+task.getMainSwitchboardPort()+
+						",备汇聚交机:"+task.getBackupSwitchboardIp()+",备汇聚交机端口:"+task.getBackupSwitchboardPort()+
+						",上线机架位置:"+task.getDevOnlineRack()+",hostname:"+task.getHostName()+
+						",管理口ip:"+task.getManagerIp()+",带外交机信息:"+task.getExclusiveSwitchboardInfo()+"。\n";
+			}
+		}
+		return s;
 	}
 
 

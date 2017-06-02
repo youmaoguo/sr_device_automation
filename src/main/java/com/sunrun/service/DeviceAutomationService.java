@@ -157,6 +157,13 @@ public interface DeviceAutomationService {
 	String concatDeviceInfo(String[] taskIds);
 	
 	/**
+	 * 组装itil工单内容信息
+	 * @param taskIds
+	 * @return
+	 */
+	String concatDeviceItilInfo(String[] taskIds);
+	
+	/**
 	 * 统计itil还未完成审批的单子（包含‘登记’和‘审批’2种状态）
 	 * @return
 	 */

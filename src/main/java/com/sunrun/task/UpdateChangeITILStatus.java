@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,9 @@ import com.sunrun.util.ITILRestfulInterface;
 public class UpdateChangeITILStatus {
 	private static final Logger logger = LoggerFactory.getLogger(UpdateChangeITILStatus.class);
 	
+	@Value("${itil.changeItils}")
+	private String changeItils;
+	
 	@Resource
 	private DeviceAutomationService deviceAutomationService;
 	
@@ -34,7 +38,7 @@ public class UpdateChangeITILStatus {
         for(int i=0;i<list.size();i++){
         	DevOnlineBatchItil itil = list.get(i);
         	try {
-				String sb = ITILRestfulInterface.queryChangeITILByNumber("", null, "GET", "");
+				String sb = ITILRestfulInterface.queryChangeITILByNumber(changeItils, null, "GET", "Basic MDEwMzQwOTA6");
 				JSONObject obj = JSONObject.parseObject(sb);
 				int code = obj.getIntValue("ret_code");
 				if(code==200){
