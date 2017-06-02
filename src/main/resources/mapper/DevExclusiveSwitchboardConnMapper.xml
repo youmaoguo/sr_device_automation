@@ -5,10 +5,10 @@
 
 	<insert id="saveSwitchboardConn">
 		insert into dev_exclusive_switchboard_conn(
-			id,					exclusive_switchboard_ip,	exclusive_switchboard_port,			exclusive_switchboard_info,		brand_name,			
+			id,					exclusive_switchboard_ip,	exclusive_switchboard_port,			exclusive_switchboard_info,		brand_name,	 exclusive_switchboard_order,
 			model_name,			current_ios_version,			create_time,						state,							create_user
 		) values(
-			#{conn.id},			#{conn.exclusiveSwitchboardIp},	#{conn.exclusiveSwitchboardPort},#{conn.exclusiveSwitchboardInfo}, #{conn.brandName},				
+			#{conn.id},			#{conn.exclusiveSwitchboardIp},	#{conn.exclusiveSwitchboardPort},#{conn.exclusiveSwitchboardInfo}, #{conn.brandName},	#{conn.exclusiveSwitchboardOrder},			
 			#{conn.modelName},	#{conn.currentIosVersion},	now(),							 	1,								#{conn.create_user}
 		)
 	</insert>
@@ -20,6 +20,7 @@
 			exclusive_switchboard_info AS exclusiveSwitchboardInfo,
 			exclusive_switchboard_ip AS exclusiveSwitchboardIp,
 			exclusive_switchboard_port AS exclusiveSwitchboardPort,
+			exclusive_switchboard_order AS exclusiveSwitchboardOrder,
 			brand_name AS brandName,
 			model_name AS modelName,
 			current_ios_version AS currentIosVersion,

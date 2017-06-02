@@ -330,6 +330,10 @@ public class AddSwitchDevice implements Runnable {
 				return;
 			}
 		}
+		List<DevOnlineTask> ll = deviceAutomationService.findPort(task.getId());
+		if(ll!=null && ll.size()>0){
+			task = ll.get(0);
+		}
 		
 		//8. 查看ios版本是否最新，不是最新需要升级ios版本
 		if(executeStep!=null && executeStep<=8){

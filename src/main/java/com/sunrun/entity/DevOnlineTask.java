@@ -41,7 +41,14 @@ public class DevOnlineTask extends BaseEntity {
 	
 	private Integer accessSwitchboardCheck;//接入交换机校验状态 ；0 ：待校验，1：校验成功,2:校验失败
 	private String accessSwitchboardCheckInfo;//接入交换机校验信息
+	private String userName;
 	
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 	public Integer getAccessSwitchboardCheck() {
 		return accessSwitchboardCheck;
 	}

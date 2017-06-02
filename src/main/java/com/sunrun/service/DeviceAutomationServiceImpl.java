@@ -73,7 +73,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	public boolean saveDevice(DevOnlineTask task, Integer executeStep, String userName) {
 		boolean b = true;
 		try{
-			task.setCreate_user(userName);
+			if(!StringUtils.isEmpty(userName))
+				task.setCreate_user(userName);
 			devOnlineTaskMapper.saveDevOnlineTask(task);
 			/*DevTaskExecute execute = new DevTaskExecute();
 			execute.setId(StringUtil.getUuid());
@@ -161,7 +162,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	public boolean updateTask(DevOnlineTask task, Integer executeStep, Object object, String userName) {
 		boolean b = true;
 		try{
-			task.setUpdate_user(userName); 
+			if(!StringUtils.isEmpty(userName))
+				task.setUpdate_user(userName); 
 			devOnlineTaskMapper.updateDevOnlineTask(task);
 			//保存每一步步骤执行情况
 			DevTaskExecute execute = new DevTaskExecute();
@@ -340,7 +342,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			}else{
 				JSONObject bo = JSONObject.parseObject(j.getData().toString());
 				DevOnlineBatchItil it = new DevOnlineBatchItil();
-				it.setItilNumber(!StringUtils.isEmpty(bo.getString("getChangeNumber")) ? bo.getString("getChangeNumber") : null);
+				it.setItilNumber(!StringUtils.isEmpty(bo.getString("changeNumber")) ? bo.getString("changeNumber") : null);
 				it.setItilAssignee(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
 				it.setItilStatus(!StringUtils.isEmpty(bo.getString("cMBStatus")) ? bo.getString("cMBStatus") : null);
 				it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getString("plannedEndDate")) ? bo.getString("plannedEndDate") : null);
@@ -354,7 +356,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					DevOnlineTaskItil taskItil = new DevOnlineTaskItil();
 					taskItil.setId(StringUtil.getUuid());
 					taskItil.setDevOnlineTaskId(taskId[i]);
-					taskItil.setItilNumber(bo.getString("getChangeNumber"));
+					taskItil.setItilNumber(bo.getString("changeNumber"));
 					taskItil.setCreate_user(updateUser);
 					devOnlineTaskItilMapper.saveTaskItil(taskItil);
 				}
@@ -405,9 +407,9 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					
 					JSONObject oo = JSONObject.parseObject(json.getData().toString());
 					String model = oo.get("model").toString();
-					JSONArray iosList = (JSONArray) oo.get("iosList");
+					com.alibaba.fastjson.JSONArray iosList = (com.alibaba.fastjson.JSONArray) oo.get("iosList");
 					String ios = "";
-					for(int z=0;z<iosList.length();z++){
+					for(int z=0;z<iosList.size();z++){
 						ios += iosList.get(z).toString() + ",";
 					}
 					//在根据model去查询品牌型号表

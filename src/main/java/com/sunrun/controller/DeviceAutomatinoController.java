@@ -78,7 +78,7 @@ public class DeviceAutomatinoController extends BaseController{
 		logger.info("添加上线交换机设备addSwitchDevice接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
-			
+			String userName = obj.getString("userName");
 			String updateUser = obj.getString("updateUser");
 			String usercode = obj.getString("usercode");
 			String brandName = obj.getString("brandName");
@@ -100,16 +100,16 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setBackupSwitchboardIp(backupSwitchboardIp);
 			task.setSwitchState(1);
 			task.setState(1);
-			task.setCreate_user(updateUser);
+			task.setCreate_user(userName);
 			String uuid = StringUtil.getUuid();
 			task.setId(uuid);
-			json = addSwitchDeviceService.saveDeviceBaseInfo(task, null);
+			json = addSwitchDeviceService.saveDeviceBaseInfo(task, userName);
 			code = json.getRet_code();
 			info = json.getRet_info();
 			success = json.getSuccess();
 			
 			//先保存这条数据的基本信息，然后分线程去执行剩下的步骤
-			AddSwitchDevice addSwitchDevice = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, usercode);
+			AddSwitchDevice addSwitchDevice = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, usercode);
 			Thread t = new Thread(addSwitchDevice);
 	        t.start();
 			
@@ -280,12 +280,13 @@ public class DeviceAutomatinoController extends BaseController{
 		logger.info("执行上线交换机executeSwitchDevice接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
-			DevExclusiveSwitchboardConn conn = new DevExclusiveSwitchboardConn();
+			//DevExclusiveSwitchboardConn conn = new DevExclusiveSwitchboardConn();
 			DevOnlineTask task = new DevOnlineTask();
 			int switchState = obj.getIntValue("switchState");
 			String taskId = obj.getString("taskId");
 			String usercode = obj.getString("usercode");//用户编号：如 ：01091231
 			String updateUser = obj.getString("updateUser");
+			String userName = obj.getString("userName");
 
 			//查询出该任务执行到第几步骤 然后分多线程继续执行之后的步骤（写入接入交换机配置管理口ip、更新ios版本、写入接入交换机配置信息）
 			Integer executeStep = null;
@@ -301,7 +302,7 @@ public class DeviceAutomatinoController extends BaseController{
 					executeStep += 1;
 				}
 			}
-			if(switchState==1){
+			if(switchState==1 || switchState==3){
 				String vlan = obj.getString("vlan");
 				String exclusiveSwitchboardIp = obj.getString("exclusiveSwitchboardIp");
 				String exclusiveSwitchboardPort = obj.getString("exclusiveSwitchboardPort");
@@ -333,7 +334,7 @@ public class DeviceAutomatinoController extends BaseController{
 				task.setCurrentIosVersion(currentIosVersion);
 				task.setUpdate_user(updateUser);
 				
-				if(!StringUtils.isEmpty(brandName))
+				/*if(!StringUtils.isEmpty(brandName))
 					conn.setBrandName(brandName);
 				conn.setCreate_user(updateUser);
 				if(!StringUtils.isEmpty(currentIosVersion))
@@ -349,9 +350,9 @@ public class DeviceAutomatinoController extends BaseController{
 					conn.setModelName(modelName);
 				if(StringUtils.isEmpty(brandName) || StringUtils.isEmpty(currentIosVersion) || StringUtils.isEmpty(exclusiveSwitchboardInfo)
 						|| StringUtils.isEmpty(exclusiveSwitchboardIp) || StringUtils.isEmpty(exclusiveSwitchboardPort))
-					conn = null;
+					conn = null;*/
 				
-				addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, updateUser);
+				addSwitchDeviceService.exclusiveSwitchboardConn(null, task, updateUser);
 				
 				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, executeStep, usercode); 
 				Thread t = new Thread(addTask);
@@ -413,13 +414,14 @@ public class DeviceAutomatinoController extends BaseController{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String itilPlannedEnd = obj.getString("itilPlannedEnd");
 			String updateUser = obj.getString("updateUser");
+			String userName = obj.getString("userName");
 			String usercode = obj.getString("usercode");	
 			JSONArray j = obj.getJSONArray("taskId");
 			List<String> l = com.alibaba.fastjson.JSONArray.parseArray(j.toString(), String.class);
 			String[] a = new String[l.size()];
 			String[] taskId = l.toArray(a);
 			
-			json = addSwitchDeviceService.switchDeviceITIL(itil, itilPlannedEnd, taskId, updateUser, usercode);
+			json = addSwitchDeviceService.switchDeviceITIL(itil, itilPlannedEnd, taskId, userName, usercode);
 			
 		}catch(Exception e){
 			logger.error("接口程序出错");

@@ -4,6 +4,7 @@ create table dev_exclusive_switchboard_conn
 		exclusive_switchboard_info varchar(200) comment '带外交机要信息描述',
 		exclusive_switchboard_ip varchar(20) comment '带外交机ip',
 		exclusive_switchboard_port varchar(10) comment '带外交机端口',
+		exclusive_switchboard_order smallint comment '带外交机顺序',
 		brand_name varchar(64) comment '品牌名称',
 		model_name varchar(64) comment '型号',
 		current_ios_version varchar(100) comment '当前IOS版本信息',

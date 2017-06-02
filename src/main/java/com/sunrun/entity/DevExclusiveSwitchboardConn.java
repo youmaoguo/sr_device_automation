@@ -14,7 +14,14 @@ public class DevExclusiveSwitchboardConn extends BaseEntity {
 	private String brandName;					//'品牌名称',
 	private String modelName;					//'型号',
 	private String currentIosVersion;			//'当前IOS版本信息',
+	private Integer exclusiveSwitchboardOrder;//'带外交机顺序',
 	
+	public Integer getExclusiveSwitchboardOrder() {
+		return exclusiveSwitchboardOrder;
+	}
+	public void setExclusiveSwitchboardOrder(Integer exclusiveSwitchboardOrder) {
+		this.exclusiveSwitchboardOrder = exclusiveSwitchboardOrder;
+	}
 	public String getExclusiveSwitchboardInfo() {
 		return exclusiveSwitchboardInfo;
 	}
@@ -58,7 +65,8 @@ public class DevExclusiveSwitchboardConn extends BaseEntity {
 				+ exclusiveSwitchboardIp + ", exclusiveSwitchboardPort="
 				+ exclusiveSwitchboardPort + ", brandName=" + brandName
 				+ ", modelName=" + modelName + ", currentIosVersion="
-				+ currentIosVersion + "]";
+				+ currentIosVersion + ", exclusiveSwitchboardOrder="
+				+ exclusiveSwitchboardOrder + "]";
 	}
-	
+	 
 }

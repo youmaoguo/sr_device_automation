@@ -228,6 +228,7 @@ public class ITILRestfulInterface {
 			json.setRet_code(201);
 			json.setRet_info("申请变更ITIL工单成功");
 			json.setData(o);
+			json.setSuccess(true);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

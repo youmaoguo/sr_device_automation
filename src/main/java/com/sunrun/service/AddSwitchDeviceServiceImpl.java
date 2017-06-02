@@ -497,8 +497,6 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 200;	
 		Boolean success = true;
 		try{
-			/*if(conn!=null)
-				devExclusiveSwitchboardConnMapper.saveSwitchboardConn(conn);*/
 			deviceAutomationService.updateTask2(task, null, null, userName);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -548,8 +546,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
 			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
 			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);*/
-			param.put("user", "");		//交换机的telnet登录账号 没有
-			param.put("password", "");	//交换机的telnet登录密码 没有
+			param.put("user", d.getTelnetUser());		//交换机的telnet登录账号 没有
+			param.put("password", d.getTelnetPwd());	//交换机的telnet登录密码 没有
 			
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);

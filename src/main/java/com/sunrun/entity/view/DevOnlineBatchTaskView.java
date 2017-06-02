@@ -62,6 +62,7 @@ public class DevOnlineBatchTaskView {
 	private Integer switchState;//设备添加状态 1：设备准备；2：汇聚设备配制；3：异常工单;4:成功工单 
 	private Integer backupSwitchboardConfigWrite;//备汇聚交换机写入配制状态 ；0 ：待写入，1：成功,2:失败
 	private String emailId;//发送邮件id(sys_send_email表)
+	private String userName;
 	
 	private Integer accessSwitchboardCheck;//接入交换机校验状态 ；0 ：待校验，1：校验成功,2:校验失败
 	private String accessSwitchboardCheckInfo;//接入交换机校验信息
@@ -71,6 +72,12 @@ public class DevOnlineBatchTaskView {
 	private Integer executeStep;		//任务步骤
 	private Integer taskCurrentStep;	//任务步骤
 	
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 	public Integer getTaskAllStep() {
 		return taskAllStep;
 	}
