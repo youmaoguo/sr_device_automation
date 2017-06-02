@@ -297,8 +297,15 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				
 				List<String> mainp = new ArrayList<String>();	//保存数据库中所有使用了的主汇聚端口
 				List<String> backp = new ArrayList<String>();	//保存数据库中所有使用了的备汇聚端口
-				//从数据库查出所有使用了的主备端口，然后分配未使用的端口，
+				//从数据库查出所有未使用完（即switchState!=4）的主备端口，然后分配未使用的端口，
 				List<DevOnlineTask> ports = deviceAutomationService.findPort(null);
+				List<DevOnlineTask> pc = ports;
+				for(int i=0;i<pc.size();i++){
+					if(pc.get(i).getSwitchState()==4){
+						ports.remove(i);
+					}
+				}
+				
 				for(int i=0;i<ports.size();i++){
 					mainp.add(ports.get(i).getMainSwitchboardPort());
 					backp.add(ports.get(i).getBackupSwitchboardPort());
@@ -310,15 +317,49 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 						break;
 					}
 				}
-				mp = mainlist.size()>=index ? mainlist.get(index) : "";
-				int index2 = 0;
+				mp = mainlist.size()>=index ? mainlist.get(index) : ""; //选定好了主端口
+				
+				//理论上最好备端口跟主端口一样
+				String bpc = "";
 				for(int i=0;i<backuplist.size();i++){
-					if(!backp.contains(backuplist.get(i))){
-						index2 = i;
+					if(backuplist.get(i).equals(mp)){
+						bpc = mp;
 						break;
 					}
 				}
-				bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+				if(!bpc.equals("")){
+					boolean g = false;
+					//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
+					for(int jj=0;jj<backp.size();jj++){
+						if(!backp.contains(bpc)){
+							g = true;
+							break;
+						}
+					}
+					if(g){
+						int index2 = 0;
+						for(int i=0;i<backuplist.size();i++){
+							if(!backp.contains(backuplist.get(i))){
+								index2 = i;
+								break;
+							}
+						}
+						bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+					}else{
+						bp = bpc;
+					}
+					
+				}else{
+					int index2 = 0;
+					for(int i=0;i<backuplist.size();i++){
+						if(!backp.contains(backuplist.get(i))){
+							index2 = i;
+							break;
+						}
+					}
+					bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+				}
+				
 			}
 			
 		}catch(Exception e){
