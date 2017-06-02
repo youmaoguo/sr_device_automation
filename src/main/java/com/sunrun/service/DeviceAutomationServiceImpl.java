@@ -427,11 +427,11 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					obj.put("modelName", bean.getModelName());
 					obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
 					li.add(obj);
-				}else{
+				}/*else{
 					code = json.getRet_code();
 					success = json.getSuccess();
 					s = json.getRet_info();
-				}
+				}*/
 			}
 			
 		}catch(Exception e){
