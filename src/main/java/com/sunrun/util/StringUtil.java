@@ -394,14 +394,14 @@ public final class StringUtil {
 			 sb.append("<col width='238' style='mso-width-source:userset;mso-width-alt:7616;width:179pt'>");
 			 sb.append("</colgroup><tbody><tr height='80' style='mso-height-source:userset;height:25.0pt'>");
 			 sb.append("<th height='80' class='xl65' width='85' style='border:1px solid #ededed;height:25.0pt;width:64pt'>设备品牌</th>");
-			 sb.append("<th class='xl65' width='72' style='border:1px solid #ededed;border-left:none;width:54pt'>型号</th>");
-			 sb.append("<th class='xl65' width='125' style='border:1px solid #ededed;border-left:none;width:94pt'>区域</th>");
-			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;border-left:none;width:124pt'>主汇聚交机:端口</th>");
-			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;border-left:none;width:124pt'>备汇聚交机:端口</th>");
-			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;border-left:none;width:124pt'>上线机架位置</th>");
-			 sb.append("<th class='xl65' width='244' style='border:1px solid #ededed;border-left:none;width:183pt'>hostname</th>");
-			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;border-left:none;width:124pt'>管理口ip</th>");
-			 sb.append("<th class='xl65' width='238' style='border:1px solid #ededed;border-left:none;width:179pt'>带外交机信息</th></tr>");
+			 sb.append("<th class='xl65' width='72' style='border:1px solid #ededed;width:54pt'>型号</th>");
+			 sb.append("<th class='xl65' width='125' style='border:1px solid #ededed;width:94pt'>区域</th>");
+			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;width:124pt'>主汇聚交机:端口</th>");
+			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;width:124pt'>备汇聚交机:端口</th>");
+			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;width:124pt'>上线机架位置</th>");
+			 sb.append("<th class='xl65' width='244' style='border:1px solid #ededed;width:183pt'>hostname</th>");
+			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;width:124pt'>管理口ip</th>");
+			 sb.append("<th class='xl65' width='238' style='border:1px solid #ededed;width:179pt'>带外交机信息</th></tr>");
 			return sb.toString();
 		 }
 	
