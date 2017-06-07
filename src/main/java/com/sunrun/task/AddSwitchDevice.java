@@ -93,6 +93,12 @@ public class AddSwitchDevice implements Runnable {
 			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
 		}
+		List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
+		if(li!=null && li.size()>0){
+			task = li.get(0);
+			map.put("vlanId", task.getVlan());
+			map.put("ip", task.getManagerIp());
+		}
 		
 		//3.看网络是否通
 		json = null;

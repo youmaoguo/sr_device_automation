@@ -101,6 +101,7 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setSwitchState(1);
 			task.setState(1);
 			task.setCreate_user(userName);
+			task.setUserName(userName);
 			String uuid = StringUtil.getUuid();
 			task.setId(uuid);
 			json = addSwitchDeviceService.saveDeviceBaseInfo(task, userName);
