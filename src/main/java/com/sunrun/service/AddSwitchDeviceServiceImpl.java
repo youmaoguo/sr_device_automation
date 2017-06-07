@@ -1081,10 +1081,10 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("name", task.getHostName());//设备名称
 			param.put("ipaddr", task.getManagerIp());//设置IP
 			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
-			
+			param.remove("method_name");
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
-			//测试环境： http://10.1.251.234/neteagle3/services/newdevice/newdevice.action
-			//生产环境： http://10.1.251.238/neteagle3/services/newdevice/newdevice.action
+			//测试环境： http://10.1.251.234/neteagle3/newdevice/newDevice/newdevice.action
+			//生产环境： http://10.1.251.238/neteagle3/newdevice/newDevice/newdevice.action
 			json = (Json) JSONObject.parseObject(sb, Json.class);
 			code = json.getRet_code();
 			success = json.getSuccess();

@@ -38,7 +38,7 @@ public class UpdateChangeITILStatus {
         for(int i=0;i<list.size();i++){
         	DevOnlineBatchItil itil = list.get(i);
         	try {
-				String sb = ITILRestfulInterface.queryChangeITILByNumber(changeItils, null, "GET", "Basic MDEwMzQwOTA6");
+				String sb = ITILRestfulInterface.queryChangeITILByNumber(changeItils+"?view=expand&number="+itil.getItilNumber(), null, "GET", "Basic MDEwMzQwOTA6");
 				JSONObject obj = JSONObject.parseObject(sb);
 				int code = obj.getIntValue("ret_code");
 				if(code==200){
