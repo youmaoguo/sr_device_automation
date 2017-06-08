@@ -343,7 +343,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				JSONObject bo = JSONObject.parseObject(j.getData().toString());
 				DevOnlineBatchItil it = new DevOnlineBatchItil();
 				it.setItilNumber(!StringUtils.isEmpty(bo.getString("changeNumber")) ? bo.getString("changeNumber") : null);
-				it.setItilAssignee(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
+				//it.setItilAssignee(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
+				it.setItilRequestor(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
 				it.setItilStatus(!StringUtils.isEmpty(bo.getString("cMBStatus")) ? bo.getString("cMBStatus") : null);
 				it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getString("plannedEndDate")) ? bo.getString("plannedEndDate") : null);
 				it.setId(StringUtil.getUuid());
