@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -38,7 +39,11 @@ public class UpdateChangeITILStatus {
         for(int i=0;i<list.size();i++){
         	DevOnlineBatchItil itil = list.get(i);
         	try {
+        		logger.info("查询变更itil工单状态url:"+changeItils+"?view=expand&number="+itil.getItilNumber()+"; GET方法,头部验证是：Basic MDEwMzQwOTA6");
 				String sb = ITILRestfulInterface.queryChangeITILByNumber(changeItils+"?view=expand&number="+itil.getItilNumber(), null, "GET", "Basic MDEwMzQwOTA6");
+				logger.info("查询变更itil工单状态返回："+sb);
+				if(StringUtils.isEmpty(sb))
+					return;
 				JSONObject obj = JSONObject.parseObject(sb);
 				int code = obj.getIntValue("ret_code");
 				if(code==200){
@@ -52,6 +57,7 @@ public class UpdateChangeITILStatus {
 						deviceAutomationService.updateBatch(itil);
 					}
 				}
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
