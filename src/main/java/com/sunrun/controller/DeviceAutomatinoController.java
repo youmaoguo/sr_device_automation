@@ -371,7 +371,7 @@ public class DeviceAutomatinoController extends BaseController{
 					d = fmt.parse(view.getItilPlannedEnd());
 				}
 				
-				if(view==null || StringUtils.isEmpty(view.getItilNumber()) || !view.getItilStatus().trim().contains("实施") ){
+				if(view==null || StringUtils.isEmpty(view.getItilNumber()) || !view.getItilStatus().trim().contains("已批准") ){
 					code = 500;
 					info = "itil工单未审批";
 					success = false;

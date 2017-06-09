@@ -1101,7 +1101,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 13, info, success, userName, null);
+			writeProcess(t, 13, success==true ? info : "检验配置不正常", success, userName, info);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
