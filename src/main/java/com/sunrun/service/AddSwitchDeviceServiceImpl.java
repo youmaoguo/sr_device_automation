@@ -683,7 +683,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				List<String> l = (List<String>) jj.getData();
 				
 			}*/
-			String[] currentIosVersion = task.getCurrentIosVersion().split(",");
+			//String[] currentIosVersion = task.getCurrentIosVersion().split(",");
+			String[] currentIosVersion = li.get(0).getIosVersion().split(",");
 			String sourceFileName = "", iosName = "";
 			for(int i=0;i<currentIosVersion.length;i++){
 				if(currentIosVersion[i].contains("kickstart")){
@@ -750,7 +751,6 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		
 	}
 
-	@SuppressWarnings("finally")
 	@Override
 	public Json writeAccessConfig(String thirdPartUrl, String auth, String taskId, String userName) {
 		/*Json json = new Json();
@@ -1082,13 +1082,13 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("ipaddr", task.getManagerIp());//设置IP
 			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
 			param.remove("method_name");
-			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl+"?jsonStr="+param.toString(), param, "POST", auth);
 			//测试环境： http://10.1.251.234/neteagle3/newdevice/newDevice/newdevice.action
 			//生产环境： http://10.1.251.238/neteagle3/newdevice/newDevice/newdevice.action
 			json = (Json) JSONObject.parseObject(sb, Json.class);
 			code = json.getRet_code();
 			success = json.getSuccess();
-			
+			info = json.getRet_info();
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("校验配置不正常");

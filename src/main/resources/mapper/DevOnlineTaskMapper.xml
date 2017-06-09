@@ -17,7 +17,7 @@
 			#{task.mainSwitchboardIp},#{task.mainSwitchboardPort}, #{task.backupSwitchboardIp},	#{task.backupSwitchboardPort},
 			#{task.devOnlineRack}, #{task.exclusiveSwitchboardIp}, #{task.exclusiveSwitchboardPort}, now(),		
 				0,						0,					 #{task.exclusiveSwitchboardInfo},	#{task.currentIosVersion},	0,
-			#{task.modelIosVersion},#{task.accessVersionWrite},1,#{task.backupSwitchboardConfigWrite},#{task.create_user},	1,	userName
+			#{task.modelIosVersion},#{task.accessVersionWrite},1,#{task.backupSwitchboardConfigWrite},#{task.create_user},	1,	#{task.userName}
 		)
 	</insert>
 	
