@@ -16,6 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.service.DeviceAutomationService;
 import com.sunrun.util.ITILRestfulInterface;
+import com.sunrun.util.StringUtil;
 
 /**
  * 查询并且更新变更itil工单状态
@@ -29,6 +30,12 @@ public class UpdateChangeITILStatus {
 	@Value("${itil.changeItils}")
 	private String changeItils;
 	
+	@Value("${itil.user}")
+	private String user;
+	
+	@Value("${itil.pwd}")
+	private String pwd;
+	
 	@Resource
 	private DeviceAutomationService deviceAutomationService;
 	
@@ -39,8 +46,8 @@ public class UpdateChangeITILStatus {
         for(int i=0;i<list.size();i++){
         	DevOnlineBatchItil itil = list.get(i);
         	try {
-        		logger.info("查询变更itil工单状态url:"+changeItils+"?view=expand&number="+itil.getItilNumber()+"; GET方法,头部验证是：Basic MDEwMzQwOTA6");
-				String sb = ITILRestfulInterface.queryChangeITILByNumber(changeItils+"?view=expand&number="+itil.getItilNumber(), null, "GET", "Basic MDEwMzQwOTA6");
+        		logger.info("查询变更itil工单状态url:"+changeItils+"?view=expand&number="+itil.getItilNumber()+"; GET方法,头部验证是："+StringUtil.basic64Encord(user, pwd));
+				String sb = ITILRestfulInterface.queryChangeITILByNumber(changeItils+"?view=expand&number="+itil.getItilNumber(), null, "GET", StringUtil.basic64Encord(user, pwd));
 				logger.info("查询变更itil工单状态返回："+sb);
 				if(StringUtils.isEmpty(sb))
 					return;
@@ -50,7 +57,7 @@ public class UpdateChangeITILStatus {
 					JSONArray array = obj.getJSONArray("data");
 					for(int j=0;j<array.size();j++){
 						JSONObject o = array.getJSONObject(j);
-						String status = o.getString("statue");
+						String status = o.getString("status");
 						String number = o.getString("number");
 						itil.setItilStatus(status);
 						itil.setItilNumber(number);
