@@ -42,7 +42,14 @@ public class DevOnlineTask extends BaseEntity {
 	private Integer accessSwitchboardCheck;//接入交换机校验状态 ；0 ：待校验，1：校验成功,2:校验失败
 	private String accessSwitchboardCheckInfo;//接入交换机校验信息
 	private String userName;
+	private String usercode;
 	
+	public String getUsercode() {
+		return usercode;
+	}
+	public void setUsercode(String usercode) {
+		this.usercode = usercode;
+	}
 	public String getUserName() {
 		return userName;
 	}

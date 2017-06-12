@@ -665,6 +665,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 200;	
 		Boolean success = true;
 		Object data = null;
+		boolean tag = true;
 		try{
 			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
 			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
@@ -698,6 +699,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				String newVersion = li.get(0).getIosVersion();
 				//如果当前版本和最新版本不一致 则更新当前版本
 				if(!task.getCurrentIosVersion().contains(newVersion)){
+					tag = false;
 					JSONObject param = new JSONObject();
 					param.put("method_name", "/interchanger/v1/updateIos");
 					param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
@@ -742,6 +744,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			t.setUpdate_user(userName);
 			writeProcess(t, 8, info, success, userName, null);
 			
+			code = (success==true && tag==false)?201:code;//200:表示不要升级；201：表示正在升级
 			json.setRet_code(code);
 			json.setRet_info(info);
 			json.setSuccess(success);

@@ -102,6 +102,7 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setState(1);
 			task.setCreate_user(userName);
 			task.setUserName(userName);
+			task.setUsercode(usercode);
 			String uuid = StringUtil.getUuid();
 			task.setId(uuid);
 			json = addSwitchDeviceService.saveDeviceBaseInfo(task, userName);
@@ -608,6 +609,15 @@ public class DeviceAutomatinoController extends BaseController{
 			
 			json.setRet_code(201);
 			json.setRet_info("ios版本回调成功");
+			
+			//回调后写入接入交换机配置
+			List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
+			task = null;
+			task = li.get(0);
+			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUpdate_user(), 9, task.getUsercode()); 
+			Thread t = new Thread(addTask);
+			t.start();
+			
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error(json.getRet_info());

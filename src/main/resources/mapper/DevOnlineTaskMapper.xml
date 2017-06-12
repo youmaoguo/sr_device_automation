@@ -10,14 +10,14 @@
 			main_switchboard_ip,	main_switchboard_port,		backup_switchboard_ip,			backup_switchboard_port,
 			dev_online_rack,		exclusive_switchboard_ip,	exclusive_switchboard_port,		create_time,	
 			manager_ip_write,		access_config_write,	exclusive_switchboard_info,			current_ios_version,	main_switchboard_config_write,
-			model_ios_version,		access_version_write,	switch_state,		backup_switchboard_config_write,	create_user,	state, username
+			model_ios_version,		access_version_write,	switch_state,		backup_switchboard_config_write,	create_user,	state, username, usercode
 		) values(
 			#{task.id}, 			#{task.taskType},	#{task.groupKey}, #{task.taskDescribe}, 1,  #{task.vlan},
 			#{task.brandName},		#{task.modelName},	#{task.areaName},	#{task.areaDescribe}, #{task.hostName}, #{task.managerIp},	
 			#{task.mainSwitchboardIp},#{task.mainSwitchboardPort}, #{task.backupSwitchboardIp},	#{task.backupSwitchboardPort},
 			#{task.devOnlineRack}, #{task.exclusiveSwitchboardIp}, #{task.exclusiveSwitchboardPort}, now(),		
 				0,						0,					 #{task.exclusiveSwitchboardInfo},	#{task.currentIosVersion},	0,
-			#{task.modelIosVersion},#{task.accessVersionWrite},1,#{task.backupSwitchboardConfigWrite},#{task.create_user},	1,	#{task.userName}
+			#{task.modelIosVersion},#{task.accessVersionWrite},1,#{task.backupSwitchboardConfigWrite},#{task.create_user},	1,	#{task.userName}, #{task.usercode}
 		)
 	</insert>
 	
@@ -153,7 +153,9 @@
 			t.access_version_write AS accessVersionWrite,
 			t.switch_state AS switchState,
 			t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
-			t.access_switchboard_check AS accessSwitchboardCheck
+			t.access_switchboard_check AS accessSwitchboardCheck,
+			t.update_user AS update_user,
+			t.usercode AS usercode
 			
 		from dev_online_task t where state=1
 		<if test="id!=null">

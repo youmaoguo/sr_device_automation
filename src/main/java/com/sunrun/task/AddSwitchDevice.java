@@ -350,6 +350,8 @@ public class AddSwitchDevice implements Runnable {
 				deviceAutomationService.updateTask2(task, null, null, userName);				
 				return;
 			}
+			if(json.getRet_code()==201)
+				return;
 		}
 		
 		//9. 写入接入交换机配置
