@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,14 +41,17 @@ public class ITILController extends BaseController{
 	private DeviceAutomationService deviceAutomationService;
 	
 	@RequestMapping(value = "/deviceAutomation/v1/queryChangeITILStatus", method = RequestMethod.GET, produces="application/json")
-	public void queryChangeITILStatus(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "itilNumber") String itilNumber){
+	public void queryChangeITILStatus(HttpServletRequest request, HttpServletResponse response, 
+			@RequestParam(value = "itilNumber", required = false) String itilNumber){
 		logger.info("sr_device_automation查询变更ITIL单子,请求参数是：itilNumber="+itilNumber);
 		Json json = new Json();
 		if(StringUtils.isEmpty(itilNumber)){
 			json.setRet_code(401);
 			json.setRet_info("缺少查询参数itilNumber");
 			json.setData(null);
+			json.setSuccess(false);
 			response(json, response, request);
+			return;
 		}
 		try {
 			String sb = RestfulRequestUtil.getResponse(changeItils+"?view=expand&number="+itilNumber, null, "GET", StringUtil.basic64Encord(user, pwd));
@@ -74,10 +76,12 @@ public class ITILController extends BaseController{
 				}
 				json.setRet_code(200);
 				json.setRet_info("查询变更ITIL单子返回成功");
+				json.setSuccess(true);
 				json.setData(sb);
 			}else{
 				json.setRet_code(500);
 				json.setRet_info("查询变更ITIL单子返回空");
+				json.setSuccess(false);
 				json.setData(sb);
 			}
 			logger.info("sr_device_automation查询变更ITIL单子返回："+sb);
@@ -85,6 +89,10 @@ public class ITILController extends BaseController{
 		} catch (Exception e) {
 			logger.error("sr_device_automation查询变更ITIL单子状态出错");
 			e.printStackTrace();
+			json.setRet_code(500);
+			json.setRet_info("查询变更ITIL单子状态出错");
+			json.setSuccess(false);
+			json.setData(null);
 		}
 		//返回数据
 		response(json, response, request);
