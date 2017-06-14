@@ -39,9 +39,9 @@ public class UpdateChangeITILStatus {
 	@Resource
 	private DeviceAutomationService deviceAutomationService;
 	
-	@Scheduled(cron="0 0/10 * * * ?") //每10分钟执行一次  
+	@Scheduled(cron="0 0/60 * * * ?") //每60分钟执行一次  
     public void statusCheck() {
-        logger.info("每10分钟执行一次查询变更itil工单状态。开始……");  
+        logger.info("每60分钟执行一次查询变更itil工单状态。开始……");  
         List<DevOnlineBatchItil> list = deviceAutomationService.findItilStatus();
         for(int i=0;i<list.size();i++){
         	DevOnlineBatchItil itil = list.get(i);
@@ -69,7 +69,7 @@ public class UpdateChangeITILStatus {
 				e.printStackTrace();
 			}
         }
-        logger.info("每10分钟执行一次查询变更itil工单状态。结束。");  
+        logger.info("每60分钟执行一次查询变更itil工单状态。结束。");  
     }    
   
 
