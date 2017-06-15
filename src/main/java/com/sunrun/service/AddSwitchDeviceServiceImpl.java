@@ -85,7 +85,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json appIpAndVlan(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
+	public Json appIpAndVlan(String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer count) {
 		Json json = new Json();
 		String info = "从看板申请ip和vlan成功";
 		Integer code = 200;	
@@ -100,7 +100,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/Kanban/v1/apply_ip");
 			param.put("subnet", li.get(0).getSubnet());	//本系统申请ip的网段(根据区域名称查询表'dev_area_switchboard_ip'中subnet)
-			param.put("mount", "1");		//申请数量1
+			param.put("mount", count.toString());		//申请数量1
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -113,6 +113,19 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				vlanId = obj.getString("vlanId");
 				data.put("ip", ips);
 				data.put("vlanId", vlanId);
+				if(count>1){
+					String[] s = ips.split(",");
+					List<DevOnlineTask> l = deviceAutomationService.findPort(null);
+					for(int i=0;i<s.length;i++){
+						for(DevOnlineTask d : l){
+							if(!d.getManagerIp().equals(s[i])){
+								ips = s[i];
+								break;
+							}
+						}
+					}
+					data.put("ip", ips);
+				}
 				if(StringUtils.isEmpty(vlanId)){
 					code = 500;
 					success = false;

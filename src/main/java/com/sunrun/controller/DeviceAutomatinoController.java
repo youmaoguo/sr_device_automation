@@ -304,6 +304,14 @@ public class DeviceAutomatinoController extends BaseController{
 					executeStep += 1;
 				}
 			}
+			if(task.getTaskState()==2){
+				json.setRet_code(500);
+				json.setRet_info("后台正在执行");
+				json.setSuccess(false);
+				//返回数据
+				response(json, response, request); 
+				return;
+			}
 			if(switchState==1 || switchState==3){
 				String vlan = obj.getString("vlan");
 				String exclusiveSwitchboardIp = obj.getString("exclusiveSwitchboardIp");
@@ -335,24 +343,6 @@ public class DeviceAutomatinoController extends BaseController{
 				if(!StringUtils.isEmpty(currentIosVersion))
 				task.setCurrentIosVersion(currentIosVersion);
 				task.setUpdate_user(updateUser);
-				
-				/*if(!StringUtils.isEmpty(brandName))
-					conn.setBrandName(brandName);
-				conn.setCreate_user(updateUser);
-				if(!StringUtils.isEmpty(currentIosVersion))
-					conn.setCurrentIosVersion(currentIosVersion);
-				if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
-					conn.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
-				if(!StringUtils.isEmpty(exclusiveSwitchboardIp))
-					conn.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
-				if(!StringUtils.isEmpty(exclusiveSwitchboardPort))
-					conn.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-				conn.setId(StringUtil.getUuid());
-				if(!StringUtils.isEmpty(modelName))
-					conn.setModelName(modelName);
-				if(StringUtils.isEmpty(brandName) || StringUtils.isEmpty(currentIosVersion) || StringUtils.isEmpty(exclusiveSwitchboardInfo)
-						|| StringUtils.isEmpty(exclusiveSwitchboardIp) || StringUtils.isEmpty(exclusiveSwitchboardPort))
-					conn = null;*/
 				
 				addSwitchDeviceService.exclusiveSwitchboardConn(null, task, updateUser);
 				

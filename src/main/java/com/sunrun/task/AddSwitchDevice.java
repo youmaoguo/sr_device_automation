@@ -77,12 +77,30 @@ public class AddSwitchDevice implements Runnable {
 		//2.从看板申请ip和vlan
 		Json json = new Json();
 		Map<String, String> map = new HashMap<String, String>();
-		json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
+		json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 1);
 		String sb = json.getData().toString();	//map中存放了ip和vlanId
 		try {
 			org.json.JSONObject obj1 = new org.json.JSONObject(sb);
 			String ip = obj1.getString("ip");
 			String vlanId = obj1.getString("vlanId");
+			
+			//点击“继续添加设备后”防止申请到重复的ip
+			boolean tag = true;
+			List<DevOnlineTask> li = deviceAutomationService.findPort(null);
+			for(DevOnlineTask t : li){
+				if(t.getManagerIp().equals(ip)){
+					tag = false;
+					break;
+				}
+			}
+			if(!tag){
+				json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 2);
+				sb = json.getData().toString();
+				obj1 = new org.json.JSONObject(sb);
+				ip = obj1.getString("ip");
+				vlanId = obj1.getString("vlanId");
+			}
+			
 			map.put("ip", ip);
 			map.put("vlanId", vlanId);
 		} catch (JSONException e) {
@@ -90,8 +108,12 @@ public class AddSwitchDevice implements Runnable {
 		}
 		if(!json.getSuccess()){
 			task.setSwitchState(3);
+			task.setTaskState(5);
 			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
+		}else{
+			task.setTaskState(2);
+			deviceAutomationService.updateTask2(task, null, null, userName);
 		}
 		List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
 		if(li!=null && li.size()>0){
@@ -109,7 +131,7 @@ public class AddSwitchDevice implements Runnable {
 				//网络ping通，被占了，回填不可用状态
 				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 				//重新申请ip,vlan
-				json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
+				json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 1);
 				//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
 				sb = json.getData().toString();	//map中存放了ip和vlanId
 				try {
@@ -127,6 +149,7 @@ public class AddSwitchDevice implements Runnable {
 						addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 					}
 					task.setSwitchState(3);
+					task.setTaskState(5);
 					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
 				}
@@ -138,6 +161,7 @@ public class AddSwitchDevice implements Runnable {
 		json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1, usercode);
 		if(!json.getSuccess()){
 			task.setSwitchState(3);
+			task.setTaskState(5);
 			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
 		}
@@ -147,8 +171,12 @@ public class AddSwitchDevice implements Runnable {
 		json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
 		if(!json.getSuccess()){
 			task.setSwitchState(3);
+			task.setTaskState(5);
 			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
+		}else{
+			task.setTaskState(3);
+			deviceAutomationService.updateTask2(task, null, null, userName);
 		}
 		//ip地址回填 ，状态是3实分配
 		//addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
@@ -184,7 +212,7 @@ public class AddSwitchDevice implements Runnable {
 		}
 		//2.从看板申请ip和vlan
 		if(executeStep!=null && executeStep==2){
-			json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
+			json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 1);
 			String sb = json.getData().toString();	//map中存放了ip和vlanId
 			try {
 				org.json.JSONObject obj1 = new org.json.JSONObject(sb);
@@ -197,8 +225,12 @@ public class AddSwitchDevice implements Runnable {
 			}
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
+				task.setTaskState(5);
 				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}else{
+				task.setTaskState(2);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 			}
 		}
 		
@@ -212,7 +244,7 @@ public class AddSwitchDevice implements Runnable {
 					//网络ping通，被占了，回填不可用状态
 					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 					//重新申请ip,vlan
-					json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
+					json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 1);
 					//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
 					String sb = json.getData().toString();	//map中存放了ip和vlanId
 					try {
@@ -230,11 +262,19 @@ public class AddSwitchDevice implements Runnable {
 							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 						}
 						task.setSwitchState(3);
+						task.setTaskState(5);
 						deviceAutomationService.updateTask2(task, null, null, userName);
 						return;
+					}else{
+						task.setTaskState(2);
+						deviceAutomationService.updateTask2(task, null, null, userName);
 					}
 				}
 				//return;
+			}
+			if(code==200){
+				task.setTaskState(2);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 			}
 			
 		}
@@ -246,7 +286,7 @@ public class AddSwitchDevice implements Runnable {
 				DevTaskExecute d = l.get(i);
 				if(d.getExecuteStep()==3 && d.getTaskExecuteState()==4){
 					//重新申请ip,vlan
-					json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName);
+					json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 1);
 					//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
 					String sb = json.getData().toString();	//map中存放了ip和vlanId
 					try {
@@ -263,7 +303,13 @@ public class AddSwitchDevice implements Runnable {
 						if(json.getRet_code()==505){
 							addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 						}
+						task.setSwitchState(3);
+						task.setTaskState(5);
+						deviceAutomationService.updateTask2(task, null, null, userName);
 						return;
+					}else{
+						task.setTaskState(2);
+						deviceAutomationService.updateTask2(task, null, null, userName);
 					}
 				}
 				
@@ -273,8 +319,12 @@ public class AddSwitchDevice implements Runnable {
 			json = addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1, usercode);
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
+				task.setTaskState(5);
 				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}else{
+				task.setTaskState(2);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 			}
 		}
 		
@@ -284,8 +334,12 @@ public class AddSwitchDevice implements Runnable {
 			json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
+				task.setTaskState(5);
 				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}else{
+				task.setTaskState(2);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 			}
 		}
 		
@@ -318,6 +372,7 @@ public class AddSwitchDevice implements Runnable {
 			execute.setTaskExecuteState(3);
 			execute.setCreate_user(userName);
 			execute.setTaskExecuteNote(null);
+			task.setTaskState(2);
 			deviceAutomationService.updateTask2(task, execute, 6, userName);
 		}
 		/*
@@ -332,8 +387,12 @@ public class AddSwitchDevice implements Runnable {
 			json = addSwitchDeviceService.managementPort(thirdPartUrl, auth, task, userName);
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
+				task.setTaskState(5);
 				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
+			}else{
+				task.setTaskState(2);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 			}
 		}
 		List<DevOnlineTask> ll = deviceAutomationService.findPort(task.getId());
@@ -347,8 +406,12 @@ public class AddSwitchDevice implements Runnable {
 			json = addSwitchDeviceService.checkIosVersion(thirdPartUrl, auth, task, userName);
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
+				task.setTaskState(5);
 				deviceAutomationService.updateTask2(task, null, null, userName);				
 				return;
+			}else{
+				task.setTaskState(2);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 			}
 			if(json.getRet_code()==201)
 				return;
@@ -360,11 +423,13 @@ public class AddSwitchDevice implements Runnable {
 			json = addSwitchDeviceService.writeNewAccessConfig(thirdPartUrl, auth, task, userName);
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
+				task.setTaskState(5);
 				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
 			}
 			if(json.getSuccess()){
 				task.setSwitchState(2);
+				task.setTaskState(3);
 				deviceAutomationService.updateTask2(task, null, 11, userName);
 			}
 			//ip地址回填 ，状态是3实分配
@@ -386,8 +451,12 @@ public class AddSwitchDevice implements Runnable {
 				json = addSwitchDeviceService.writeNewGatherConfig(thirdPartUrl, auth, task, userName);
 				if(!json.getSuccess()){
 					task.setSwitchState(3);
+					task.setTaskState(5);
 					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
+				}else{
+					task.setTaskState(2);
+					deviceAutomationService.updateTask2(task, null, null, userName);
 				}
 			}
 			
@@ -403,8 +472,10 @@ public class AddSwitchDevice implements Runnable {
 				}
 				
 				if(json.getSuccess()){
+					task.setTaskState(3);
 					task.setSwitchState(4);
 				}else{
+					task.setTaskState(5);
 					task.setSwitchState(3);
 				}
 				deviceAutomationService.updateTask2(task, null, 13, userName);
