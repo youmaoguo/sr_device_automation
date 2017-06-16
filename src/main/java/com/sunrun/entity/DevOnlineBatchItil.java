@@ -1,14 +1,15 @@
 package com.sunrun.entity;
 
-import java.util.Date;
+import java.io.Serializable;
 
 /**
  * 设备上线批次itil工单表
  * @author ymg
  *
  */
-public class DevOnlineBatchItil extends BaseEntity {
+public class DevOnlineBatchItil extends BaseEntity implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
 	private String batchName;		//'批次名称',
 	private String batchDescribe;	//'批次描述',
 	private Integer batchState;			//'批次状态 1：新建；2：执行中；3：完成;4:废除;5:失败',

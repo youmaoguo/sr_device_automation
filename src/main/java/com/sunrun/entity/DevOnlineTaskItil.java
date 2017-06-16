@@ -1,12 +1,15 @@
 package com.sunrun.entity;
 
+import java.io.Serializable;
+
 /**
  * 设备上线批次任务与 itil对应实体类
  * @author ymg
  *
  */
-public class DevOnlineTaskItil extends BaseEntity{
+public class DevOnlineTaskItil extends BaseEntity implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	private String itilNumber;		//'itil申请单编号 ',
 	private String devOnlineTaskId;	// '设备上线任务表记录对应ID',
 	

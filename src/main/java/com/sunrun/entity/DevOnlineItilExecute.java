@@ -1,15 +1,15 @@
 package com.sunrun.entity;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.Serializable;
 
 /**
  * 设备上线批次_itil工单执行情况实体类
  * @author ymg
  *
  */
-public class DevOnlineItilExecute extends DevOnlineBatchItil {
+public class DevOnlineItilExecute extends DevOnlineBatchItil implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	private String itilSourceId;  	//'来源ID GEN000002',
 	private String itilRequestedDate; //'申请时间 日期时间 2015-12-07T14:02:07+00:00',
 	private String itilSource; 		//'来源 文本 cloud',

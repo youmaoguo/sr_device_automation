@@ -1,12 +1,14 @@
 package com.sunrun.entity;
 
+import java.io.Serializable;
+
 /**
  * 区域汇聚交换机ip对应表
  * @author ymg
  *
  */
-public class DevAreaSwitchboardIp extends BaseEntity {
-
+public class DevAreaSwitchboardIp extends BaseEntity implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private String areaName;//区域名称',
 	private String areaDescribe;//区域描述',
 	private String mainSwitchboardIp;//'主汇聚交换机ip',

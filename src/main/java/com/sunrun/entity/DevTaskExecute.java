@@ -1,5 +1,6 @@
 package com.sunrun.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,8 +8,9 @@ import java.util.Date;
  * @author ymg
  *
  */
-public class DevTaskExecute extends BaseEntity {
+public class DevTaskExecute extends BaseEntity implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
 	private String taskId;		//'任务id(引用表dev_online_task的id)',
 	private Integer taskType;		//'任务类型，此字段目前不使用，备用',
 	private Integer taskOrder;		//'任务执行顺序',

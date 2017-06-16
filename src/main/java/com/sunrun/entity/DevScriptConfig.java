@@ -1,12 +1,14 @@
 package com.sunrun.entity;
 
+import java.io.Serializable;
+
 /**
  * 设备脚本配制信息
  * @author ymg
  *
  */
-public class DevScriptConfig extends BaseEntity {
-
+public class DevScriptConfig extends BaseEntity implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private String objectId;	//'其他表对象Id',
 	private Integer devType;	// '设备类型：1、接入交换机； 2 、主汇聚交换机； 3 、备汇聚交换机',
 	private Integer scriptType; //'脚本类型: 1配制文件',

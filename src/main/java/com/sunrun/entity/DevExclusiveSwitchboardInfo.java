@@ -1,12 +1,15 @@
 package com.sunrun.entity;
 
+import java.io.Serializable;
+
 /**
  * 带外交换机信息
  * @author ymg
  *
  */
-public class DevExclusiveSwitchboardInfo extends BaseEntity {
+public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	private String exclusiveSwitchboardIp;	//'带外交机ip(console)',
 	private String exclusiveSwitchboardPort;//'带外交机端口(console)',
 	private Integer exclusiveSwitchboardOrder;//'带外交机顺序',

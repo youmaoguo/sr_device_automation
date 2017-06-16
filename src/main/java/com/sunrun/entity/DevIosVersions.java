@@ -1,12 +1,15 @@
 package com.sunrun.entity;
 
+import java.io.Serializable;
+
 /**
  * 设备版本库信息
  * @author ymg
  *
  */
-public class DevIosVersions extends BaseEntity{
+public class DevIosVersions extends BaseEntity implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	private String brandName;	//'品牌名称',
 	private String modelName;	//'型号',
 	private String iosVersion;	//'IOS版本信息',
