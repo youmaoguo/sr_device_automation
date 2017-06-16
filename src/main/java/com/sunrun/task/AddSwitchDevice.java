@@ -472,7 +472,7 @@ public class AddSwitchDevice implements Runnable {
 				}
 				
 				if(json.getSuccess()){
-					task.setTaskState(3);
+					task.setTaskState(6);
 					task.setSwitchState(4);
 				}else{
 					task.setTaskState(5);

@@ -10,7 +10,7 @@ public class DevOnlineTask extends BaseEntity {
 	private Integer taskType; 			//'任务类型 1：接入设备任务;2:汇聚设备任务',
 	private String groupKey;		//'组名，用于标示多个任务属于同一组',
 	private String taskDescribe;	//'任务描述',
-	private Integer taskState;			//'批次任务状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
+	private Integer taskState;			//'批次任务状态 1：新建；2：执行中；3：完成（局部完成）;4:废除;5:失败';6：成功（全部完成成功）,
 	private String brandName;		//'品牌名称',
 	private String modelName;		//'型号',
 	private String areaName;		//'区域名称',

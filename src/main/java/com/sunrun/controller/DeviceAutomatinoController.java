@@ -103,6 +103,7 @@ public class DeviceAutomatinoController extends BaseController{
 			task.setCreate_user(userName);
 			task.setUserName(userName);
 			task.setUsercode(usercode);
+			task.setTaskState(2);
 			String uuid = StringUtil.getUuid();
 			task.setId(uuid);
 			json = addSwitchDeviceService.saveDeviceBaseInfo(task, userName);
@@ -305,8 +306,8 @@ public class DeviceAutomatinoController extends BaseController{
 				}
 			}
 			if(task.getTaskState()==2){
-				json.setRet_code(500);
-				json.setRet_info("后台正在执行");
+				json.setRet_code(200);
+				json.setRet_info("后台正在执行...");
 				json.setSuccess(false);
 				//返回数据
 				response(json, response, request); 
