@@ -356,8 +356,11 @@ public class DeviceAutomatinoController extends BaseController{
 				DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
 				batchView.setId(task.getId());
 				long i = System.currentTimeMillis();
-				DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
-				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				//DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
+				List<DevOnlineBatchTaskView> views = deviceAutomationService.findDevBatchTask(batchView, null, null, null, null);
+				DevOnlineBatchTaskView view = views.get(0);
+				//SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				Date d = null;
 				if(view!=null && !view.getItilPlannedEnd().equals("") && view.getItilPlannedEnd()!=null){
 					d = fmt.parse(view.getItilPlannedEnd());
