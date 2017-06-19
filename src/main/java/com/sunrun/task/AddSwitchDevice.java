@@ -7,6 +7,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
@@ -361,6 +362,8 @@ public class AddSwitchDevice implements Runnable {
 				return;
 		}*/
 		
+		if(StringUtils.isEmpty(task.getExclusiveSwitchboardInfo()) || StringUtils.isEmpty(task.getExclusiveSwitchboardPort()) || StringUtils.isEmpty(task.getExclusiveSwitchboardIp()))
+			return;
 		//6.第八步保存带外交换机端口与接入交换机的连接在进入这个方法前的控制器层已经调用方法执行了,此处不要重复执行了,只要记录任务执行详情
 		if(executeStep!=null && executeStep<=6){
 			DevTaskExecute execute = new DevTaskExecute();
