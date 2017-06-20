@@ -370,10 +370,14 @@ public class DeviceAutomatinoController extends BaseController{
 					code = 500;
 					info = "itil工单未审批";
 					success = false;
-				}else if(d.getTime()<i && d.getHours()>=19 && d.getMinutes()>0){
+				}else if(d.getTime()<i || d.getHours()<19){
 					code = 500;
 					success = false;
 					info = "未到时候执行，请在"+view.getItilPlannedEnd()+"后执行";
+				}else if(StringUtils.isEmpty(view.getEmailId())){
+					code = 500;
+					info = "请发送下邮件通知再执行";
+					success = false;
 				}else{
 					AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, executeStep, usercode); 
 					Thread t = new Thread(addTask);

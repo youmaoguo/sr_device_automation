@@ -127,6 +127,7 @@
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				t.access_switchboard_check AS accessSwitchboardCheck,
 				13 AS taskAllStep,
+				t.email_id AS emailId,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS taskCurrentStep,
 				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep and update_time is null
@@ -135,6 +136,7 @@
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
 				LEFT JOIN dev_online_batch_itil b on b.itil_number = ti.itil_number
+				LEFT JOIN sys_send_email e ON e.id = t.email_id
 			WHERE t.state=1  
 			
 		) taskView	where 1=1 
@@ -226,6 +228,7 @@
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
 				13 AS taskAllStep,
+				t.email_id AS emailId,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS taskCurrentStep,
 				(SELECT task_describe FROM dev_task_execute where task_id=t.id AND execute_step = executeStep and update_time is null
@@ -234,6 +237,7 @@
 			FROM  dev_online_task t 
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
 				LEFT JOIN dev_online_batch_itil b on b.itil_number = ti.itil_number
+				LEFT JOIN sys_send_email e ON e.id = t.email_id
 			WHERE t.state=1   
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">
