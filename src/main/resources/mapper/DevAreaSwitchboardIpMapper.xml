@@ -43,6 +43,9 @@
 		<if test="area.areaName != null">
 		    AND area_name = #{area.areaName}
 		</if>
+		<if test="area.areaDescribe != null">
+		    AND area_describe = #{area.areaDescribe}
+		</if>
 	</select>
 
 	

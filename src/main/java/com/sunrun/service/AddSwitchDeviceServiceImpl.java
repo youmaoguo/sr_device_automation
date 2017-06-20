@@ -94,7 +94,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		String vlanId = "", ips = "";
 		try{
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
-			area.setAreaName(task.getAreaName());
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
 			
 			JSONObject param = new JSONObject();
@@ -166,7 +167,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		try{
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
-			area.setAreaName(task.getAreaName());
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/pingFun");
@@ -220,7 +222,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		try{
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
-			area.setAreaName(task.getAreaName());
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
 			
 			JSONObject param = new JSONObject();
@@ -276,7 +279,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		String mp = "", bp = "";
 		try{
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
-			area.setAreaName(task.getAreaName());
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
 			
 			JSONObject param = new JSONObject();
@@ -1012,7 +1016,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
 			
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
-			area.setAreaName(task.getAreaName());
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
 			
 			/*DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
@@ -1152,7 +1157,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Object data = null;
 		try{
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
-			area.setAreaName(task.getAreaName());
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
 			
 			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
@@ -1225,7 +1231,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
 			
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
-			area.setAreaName(task.getAreaName());
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
 			
 			JSONObject param = new JSONObject();
