@@ -83,6 +83,85 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}
 	}
 
+	@Override
+	public Json appIpAndVlan2(String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer count){
+		Json json = new Json();
+		JSONObject data = new JSONObject();
+		String vlanId = "", ips = "";
+		try{
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			
+			JSONObject param = new JSONObject();
+			param.put("method_name", "/Kanban/v1/apply_ip");
+			param.put("subnet", li.get(0).getSubnet());	//本系统申请ip的网段(根据区域名称查询表'dev_area_switchboard_ip'中subnet)
+			param.put("mount", count.toString());		//申请数量
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			Json j = (Json) JSONObject.parseObject(sb, Json.class);
+			if(j.getRet_code()!=200){
+				json.setRet_code(j.getRet_code());
+				json.setRet_info(j.getRet_info());
+				json.setSuccess(j.getSuccess());
+				return json;
+			}else{
+				boolean b = false;
+				org.json.JSONObject obj = new org.json.JSONObject(j.getData().toString());
+				if(obj.length()==0){
+					json.setRet_code(500);
+					json.setRet_info("看板上未返回ip和vlan");
+					json.setSuccess(false);
+					return json;
+				}
+				ips = obj.getString("ips");	//多个ip用英文逗号隔开,(主要作用于生成汇聚和接入接入交换机配置信息)
+				vlanId = obj.getString("vlanId");
+				String[] s = ips.split(",");
+				for(int i=0;i<s.length;i++){
+					DevOnlineTask t = new DevOnlineTask();
+					t.setManagerIp(s[i]);
+					List<DevOnlineTask> l = deviceAutomationService.findTask(t);
+					if(l==null || l.size()==0){
+						ips = s[i];
+						b = true;
+						break;
+					}
+				}
+				if(b){
+					data.put("ip", ips);
+					data.put("vlanId", vlanId);
+					
+				}else{
+					data = null;
+				}
+				//记录任务执行步骤
+				DevOnlineTask t = new DevOnlineTask();
+				t.setId(task.getId());
+				t.setVlan(vlanId);
+				t.setManagerIp(ips);
+				t.setUpdate_user(userName);
+				writeProcess(t, 2, b==true?"从看板申请ip和vlan成功":"从看板申请ip失败", b, userName, null);
+				
+				json.setRet_code(b==true?200:500);
+				json.setRet_info(b==true?"从看板申请ip和vlan成功":"从看板申请到重复的ip,失败");
+				json.setSuccess(b);
+				return json;
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("从看板申请ip和vlan出错");
+			json.setRet_info("从看板申请ip和vlan失败");
+			json.setRet_code(500);
+			json.setSuccess(false);
+			
+			DevOnlineTask t = new DevOnlineTask();
+			t.setId(task.getId());
+			writeProcess(t, 2, "从看板申请ip失败", false, userName, "程序异常了，请联系后台开发人员");
+			return json;
+		}
+	}
+	
 	@SuppressWarnings("finally")
 	@Override
 	public Json appIpAndVlan(String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer count) {
@@ -115,7 +194,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				vlanId = obj.getString("vlanId");
 				data.put("ip", ips);
 				data.put("vlanId", vlanId);
-				if(count>1){
+				//if(count>1){
 					String[] s = ips.split(",");
 					for(int i=0;i<s.length;i++){
 						DevOnlineTask t = new DevOnlineTask();
@@ -127,7 +206,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 						}
 					}
 					data.put("ip", ips);
-				}
+				//}
 				if(StringUtils.isEmpty(vlanId)){
 					code = 500;
 					success = false;

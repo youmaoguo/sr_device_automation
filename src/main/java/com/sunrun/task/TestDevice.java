@@ -14,7 +14,7 @@ import com.sunrun.util.Json;
 
 public class TestDevice  implements Runnable {
 
-	private final boolean tag = false;
+	private static boolean t = false;
 	
 	private DeviceAutomationService deviceAutomationService;
 	private AddSwitchDeviceService addSwitchDeviceService;
@@ -38,6 +38,7 @@ public class TestDevice  implements Runnable {
 
 	@Override
 	public void run() {
+		t = true;
 		//2.从看板申请ip和vlan
 		Json json = new Json();
 		String sb = "";
@@ -83,13 +84,13 @@ public class TestDevice  implements Runnable {
 	}
 	
 	public synchronized Map<String, String> step2_appIpAndVlan(){
-		/*if(tag){
+		if(t){
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}*/
+		}
 		//2.从看板申请ip和vlan
 			Json json = new Json();
 			json.setSuccess(true);

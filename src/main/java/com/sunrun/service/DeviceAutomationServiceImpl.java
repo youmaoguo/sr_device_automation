@@ -514,6 +514,12 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	public List<DevOnlineTask> findTask(DevOnlineTask task) {
 		return devOnlineTaskMapper.findTask(task);
 	}
+
+
+	@Override
+	public List<DevOnlineTask> findTaskByTime() {
+		return devOnlineTaskMapper.findTaskByTime();
+	}
 	
 
 }

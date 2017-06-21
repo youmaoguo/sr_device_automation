@@ -77,6 +77,24 @@ public class DeviceAutomatinoController extends BaseController{
 		Boolean success = true;
 		logger.info("添加上线交换机设备addSwitchDevice接口入参是："+jsonStr);
 		try{
+			
+			//以下判断是防止重复申请到ip(判断上一条task添加的步骤是否走完了第四步，走完了就允许添加)
+			List<DevOnlineTask> l = deviceAutomationService.findTaskByTime();
+			if(l!=null && l.size()>0){
+				List<DevTaskExecute> li = deviceAutomationService.findTaskExecute(l.get(0).getId(), "execute_step");
+				if(li!=null && li.size()>0){
+					int step = li.get(0).getExecuteStep();
+					if(l.get(0).getSwitchState()==1 && step<=4){
+						json.setRet_code(code);
+						json.setRet_info("为了保证从看板申请ip稳定，请再等待几分钟！");
+						json.setSuccess(success);
+						//返回数据
+						response(json, response, request);
+						return;
+					}
+				}
+			}
+			
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String userName = obj.getString("userName");
 			String updateUser = obj.getString("updateUser");

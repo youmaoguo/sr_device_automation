@@ -173,4 +173,6 @@ public interface DeviceAutomationService {
 	
 	List<DevOnlineTask> findTask(DevOnlineTask task);
 	
+	List<DevOnlineTask> findTaskByTime();
+	
 }

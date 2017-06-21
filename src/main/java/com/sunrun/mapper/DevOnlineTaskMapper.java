@@ -54,4 +54,6 @@ public interface DevOnlineTaskMapper {
 	
 	List<DevOnlineTask> findTask(@Param("task") DevOnlineTask task);
 	
+	List<DevOnlineTask> findTaskByTime();
+	
 }

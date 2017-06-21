@@ -24,6 +24,15 @@ public interface AddSwitchDeviceService {
 	 */
 	Json appIpAndVlan(String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer count);
 	
+	/**添加设备第2步：
+	 * 从看板申请ip和vlan
+	 * @param thirdPartUrl
+	 * @param auth
+	 * @param task
+	 * @return
+	 */
+	Json appIpAndVlan2(String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer count);
+	
 	/**添加设备第3步：
 	 * 在交换机上ping 在看板系统上申请到的IP地址，看网络是否通
 	 * @param thirdPartUrl
