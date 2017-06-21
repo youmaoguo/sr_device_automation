@@ -90,7 +90,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		String info = "从看板申请ip和vlan成功";
 		Integer code = 200;	
 		Boolean success = true;
-		Map<String, String> data = new HashMap<String, String>();
+		//Map<String, String> data = new HashMap<String, String>();
+		JSONObject data = new JSONObject();
 		String vlanId = "", ips = "";
 		try{
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
@@ -101,7 +102,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/Kanban/v1/apply_ip");
 			param.put("subnet", li.get(0).getSubnet());	//本系统申请ip的网段(根据区域名称查询表'dev_area_switchboard_ip'中subnet)
-			param.put("mount", count.toString());		//申请数量1
+			param.put("mount", count.toString());		//申请数量
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){

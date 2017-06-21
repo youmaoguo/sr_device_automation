@@ -508,6 +508,12 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	public List<DevOnlineBatchItil> findItilStatus() {
 		return devOnlineBatchItilMapper.findItilStatus();
 	}
+
+
+	@Override
+	public List<DevOnlineTask> findTask(DevOnlineTask task) {
+		return devOnlineTaskMapper.findTask(task);
+	}
 	
 
 }

@@ -52,4 +52,6 @@ public interface DevOnlineTaskMapper {
 	 */
 	List<DevOnlineTask> findPort(@Param("id") String id);
 	
+	List<DevOnlineTask> findTask(@Param("task") DevOnlineTask task);
+	
 }

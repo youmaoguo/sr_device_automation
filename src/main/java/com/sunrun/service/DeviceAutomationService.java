@@ -2,6 +2,8 @@ package com.sunrun.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.sunrun.entity.DevAreaSwitchboardIp;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineBatchItil;
@@ -169,5 +171,6 @@ public interface DeviceAutomationService {
 	 */
 	List<DevOnlineBatchItil> findItilStatus();
 	
+	List<DevOnlineTask> findTask(DevOnlineTask task);
 	
 }
