@@ -24,7 +24,6 @@
 	<update id="updateTest">
 		update test
 		<trim prefix="set" suffixOverrides=",">
-				<if test="test.ip != null">ip=#{test.ip},</if>
 				<if test="test.status != null">status=#{test.status},</if>
 			</trim>
 		where 1=1
@@ -33,9 +32,6 @@
 		</if>
 		<if test="test.ip != null">
 		    AND ip = #{test.ip}
-		</if>
-		<if test="test.status != null">
-		    AND status = #{test.status}
 		</if>
 	</update>
 

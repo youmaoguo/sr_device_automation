@@ -14,6 +14,8 @@ import com.sunrun.util.Json;
 
 public class TestDevice  implements Runnable {
 
+	private final boolean tag = false;
+	
 	private DeviceAutomationService deviceAutomationService;
 	private AddSwitchDeviceService addSwitchDeviceService;
 	private TestService testService;
@@ -42,9 +44,52 @@ public class TestDevice  implements Runnable {
 		Map<String, String> map = new HashMap<String, String>();
 		map = step2_appIpAndVlan();
 		
+		//3.看网络是否通
+		json = null;
+		json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
+		int code = json.getRet_code();//200:表示网络ping不通，本系统可用；505，表示网络ping通，被占了，本系统不可用; 500，服务器操作交换机时出错
+		if(!json.getSuccess() && code!=200){
+			if(code==505){
+				//网络ping通，被占了，回填不可用状态
+				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
+				//重新申请ip,vlan
+				json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 1);
+				//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
+				sb = json.getData().toString();	//map中存放了ip和vlanId
+				try {
+					org.json.JSONObject obj1 = new org.json.JSONObject(sb);
+					String ip = obj1.getString("ip");
+					String vlanId = obj1.getString("vlanId");
+					map.put("ip", ip);
+					map.put("vlanId", vlanId);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
+				if(json.getRet_code()!=200){
+					if(json.getRet_code()==505){
+						addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
+					}
+					task.setSwitchState(3);
+					task.setTaskState(5);
+					deviceAutomationService.updateTask2(task, null, null, userName);
+					return;
+				}
+			}
+		}
+
+		testService.callback(map.get("ip"), 1);
+		
 	}
 	
 	public synchronized Map<String, String> step2_appIpAndVlan(){
+		/*if(tag){
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}*/
 		//2.从看板申请ip和vlan
 			Json json = new Json();
 			json.setSuccess(true);
