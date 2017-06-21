@@ -21,10 +21,8 @@ public class SrDeviceAutomationApplicationTests {
 
 	@Test
 	public void contextLoads() {
-
-		System.out.println(11);
-		List<DevOnlineTask> li = deviceAutomationService.findPort("1");
-		System.out.println(li.size());
+		
+		
 	}
 
 	

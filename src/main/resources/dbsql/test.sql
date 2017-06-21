@@ -1,0 +1,1 @@
+CREATE TABLE test(                              	id varchar(32) not null comment '主键',	ip varchar(100) not null comment '区域名称',	status tinyint default 0 comment '状态 0 代表空闲，1代表预占，3：实占',	primary key (id)) ENGINE=InnoDB DEFAULT CHARSET=UTF8 ROW_FORMAT=DYNAMIC collate=utf8_bin COMMENT '模拟申请ip表';

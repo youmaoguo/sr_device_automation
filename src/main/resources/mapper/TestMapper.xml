@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunrun.mapper.TestMapper">
+
+
+	<select id="findTestIp" resultType="com.sunrun.entity.Test">
+		select 
+			id AS id,
+			ip AS ip,
+			status AS status
+		from test where 1=1
+		<if test="test.id != null">
+		    AND id = #{test.id}
+		</if>
+		<if test="test.ip != null">
+		    AND ip = #{test.ip}
+		</if>
+		<if test="test.status != null">
+		    AND status = #{test.status}
+		</if>
+	</select>
+
+	<update id="updateTest">
+		update test
+		<trim prefix="set" suffixOverrides=",">
+				<if test="test.ip != null">ip=#{test.ip},</if>
+				<if test="test.status != null">status=#{test.status},</if>
+			</trim>
+		where 1=1
+		<if test="test.id != null">
+		    AND id = #{test.id}
+		</if>
+		<if test="test.ip != null">
+		    AND ip = #{test.ip}
+		</if>
+		<if test="test.status != null">
+		    AND status = #{test.status}
+		</if>
+	</update>
+
+</mapper>

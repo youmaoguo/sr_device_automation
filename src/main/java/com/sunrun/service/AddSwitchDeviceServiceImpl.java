@@ -117,13 +117,13 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				data.put("vlanId", vlanId);
 				if(count>1){
 					String[] s = ips.split(",");
-					List<DevOnlineTask> l = deviceAutomationService.findPort(null);
 					for(int i=0;i<s.length;i++){
-						for(DevOnlineTask d : l){
-							if(!d.getManagerIp().equals(s[i])){
-								ips = s[i];
-								break;
-							}
+						DevOnlineTask t = new DevOnlineTask();
+						t.setManagerIp(s[i]);
+						List<DevOnlineTask> l = deviceAutomationService.findTask(t);
+						if(l==null || l.size()==0){
+							ips = s[i];
+							break;
 						}
 					}
 					data.put("ip", ips);
@@ -394,7 +394,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			t.setBackupSwitchboardPort(bp);
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 5, info, success, userName, null);
+			writeProcess(t, 5, "判断汇聚交换机端口上是否有配置及端口状态是否为down", success, userName, success!=true?info:"");
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -760,7 +760,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 8, info, success, userName, null);
+			writeProcess(t, 8, info, success, userName, success!=true?info:"");
 			
 			code = (success==true && tag==false)?201:code;//200:表示不要升级；201：表示正在升级
 			json.setRet_code(code);
