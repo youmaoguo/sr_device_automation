@@ -147,6 +147,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				json.setRet_code(b==true?200:500);
 				json.setRet_info(b==true?"从看板申请ip和vlan成功":"从看板申请到重复的ip,失败");
 				json.setSuccess(b);
+				json.setData(data);
 				return json;
 			}
 			
