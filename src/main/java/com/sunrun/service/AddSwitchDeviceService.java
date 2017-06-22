@@ -191,7 +191,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json checkNewConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 
-	
+	void writeProcess(DevOnlineTask t,  Integer executeStep, String info, boolean success, String userName, String taskExecuteNote);
 	
 	
 }

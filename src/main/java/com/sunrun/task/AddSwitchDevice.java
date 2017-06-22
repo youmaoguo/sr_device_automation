@@ -135,6 +135,8 @@ public class AddSwitchDevice implements Runnable {
 		String sb = "";
 		Map<String, String> map = new HashMap<String, String>();
 		map = step2_appIpAndVlan();
+		if(map==null || map.size()==0)
+			return;
 		/*json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 1);
 		String sb = json.getData().toString();	//map中存放了ip和vlanId
 		try {
@@ -191,6 +193,8 @@ public class AddSwitchDevice implements Runnable {
 				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 				//重新申请ip,vlan
 				map = step2_appIpAndVlan();
+				if(map==null || map.size()==0)
+					return;
 				/*json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
 				//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
 				sb = json.getData().toString();	//map中存放了ip和vlanId
@@ -308,6 +312,8 @@ public class AddSwitchDevice implements Runnable {
 					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 					//重新申请ip,vlan
 					map = step2_appIpAndVlan();
+					if(map==null || map.size()==0)
+						return;
 					/*json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
 					//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
 					String sb = json.getData().toString();	//map中存放了ip和vlanId
@@ -352,6 +358,8 @@ public class AddSwitchDevice implements Runnable {
 				if(d.getExecuteStep()==3 && d.getTaskExecuteState()==4){
 					//重新申请ip,vlan
 					map = step2_appIpAndVlan();
+					if(map==null || map.size()==0)
+						return;
 					/*json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
 					//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
 					String sb = json.getData().toString();	//map中存放了ip和vlanId
