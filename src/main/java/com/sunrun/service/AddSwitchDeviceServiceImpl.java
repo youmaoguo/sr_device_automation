@@ -87,7 +87,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	public Json appIpAndVlan2(String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer count){
 		Json json = new Json();
 		JSONObject data = new JSONObject();
-		String vlanId = "", ips = "";
+		String vlanId = "", ips = "", ip="";
 		try{
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
 			//area.setAreaName(task.getAreaName());
@@ -122,13 +122,13 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 					t.setManagerIp(s[i]);
 					List<DevOnlineTask> l = deviceAutomationService.findTask(t);
 					if(l==null || l.size()==0){
-						ips = s[i];
+						ip = s[i];
 						b = true;
 						break;
 					}
 				}
 				if(b){
-					data.put("ip", ips);
+					data.put("ip", ip);
 					data.put("vlanId", vlanId);
 					
 				}else{
@@ -139,7 +139,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				t.setId(task.getId());
 				if(data!=null){
 					t.setVlan(vlanId);
-					t.setManagerIp(ips);
+					t.setManagerIp(ip);
 				}
 				t.setUpdate_user(userName);
 				writeProcess(t, 2, b==true?"从看板申请ip和vlan成功":"从看板申请ip失败", b, userName, null);
