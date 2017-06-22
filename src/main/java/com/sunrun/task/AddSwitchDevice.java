@@ -71,60 +71,7 @@ public class AddSwitchDevice implements Runnable {
 		
 	}
 	
-	public synchronized Map<String, String> step2_appIpAndVlan(){
-		//2.从看板申请ip和vlan
-			Json json = new Json();
-			Map<String, String> map = new HashMap<String, String>();
-			json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
-			try {
-				if(!json.getSuccess()){
-					json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
-				}
-				if(json.getSuccess()){
-					String sb = json.getData().toString();	//map中存放了ip和vlanId
-					org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-					String ip = obj1.getString("ip");
-					String vlanId = obj1.getString("vlanId");
-					
-					//点击“继续添加设备后”防止申请到重复的ip
-					/*	boolean tag = true;
-				DevOnlineTask t = new DevOnlineTask();
-				t.setManagerIp(ip);
-				List<DevOnlineTask> li = deviceAutomationService.findTask(t);
-				if(li!=null && li.size()>1){
-					tag = false;
-				}
-				if(!tag){
-					json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 2);
-					sb = json.getData().toString();
-					obj1 = new org.json.JSONObject(sb);
-					ip = obj1.getString("ip");
-					vlanId = obj1.getString("vlanId");
-				}*/
-					map.put("ip", ip);
-					map.put("vlanId", vlanId);
-				}
-			} catch (JSONException e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-			if(!json.getSuccess()){
-				task.setSwitchState(3);
-				task.setTaskState(5);
-				deviceAutomationService.updateTask2(task, null, null, userName);
-				return map;
-			}else{
-				task.setTaskState(2);
-				deviceAutomationService.updateTask2(task, null, null, userName);
-			}
-			List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
-			if(li!=null && li.size()>0){
-				task = li.get(0);
-				/*map.put("vlanId", task.getVlan());
-				map.put("ip", task.getManagerIp());*/
-			}
-			return map;
-	}
+	
 
 	/**
 	 * 执行添加设备的1-5步骤
@@ -132,57 +79,18 @@ public class AddSwitchDevice implements Runnable {
 	public void executeTask(){
 		//2.从看板申请ip和vlan
 		Json json = new Json();
-		String sb = "";
 		Map<String, String> map = new HashMap<String, String>();
-		map = step2_appIpAndVlan();
-		if(map==null || map.size()==0)
+		//map = step2_appIpAndVlan();
+		ManagerIpAanVlan mv = new ManagerIpAanVlan();
+		map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
+		if(map==null || map.size()==0){
 			return;
-		/*json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 1);
-		String sb = json.getData().toString();	//map中存放了ip和vlanId
-		try {
-			org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-			String ip = obj1.getString("ip");
-			String vlanId = obj1.getString("vlanId");
-			
-			//点击“继续添加设备后”防止申请到重复的ip
-			boolean tag = true;
-			int count = 0;
-			DevOnlineTask t = new DevOnlineTask();
-			t.setManagerIp(ip);
-			List<DevOnlineTask> li = deviceAutomationService.findTask(t);
-			if(li!=null && li.size()>1){
-				tag = false;
+		}else {
+			List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
+			if(li!=null && li.size()>0){
+				task = li.get(0);
 			}
-			
-			if(!tag){
-				json = addSwitchDeviceService.appIpAndVlan(thirdPartUrl, auth, task, userName, 2);
-				sb = json.getData().toString();
-				obj1 = new org.json.JSONObject(sb);
-				ip = obj1.getString("ip");
-				vlanId = obj1.getString("vlanId");
-			}
-			
-			map.put("ip", ip);
-			map.put("vlanId", vlanId);
-		} catch (JSONException e) {
-			e.printStackTrace();
 		}
-		if(!json.getSuccess()){
-			task.setSwitchState(3);
-			task.setTaskState(5);
-			deviceAutomationService.updateTask2(task, null, null, userName);
-			return;
-		}else{
-			task.setTaskState(2);
-			deviceAutomationService.updateTask2(task, null, null, userName);
-		}
-		List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
-		if(li!=null && li.size()>0){
-			task = li.get(0);
-			map.put("vlanId", task.getVlan());
-			map.put("ip", task.getManagerIp());
-		}*/
-		
 		//3.看网络是否通
 		json = null;
 		json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
@@ -192,22 +100,17 @@ public class AddSwitchDevice implements Runnable {
 				//网络ping通，被占了，回填不可用状态
 				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 				//重新申请ip,vlan
-				map = step2_appIpAndVlan();
-				if(map==null || map.size()==0)
+				//map = step2_appIpAndVlan();
+				map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
+				if(map==null || map.size()==0){
 					return;
-				/*json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
-				//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
-				sb = json.getData().toString();	//map中存放了ip和vlanId
-				try {
-					org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-					String ip = obj1.getString("ip");
-					String vlanId = obj1.getString("vlanId");
-					map.put("ip", ip);
-					map.put("vlanId", vlanId);
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}*/
-				
+				}else {
+					List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
+					if(li!=null && li.size()>0){
+						task = li.get(0);
+					}
+				}
+				 
 				json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 				if(json.getRet_code()!=200){
 					if(json.getRet_code()==505){
@@ -277,18 +180,17 @@ public class AddSwitchDevice implements Runnable {
 		}
 		//2.从看板申请ip和vlan
 		if(executeStep!=null && executeStep==2){
-			map = step2_appIpAndVlan();
-			/*json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
-			String sb = json.getData().toString();	//map中存放了ip和vlanId
-			try {
-				org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-				String ip = obj1.getString("ip");
-				String vlanId = obj1.getString("vlanId");
-				map.put("ip", ip);
-				map.put("vlanId", vlanId);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}*/
+			//map = step2_appIpAndVlan();
+			ManagerIpAanVlan mv = new ManagerIpAanVlan();
+			map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
+			if(map==null || map.size()==0){
+				return;
+			}else {
+				li = deviceAutomationService.findPort(task.getId());
+				if(li!=null && li.size()>0){
+					task = li.get(0);
+				}
+			}
 			
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
@@ -311,21 +213,16 @@ public class AddSwitchDevice implements Runnable {
 					//网络ping通，被占了，回填不可用状态
 					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 					//重新申请ip,vlan
-					map = step2_appIpAndVlan();
-					if(map==null || map.size()==0)
+					ManagerIpAanVlan mv = new ManagerIpAanVlan();
+					map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
+					if(map==null || map.size()==0){
 						return;
-					/*json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
-					//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
-					String sb = json.getData().toString();	//map中存放了ip和vlanId
-					try {
-						org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-						String ip = obj1.getString("ip");
-						String vlanId = obj1.getString("vlanId");
-						map.put("ip", ip);
-						map.put("vlanId", vlanId);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}*/
+					}else {
+						li = deviceAutomationService.findPort(task.getId());
+						if(li!=null && li.size()>0){
+							task = li.get(0);
+						}
+					}
 					
 					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 					if(json.getRet_code()!=200){
@@ -357,21 +254,17 @@ public class AddSwitchDevice implements Runnable {
 				DevTaskExecute d = l.get(i);
 				if(d.getExecuteStep()==3 && d.getTaskExecuteState()==4){
 					//重新申请ip,vlan
-					map = step2_appIpAndVlan();
-					if(map==null || map.size()==0)
+					//map = step2_appIpAndVlan();
+					ManagerIpAanVlan mv = new ManagerIpAanVlan();
+					map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
+					if(map==null || map.size()==0){
 						return;
-					/*json = addSwitchDeviceService.appIpAndVlan2(thirdPartUrl, auth, task, userName, 1);
-					//map = (Map<String, String>) json.getData();	//map中存放了ip和vlanId
-					String sb = json.getData().toString();	//map中存放了ip和vlanId
-					try {
-						org.json.JSONObject obj1 = new org.json.JSONObject(sb);
-						String ip = obj1.getString("ip");
-						String vlanId = obj1.getString("vlanId");
-						map.put("ip", ip);
-						map.put("vlanId", vlanId);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}*/
+					}else {
+						li = deviceAutomationService.findPort(task.getId());
+						if(li!=null && li.size()>0){
+							task = li.get(0);
+						}
+					}
 					
 					json = addSwitchDeviceService.pingFun(thirdPartUrl, auth, task, map, userName);
 					if(json.getRet_code()!=200){
