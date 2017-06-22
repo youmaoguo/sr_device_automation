@@ -137,8 +137,10 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				//记录任务执行步骤
 				DevOnlineTask t = new DevOnlineTask();
 				t.setId(task.getId());
-				t.setVlan(vlanId);
-				t.setManagerIp(ips);
+				if(data!=null){
+					t.setVlan(vlanId);
+					t.setManagerIp(ips);
+				}
 				t.setUpdate_user(userName);
 				writeProcess(t, 2, b==true?"从看板申请ip和vlan成功":"从看板申请ip失败", b, userName, null);
 				
