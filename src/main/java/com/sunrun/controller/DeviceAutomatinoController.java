@@ -668,7 +668,7 @@ public class DeviceAutomatinoController extends BaseController{
 		Integer switchState = obj.getInteger("switchState");
 		String taskId = obj.getString("taskId");
 		if(StringUtils.isEmpty(taskId) || StringUtils.isEmpty(switchState)){
-			json.setRet_code(500);
+			json.setRet_code(400);
 			json.setRet_info("缺少请求参数");
 			json.setSuccess(false);
 			//返回数据
@@ -722,8 +722,64 @@ public class DeviceAutomatinoController extends BaseController{
 			//返回数据
 			response(json, response, request);
 		}
-		
 	} 
+	
+	
+	/**
+	 * 强制停止执行上线交换机设备（即默认接下来的步骤执行成功）
+	 * @param jsonStr	json格式的请求参数字符串
+	 * @param auth		Authorization认证参数
+	 * @param response	response响应对象
+	 * @param request	request请求对象
+	 * @return			返回json格式的字符串
+	 */
+	@RequestMapping(value = "/deviceAutomation/v1/forceStopExecute", method = RequestMethod.POST, produces="application/json", consumes="application/json")
+	public void forceStopExecute(HttpServletRequest request, HttpServletResponse response,
+								@RequestBody String jsonStr, @RequestHeader("Authorization") String auth){
+		logger.info("强制停止执行上线交换机设备forceStopExecute接口入参是："+jsonStr);
+		Json json = new Json();
+		JSONObject obj = JSONObject.parseObject(jsonStr);
+		String ids = obj.getString("taskId");
+		if(StringUtils.isEmpty(ids)){
+			json.setRet_code(400);
+			json.setRet_info("缺少请求参数");
+			json.setSuccess(false);
+			response(json, response, request);
+			return;
+		}
+		try{
+			String[] s = ids.split(",");
+			//1.把设备状态改成“成功工单”；2.ip地址回填成实占
+			Map<String, String> map = new HashMap<String, String>();
+			for(int i=0;i<s.length;i++){
+				//ip地址回填 ，状态是3实分配
+				List<DevOnlineTask> list = deviceAutomationService.findPort(s[i]);
+				if(list!=null && list.size()>0){
+					DevOnlineTask task = list.get(0);
+					map.put("ip", task.getManagerIp());
+					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, list.get(0), map, task.getUserName(), 3, task.getUsercode());
+					
+					DevOnlineTask t = new DevOnlineTask();
+					t.setId(task.getId());
+					t.setSwitchState(4);
+					t.setTaskState(6);
+					deviceAutomationService.updateTask2(t, null, null, task.getUserName());
+				}
+			}
+			json.setRet_code(201);
+			json.setRet_info("操作成功");
+			json.setSuccess(true);
+			response(json, response, request);
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("强制停止执行上线交换机设备出现异常");
+			json.setRet_code(201);
+			json.setRet_info("操作失败");
+			json.setSuccess(true);
+			response(json, response, request);
+		}
+		
+	}
 	
 
 }
