@@ -647,5 +647,83 @@ public class DeviceAutomatinoController extends BaseController{
 		
 	}
 	
+	/**
+	 * 编辑上线交换机设备
+	 * @param jsonStr	json格式的请求参数字符串
+	 * @param auth		Authorization认证参数
+	 * @param response	response响应对象
+	 * @param request	request请求对象
+	 * @return			返回json格式的字符串
+	 */
+	@RequestMapping(value = "/deviceAutomation/v1/updateSwitchDevice", method = RequestMethod.POST, produces="application/json", consumes="application/json")
+	public void updateSwitchDevice(HttpServletRequest request, HttpServletResponse response,
+								@RequestBody String jsonStr, @RequestHeader("Authorization") String auth){
+		Json json = new Json();
+		String info = "编辑成功";
+		Integer code = 201;	//201:用户新建或修改数据成功
+		Boolean success = true;
+		logger.info("编辑上线交换机设备updateSwitchDevice接口入参是："+jsonStr);
+		
+		JSONObject obj = JSONObject.parseObject(jsonStr);
+		Integer switchState = obj.getInteger("switchState");
+		String taskId = obj.getString("taskId");
+		if(StringUtils.isEmpty(taskId) || StringUtils.isEmpty(switchState)){
+			json.setRet_code(500);
+			json.setRet_info("缺少请求参数");
+			json.setSuccess(false);
+			//返回数据
+			response(json, response, request);
+			return;
+		}
+		
+		try{
+			String updateUser = obj.getString("updateUser");
+			String exclusiveSwitchboardIp = obj.getString("exclusiveSwitchboardIp");
+			String exclusiveSwitchboardPort = obj.getString("exclusiveSwitchboardPort");
+			String exclusiveSwitchboardOrder = obj.getString("exclusiveSwitchboardOrder");
+			String brandName = obj.getString("brandName");
+			String modelName = obj.getString("modelName");
+			String currentIosVersion = obj.getString("currentIosVersion");
+			String exclusiveSwitchboardInfo = "";
+			if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
+				exclusiveSwitchboardInfo = "第"+exclusiveSwitchboardOrder+"口-"+brandName+"-"+modelName;
+			
+			DevOnlineTask task = new DevOnlineTask();
+			task.setSwitchState(switchState);
+			if(!StringUtils.isEmpty(taskId))
+				task.setId(taskId);
+			if(!StringUtils.isEmpty(exclusiveSwitchboardIp))
+				task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
+			if(!StringUtils.isEmpty(exclusiveSwitchboardPort))
+				task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
+			if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
+				task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
+			
+			if(!StringUtils.isEmpty(brandName))
+				task.setBrandName(brandName);
+			if(!StringUtils.isEmpty(modelName))
+				task.setModelName(modelName);
+			if(!StringUtils.isEmpty(currentIosVersion))
+				task.setCurrentIosVersion(currentIosVersion);
+			if(!StringUtils.isEmpty(updateUser))
+				task.setUpdate_user(updateUser);
+			deviceAutomationService.updateTask2(task, null, null, updateUser);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			info = "编辑交换机设备出错了";
+			code = 500;
+			success = false;
+			logger.error(info);
+		}finally{
+			json.setRet_code(code);
+			json.setRet_info(info);
+			json.setSuccess(success);
+			//返回数据
+			response(json, response, request);
+		}
+		
+	} 
+	
 
 }

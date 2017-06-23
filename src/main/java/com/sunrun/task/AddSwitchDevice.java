@@ -136,7 +136,9 @@ public class AddSwitchDevice implements Runnable {
 		
 		//5.判断汇聚交换机端口上是否有配置及端口状态是否为down；
 		json = null;
-		json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
+		//json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
+		PortCheckSington pc = new PortCheckSington();
+		json = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName);
 		if(!json.getSuccess()){
 			task.setSwitchState(3);
 			task.setTaskState(5);
@@ -299,7 +301,9 @@ public class AddSwitchDevice implements Runnable {
 		//5.判断汇聚交换机端口上是否有配置及端口状态是否为down；
 		if(executeStep!=null && executeStep<=5){
 			json = null;
-			json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
+			//json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
+			PortCheckSington pc = new PortCheckSington();
+			json = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName);
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
 				task.setTaskState(5);

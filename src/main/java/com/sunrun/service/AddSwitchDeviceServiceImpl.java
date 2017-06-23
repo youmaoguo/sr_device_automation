@@ -89,7 +89,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		JSONObject data = new JSONObject();
 		String vlanId = "", ips = "", ip="";
 		try{
-			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			/*DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
 			//area.setAreaName(task.getAreaName());
 			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
@@ -98,7 +98,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("method_name", "/Kanban/v1/apply_ip");
 			param.put("subnet", li.get(0).getSubnet());	//本系统申请ip的网段(根据区域名称查询表'dev_area_switchboard_ip'中subnet)
 			param.put("mount", count.toString());		//申请数量
-			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);*/
+			String sb = "{\"ret_code\":200,\"ret_info\":\"success\",\"data\":{\"ips\":\"1.1.1.1,1.1.1.2,1.1.1.3,1.1.1.4,1.1.1.5,1.1.1.6,1.1.1.7,1.1.1.8,1.1.1.9\",\"vlanId\":\"120\"}}";
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
 				json.setRet_code(j.getRet_code());

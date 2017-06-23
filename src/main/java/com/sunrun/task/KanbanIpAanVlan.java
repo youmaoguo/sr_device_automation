@@ -25,6 +25,7 @@ import com.sunrun.util.StringUtil;
 
 @Controller
 public class KanbanIpAanVlan  {
+	private static final Logger logger = LoggerFactory.getLogger(KanbanIpAanVlan.class);
 	 //注意，这里没有final      
     private static KanbanIpAanVlan single=null;  
     //静态工厂方法   
@@ -38,16 +39,14 @@ public class KanbanIpAanVlan  {
     
 	//标识方法是否在调用中 true为调用中，false标识调用完毕  
     private static boolean Flag=true;  
+    
     public static boolean getFlag() {  
         return Flag;  
     }  
-  
-  
     public static   void setFlag(boolean flag) {  
         Flag = flag;  
     }  
  
-	private static final Logger logger = LoggerFactory.getLogger(KanbanIpAanVlan.class);
 	 
 	/**
 	 * 同步锁 - 去除重复从看板上申请到的ip
