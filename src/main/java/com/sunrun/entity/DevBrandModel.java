@@ -13,7 +13,14 @@ public class DevBrandModel extends BaseEntity implements Serializable{
 	private String modelName;	//'型号',
 	private String iosVersion;	//'IOS版本信息',
 	private String iosVersion2;	//'备用字段',
+	private String modelDescribe;
 	
+	public String getModelDescribe() {
+		return modelDescribe;
+	}
+	public void setModelDescribe(String modelDescribe) {
+		this.modelDescribe = modelDescribe;
+	}
 	public String getBrandName() {
 		return brandName;
 	}
@@ -42,8 +49,9 @@ public class DevBrandModel extends BaseEntity implements Serializable{
 	public String toString() {
 		return "DevBrandModel [brandName=" + brandName + ", modelName="
 				+ modelName + ", iosVersion=" + iosVersion + ", iosVersion2="
-				+ iosVersion2 + "]";
+				+ iosVersion2 + ", modelDescribe=" + modelDescribe + "]";
 	}
+	 
 	
 	
 	

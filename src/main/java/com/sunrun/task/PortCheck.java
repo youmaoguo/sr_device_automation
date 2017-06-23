@@ -118,13 +118,13 @@ public class PortCheck {
 					if(!bpc.equals("")){
 						boolean g = false;
 						//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
-						for(int jj=0;jj<backp.size();jj++){
+						//for(int jj=0;jj<backp.size();jj++){
 							if(!backp.contains(bpc)){
 								g = true;
-								break;
+								//break;
 							}
-						}
-						if(g){
+						//}
+						if(!g){
 							int index2 = 0;
 							for(int i=0;i<backuplist.size();i++){
 								if(!backp.contains(backuplist.get(i))){

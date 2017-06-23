@@ -19,7 +19,8 @@
 			brand_name AS brandName,
 			model_name AS modelName,
 			ios_version AS iosVersion,
-			ios_version_2 AS iosVersion2
+			ios_version_2 AS iosVersion2,
+			model_describe AS modelDescribe
 			
 		from dev_brand_model
 		where 1=1
@@ -31,6 +32,9 @@
 		</if>
 		<if test="model.modelName != null">
 		    AND model_name = #{model.modelName}
+		</if>
+		<if test="model.modelDescribe != null">
+		    AND model_describe = #{model.modelDescribe}
 		</if>
 	</select>
 

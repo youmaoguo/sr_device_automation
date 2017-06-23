@@ -415,7 +415,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					}
 					//在根据model去查询品牌型号表
 					DevBrandModel bean = new DevBrandModel();
-					bean.setModelName(model);
+					//bean.setModelName(model);
+					bean.setModelDescribe(model);
 					List<DevBrandModel> ll = devBrandModelMapper.findBrandModel(bean);
 					if(ll!=null && ll.size()>0){
 						bean = ll.get(0);
@@ -425,7 +426,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					obj.put("exclusiveSwitchboardPort", d.getExclusiveSwitchboardPort());
 					obj.put("exclusiveSwitchboardOrder", d.getExclusiveSwitchboardOrder());
 					obj.put("brandName", bean.getBrandName());
-					obj.put("modelName", bean.getModelName());
+					obj.put("modelName", bean.getModelDescribe());
 					obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
 					li.add(obj);
 				}/*else{
