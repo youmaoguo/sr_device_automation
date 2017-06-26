@@ -618,7 +618,7 @@ public class DeviceAutomatinoController extends BaseController{
 			execute.setTaskId(task.getId());
 			execute.setExecuteStep(8);
 			execute.setTaskOrder(8);
-			execute.setTaskDescribe(code==201 ? "ios版本回调成功" : "ios版本回调失败"); 
+			execute.setTaskDescribe(code==201 ? "ios版本回调成功,升级完成" : "ios版本回调失败,升级失败"); 
 			execute.setTaskExecuteState(code==201 ? 3 : 4);
 			execute.setCreate_user("");
 			execute.setTaskExecuteNote(null);
