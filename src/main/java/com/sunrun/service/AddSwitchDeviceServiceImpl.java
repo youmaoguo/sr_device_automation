@@ -847,7 +847,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			
 			code = (success==true && tag==false)?201:code;//200:表示不要升级；201：表示正在升级
 			json.setRet_code(code);
-			json.setRet_info(info);
+			json.setRet_info((success==true && tag==false)?"交换机ios版本正在升级...":info);
 			json.setSuccess(success);
 			json.setData(data);
 			return json;
