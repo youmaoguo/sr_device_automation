@@ -240,27 +240,32 @@ public class DeviceAutomatinoController extends BaseController{
 		Integer code = 201;	//201:用户新建或修改数据成功
 		Boolean success = true;
 		logger.info("删除交换机设备deleteSwitchDevice接口入参是："+jsonStr);
+		JSONObject obj = JSONObject.parseObject(jsonStr);
+		String updateUser = obj.getString("updateUser");
+		String usercode = obj.getString("usercode");
+		String taskId = obj.getString("taskId");		//任务Id
+		List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
+		if(l!=null && l.size()>0 && l.get(0).getTaskState()==2){
+			json.setRet_code(401);
+			json.setRet_info("后台正在执行，请勿删除");
+			json.setSuccess(false);
+			response(json, response, request);
+			return;
+		}
 		try{
-			JSONObject obj = JSONObject.parseObject(jsonStr);
-			String updateUser = obj.getString("updateUser");
-			String usercode = obj.getString("usercode");
-			String taskId = obj.getString("taskId");		//任务Id
-			
 			//删除任务
 			if(!StringUtils.isEmpty(taskId)){
-				
 				//回填从看板申请回来的ip状态，state=2：回收，第三方系统放弃使用该ip，IP状态由“预占用”改为“未分配”
-				List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
 				if(l!=null && l.size()>0){
 					 Map<String, String> map = new HashMap<String, String>();
 					 map.put("ip", l.get(0).getManagerIp());
 					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, l.get(0), map, updateUser, 2, usercode);
 				}
-				
 				success = deviceAutomationService.deleteTask(taskId);
 				if(!success){
 					code = 500;
 					info = "删除出错";
+					success = false;
 				}
 			}else{
 				json.setRet_code(400);
