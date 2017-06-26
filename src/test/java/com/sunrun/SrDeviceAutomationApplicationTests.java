@@ -21,8 +21,9 @@ public class SrDeviceAutomationApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		
-		
+		String[] taskIds = {"28380b02be494bb4b7133a764b5177a8", "47c70af62e7a4d0b8143cfe09caa51ef","4fa5b51d1ba24dc5955ed28161a355e4"};
+		String s = deviceAutomationService.concatDeviceItilInfo(taskIds);
+		System.out.println(s);
 	}
 
 	

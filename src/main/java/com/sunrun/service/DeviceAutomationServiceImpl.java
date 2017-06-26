@@ -494,11 +494,13 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			List<DevOnlineTask> view = findPort(ids[i]);
 			if(view!=null && view.size()>0){
 				DevOnlineTask task = view.get(0);
-				s += (i+1) + "、设备品牌:"+task.getBrandName() + ",型号:"+task.getModelName()+",区域:"+task.getAreaName()+
-						",主汇聚交机:"+task.getMainSwitchboardIp()+",主汇聚交机端口:"+task.getMainSwitchboardPort()+
-						",备汇聚交机:"+task.getBackupSwitchboardIp()+",备汇聚交机端口:"+task.getBackupSwitchboardPort()+
-						",上线机架位置:"+task.getDevOnlineRack()+",hostname:"+task.getHostName()+
-						",管理口ip:"+task.getManagerIp()+",带外交机信息:"+task.getExclusiveSwitchboardInfo()+"。\n";
+				int n = i+1;
+				s += n + ".------------------------------------------------------------------\n";
+				s += "设备品牌:"+task.getBrandName() + ", 型号:"+task.getModelName()+", 区域:"+task.getAreaName()+
+						",\n 主汇聚交机:"+task.getMainSwitchboardIp()+", 主汇聚交机端口:"+task.getMainSwitchboardPort()+
+						",\n 备汇聚交机:"+task.getBackupSwitchboardIp()+", 备汇聚交机端口:"+task.getBackupSwitchboardPort()+
+						",\n 上线机架位置:"+task.getDevOnlineRack()+", hostname:"+task.getHostName()+
+						",\n 管理地址:"+task.getManagerIp()+", 带外交机信息:"+task.getExclusiveSwitchboardInfo()+"。\n";
 			}
 		}
 		return s;

@@ -53,7 +53,7 @@ public class DeviceAutomatinoController extends BaseController{
 	@Value("${sr_public.thirdPartUrl}")
 	private String thirdPartUrl;
 	
-	@Value("${itil.url}")
+	@Value("${itil.wsURL}")
 	private String itil;
 	
 	@Value("${sr_public.sendEmail}")

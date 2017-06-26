@@ -161,13 +161,13 @@ public class ITILRestfulInterface {
 	        String end = fmt.format(d);
 			header.setPlannedEndDate(new DateTimeType(end));
 			
-			header.setBriefDescription(new StringType("门户系统portal申请itil变更工单"));
+			header.setBriefDescription(new StringType("门户系统一键提单"));
 			header.setRequestedBy(new StringType(usercode));
 			instance.setHeader(header);
 			
 			CMBChangeInstanceTypeDescriptionStructure descriptionStructure = new CMBChangeInstanceTypeDescriptionStructure();
 			StringType[] des = new StringType[] {new StringType(description)};
-			descriptionStructure.setDescription(new CMBChangeInstanceTypeDescriptionStructureDescription("门户系统交换机模块申请itil变更工单",des));
+			descriptionStructure.setDescription(new CMBChangeInstanceTypeDescriptionStructureDescription("门户系统一键提单",des));
 			instance.setDescriptionStructure(descriptionStructure);
 			
 			CMBChangeInstanceTypeMiddle middle = new CMBChangeInstanceTypeMiddle();
