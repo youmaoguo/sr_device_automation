@@ -1,8 +1,12 @@
 package com.sunrun.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -32,6 +36,7 @@ import com.sunrun.mapper.DevOnlineBatchItilMapper;
 import com.sunrun.mapper.DevOnlineTaskItilMapper;
 import com.sunrun.mapper.DevOnlineTaskMapper;
 import com.sunrun.mapper.DevTaskExecuteMapper;
+import com.sunrun.task.KvmInfo;
 import com.sunrun.util.ITILRestfulInterface;
 import com.sunrun.util.Json;
 import com.sunrun.util.RestfulRequestUtil;
@@ -429,11 +434,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					obj.put("modelName", bean.getModelDescribe());
 					obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
 					li.add(obj);
-				}/*else{
-					code = json.getRet_code();
-					success = json.getSuccess();
-					s = json.getRet_info();
-				}*/
+				}
 			}
 			
 		}catch(Exception e){
@@ -450,7 +451,120 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		j.setData(li); 
 		return j;
 	}
-
+	
+	@Override
+	public Json findKvmInfo2(DevExclusiveSwitchboardInfo info, String models, String thirdPartUrl, String auth) {
+		Json j = new Json();
+		String s = "获取kvm接口所对应的设备型号信息成功";
+		Integer code = 200;	//200:用户查询数据成功
+		Boolean success = true;
+		List<Object> li = new ArrayList<Object>();
+		try{
+			List<String> ips = new ArrayList<String>();
+			List<DevExclusiveSwitchboardInfo> infos = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
+			for(int i=0;i<infos.size();i++){
+				ips.add(infos.get(i).getExclusiveSwitchboardIp());
+			}
+			// 去重
+			HashSet<String> h1 = new HashSet<String>(ips);
+			ips.clear();
+			ips.addAll(h1);
+			
+			Map<String, Object> map = new HashMap<String, Object>();//键存放kvm的ip,值是kvm上的端口
+			//1.先查kvm端口链接信息，返回所有端口链接状态（1：:已链接；0：无链接）
+			for(int i=0;i<ips.size();i++){
+				List<String> ports = new ArrayList<String>();
+				JSONObject param = new JSONObject();
+				param.put("method_name", "/interchanger/v1/connectState");
+				param.put("ip", ips.get(i));	//kvm的IP地址
+				param.put("port", null);
+				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "post", auth);
+				logger.info("查kvm端口链接信息返回："+sb);
+				Json json = JSONObject.parseObject(sb, Json.class);
+				if(json.getRet_code()==200){
+					//解析查kvm端口
+					JSONObject o = JSONObject.parseObject(json.getData().toString());
+					Set<String> keys = o.keySet();
+					for(Iterator<String> it = keys.iterator(); it.hasNext();){
+						String key = (String) it.next();
+						Integer value = o.getInteger(key);
+						if(value==1){
+							ports.add(key);
+						}
+					}
+				}
+				//从获取到的端口中去除掉数据库中被实占的
+				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
+				in.setExclusiveSwitchboardPortState(1);
+				List<DevExclusiveSwitchboardInfo> l1 = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(in);
+				List<String> cp = ports;
+				for(int z=0;z<l1.size();z++){
+					if(cp.contains(l1.get(z).getExclusiveSwitchboardPort())){
+						ports.remove(l1.get(z).getExclusiveSwitchboardPort());
+					}
+				}
+				// 去重
+				HashSet<String> h = new HashSet<String>(ports);
+				ports.clear();
+				ports.addAll(h);
+				map.put(ips.get(i), ports);
+			}
+			
+			//2.多线程去获取已链接的端口上的版本信息
+			List<String> ps = (List<String>) map.get(ips.get(0));
+			info.setExclusiveSwitchboardIp(ips.get(0));
+			List<DevExclusiveSwitchboardInfo> list = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
+			if(list!=null && list.size()>0){
+				DevExclusiveSwitchboardInfo d = list.get(0);
+				List<String> l = KvmInfo.completionServiceCount(ps, d, models, thirdPartUrl, "post", auth);
+				for(int i=0;i<l.size();i++){
+					Json json = JSONObject.parseObject(l.get(i), Json.class);
+					if(json.getRet_code()==200){
+						JSONObject oo = JSONObject.parseObject(json.getData().toString());
+						String model = oo.get("model").toString();
+						String port = oo.get("port").toString();
+						String host = oo.get("host").toString();
+						com.alibaba.fastjson.JSONArray iosList = (com.alibaba.fastjson.JSONArray) oo.get("iosList");
+						String ios = "";
+						for(int z=0;z<iosList.size();z++){
+							ios += iosList.get(z).toString() + ",";
+						}
+						//在根据model去查询品牌型号表
+						DevBrandModel bean = new DevBrandModel();
+						//bean.setModelName(model);
+						bean.setModelDescribe(model);
+						List<DevBrandModel> ll = devBrandModelMapper.findBrandModel(bean);
+						if(ll!=null && ll.size()>0){
+							bean = ll.get(0);
+						}
+						JSONObject obj = new JSONObject();
+						obj.put("exclusiveSwitchboardIp", host);
+						obj.put("exclusiveSwitchboardPort", port);
+						obj.put("exclusiveSwitchboardOrder", i+1);
+						obj.put("brandName", bean.getBrandName());
+						obj.put("modelName", bean.getModelDescribe());
+						obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
+						obj.put("showkvmDescribe", bean.getShowkvmDescribe());
+						li.add(obj);
+					}
+				}
+			}
+			
+		}catch(Exception e){
+			logger.error("kvm接口所对应的设备型号信息接口出错");
+			e.printStackTrace();
+			j.setRet_code(500);
+			j.setRet_info("kvm接口所对应的设备型号信息接口出错");
+			j.setSuccess(false);
+			return j;
+		}
+		j.setRet_code(code);
+		j.setRet_info(s);
+		j.setSuccess(success);
+		j.setData(li); 
+		return j;
+	}
+	
 
 	@Override
 	public List<DevAreaSwitchboardIp> findAreaIp(DevAreaSwitchboardIp info) {
@@ -523,6 +637,15 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	public List<DevOnlineTask> findTaskByTime() {
 		return devOnlineTaskMapper.findTaskByTime();
 	}
+
+
+	@Override
+	public void updateDevExclusiveSwitchboardInfo(DevExclusiveSwitchboardInfo info) {
+		devExclusiveSwitchboardInfoMapper.updateDevExclusiveSwitchboardInfo(info);
+	}
+
+
+	
 	
 
 }

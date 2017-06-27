@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.service.AddSwitchDeviceService;
@@ -408,6 +409,12 @@ public class AddSwitchDevice implements Runnable {
 			}
 			//ip地址回填 ，状态是3实分配
 			addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3, usercode);
+			////将kvm端口释放
+			DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
+			in.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			in.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			in.setExclusiveSwitchboardPortState(0);
+			deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
 		}
 		
 	}
@@ -441,18 +448,15 @@ public class AddSwitchDevice implements Runnable {
 				json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName);
 				if(!json.getSuccess()){
 					task.setSwitchState(3);
+					task.setTaskState(5);
 					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
-				}
-				
-				if(json.getSuccess()){
+				}else{
 					task.setTaskState(6);
 					task.setSwitchState(4);
-				}else{
-					task.setTaskState(5);
-					task.setSwitchState(3);
+					deviceAutomationService.updateTask2(task, null, null, userName);
 				}
-				deviceAutomationService.updateTask2(task, null, 13, userName);
+				
 			}
 			
 			

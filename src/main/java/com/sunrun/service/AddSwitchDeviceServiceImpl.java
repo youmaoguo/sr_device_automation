@@ -1094,10 +1094,10 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		Object data = null;
 		try{
-			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			/*DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
 			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
 			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
-			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);*/
 			
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
 			//area.setAreaName(task.getAreaName());

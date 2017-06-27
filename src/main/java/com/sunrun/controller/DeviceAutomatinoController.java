@@ -370,6 +370,12 @@ public class DeviceAutomatinoController extends BaseController{
 				task.setUpdate_user(updateUser);
 				
 				addSwitchDeviceService.exclusiveSwitchboardConn(null, task, updateUser);
+				//将kvm端口实占掉
+				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
+				in.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
+				in.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
+				in.setExclusiveSwitchboardPortState(1);
+				deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
 				
 				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, executeStep, usercode); 
 				Thread t = new Thread(addTask);
@@ -571,20 +577,30 @@ public class DeviceAutomatinoController extends BaseController{
 	 * kvm接口所对应的设备型号信息接口
 	 * @param request
 	 * @param response
-	 * @param exclusiveSwitchboardIp
-	 * @param exclusiveSwitchboardPort
+	 * @param exclusiveSwitchboardIp	带外交换机IP
+	 * @param exclusiveSwitchboardPort 带外交换机端口
+	 * @param model	设备型号
 	 */
 	@RequestMapping(value = "/v1/thirdparty/kvmInfo", method = RequestMethod.GET, produces="application/json")
 	public void kvmInfo(HttpServletRequest request, HttpServletResponse response,  @RequestHeader("Authorization") String auth,
 						@RequestParam(value = "exclusiveSwitchboardIp", required = false) String exclusiveSwitchboardIp,
-						@RequestParam(value = "exclusiveSwitchboardPort", required = false) String exclusiveSwitchboardPort){
+						@RequestParam(value = "exclusiveSwitchboardPort", required = false) String exclusiveSwitchboardPort,
+						@RequestParam(value = "model", required = false) String model,
+						@RequestParam(value = "brandName", required = false) String brandName){
 		Json json = new Json();
 		logger.info("kvm接口所对应的设备型号信息kvmInfo接口入参是："+request.getQueryString());
+		if(StringUtils.isEmpty(model)){
+			json.setRet_code(400);
+			json.setRet_info("缺少请求参数");
+			json.setSuccess(false);
+			response(json, response, request);
+			return;
+		}
 		try{
 			DevExclusiveSwitchboardInfo bean = new DevExclusiveSwitchboardInfo();
 			bean.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
 			bean.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-			json = deviceAutomationService.findKvmInfo(bean, thirdPartUrl, auth);
+			json = deviceAutomationService.findKvmInfo2(bean, model, thirdPartUrl, auth);
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error(json.getRet_info());

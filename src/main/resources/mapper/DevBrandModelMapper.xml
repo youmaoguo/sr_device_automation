@@ -20,8 +20,8 @@
 			model_name AS modelName,
 			ios_version AS iosVersion,
 			ios_version_2 AS iosVersion2,
-			model_describe AS modelDescribe
-			
+			model_describe AS modelDescribe,
+			showkvm_describe AS showkvmDescribe
 		from dev_brand_model
 		where 1=1
 		<if test="model.id != null">

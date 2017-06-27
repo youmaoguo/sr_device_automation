@@ -138,6 +138,16 @@ public interface DeviceAutomationService {
 	Json findKvmInfo(DevExclusiveSwitchboardInfo info, String thirdPartUrl, String auth);
 	
 	/**
+	 * kvm接口所对应的设备型号信息接口
+	 * @param info
+	 * @param model
+	 * @param thirdPartUrl
+	 * @param auth
+	 * @return
+	 */
+	Json findKvmInfo2(DevExclusiveSwitchboardInfo info, String model, String thirdPartUrl, String auth);
+	
+	/**
 	 * 查询区域汇聚交换机ip对应
 	 * @param info
 	 * @return
@@ -174,5 +184,7 @@ public interface DeviceAutomationService {
 	List<DevOnlineTask> findTask(DevOnlineTask task);
 	
 	List<DevOnlineTask> findTaskByTime();
+	
+	void updateDevExclusiveSwitchboardInfo(DevExclusiveSwitchboardInfo info);
 	
 }

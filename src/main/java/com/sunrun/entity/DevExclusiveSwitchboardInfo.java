@@ -20,8 +20,14 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializa
 	private String telnetPort;
 	private String managerSwitchboardIp;
 	private String exclusiveSwitchboardType;
+	private Integer exclusiveSwitchboardPortState;//端口连接状态 0 空闲，1代表实占
 	
-	
+	public Integer getExclusiveSwitchboardPortState() {
+		return exclusiveSwitchboardPortState;
+	}
+	public void setExclusiveSwitchboardPortState(Integer exclusiveSwitchboardPortState) {
+		this.exclusiveSwitchboardPortState = exclusiveSwitchboardPortState;
+	}
 	public String getManagerSwitchboardIp() {
 		return managerSwitchboardIp;
 	}
@@ -90,8 +96,12 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializa
 				+ exclusiveSwitchboardOrder + ", exclusiveSwitchboardNote="
 				+ exclusiveSwitchboardNote + ", telnetType=" + telnetType
 				+ ", telnetUser=" + telnetUser + ", telnetPwd=" + telnetPwd
-				+ ", telnetPort=" + telnetPort + "]";
+				+ ", telnetPort=" + telnetPort + ", managerSwitchboardIp="
+				+ managerSwitchboardIp + ", exclusiveSwitchboardType="
+				+ exclusiveSwitchboardType + ", exclusiveSwitchboardPortState="
+				+ exclusiveSwitchboardPortState + "]";
 	}
+	 
 	 
 	
 }
