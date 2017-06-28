@@ -406,15 +406,16 @@ public class AddSwitchDevice implements Runnable {
 				task.setSwitchState(2);
 				task.setTaskState(3);
 				deviceAutomationService.updateTask2(task, null, 11, userName);
+				
+				//ip地址回填 ，状态是3实分配
+				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3, usercode);
+				////将kvm端口释放
+				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
+				in.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+				in.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+				in.setExclusiveSwitchboardPortState(0);
+				deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
 			}
-			//ip地址回填 ，状态是3实分配
-			addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3, usercode);
-			////将kvm端口释放
-			DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
-			in.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
-			in.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
-			in.setExclusiveSwitchboardPortState(0);
-			deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
 		}
 		
 	}
