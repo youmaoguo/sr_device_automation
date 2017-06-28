@@ -469,14 +469,19 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			HashSet<String> h1 = new HashSet<String>(ips);
 			ips.clear();
 			ips.addAll(h1);
-			
+			if(ips==null || ips.size()==0){
+				j.setRet_code(500);
+				j.setRet_info("缺少带外信息交换机信息，请检查该表数据");
+				j.setSuccess(false);
+				return j;
+			}
 			Map<String, Object> map = new HashMap<String, Object>();//键存放kvm的ip,值是kvm上的端口
 			//1.先查kvm端口链接信息，返回所有端口链接状态（1：:已链接；0：无链接）
-			for(int i=0;i<ips.size();i++){
+			//for(int i=0;i<ips.size();i++){
 				List<String> ports = new ArrayList<String>();
 				JSONObject param = new JSONObject();
 				param.put("method_name", "/interchanger/v1/connectState");
-				param.put("ip", ips.get(i));	//kvm的IP地址
+				param.put("ip", ips.get(0));	//kvm的IP地址
 				param.put("port", null);
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "post", auth);
 				logger.info("查kvm端口链接信息返回："+sb);
@@ -507,18 +512,19 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				HashSet<String> h = new HashSet<String>(ports);
 				ports.clear();
 				ports.addAll(h);
-				map.put(ips.get(i), ports);
-			}
+				//map.put(ips.get(0), ports);
+			//}
 			
 			//2.多线程去获取已链接的端口上的版本信息
-			List<String> ps = (List<String>) map.get(ips.get(0));
+			//List<String> ps = (List<String>) map.get(ips.get(0));
 			info.setExclusiveSwitchboardIp(ips.get(0));
 			List<DevExclusiveSwitchboardInfo> list = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
 			if(list!=null && list.size()>0){
 				DevExclusiveSwitchboardInfo d = list.get(0);
-				List<String> l = KvmInfo.completionServiceCount(ps, d, models, thirdPartUrl, "post", auth);
+				List<String> l = KvmInfo.completionServiceCount(ports, d, models, thirdPartUrl, "post", auth);
 				for(int i=0;i<l.size();i++){
-					Json json = JSONObject.parseObject(l.get(i), Json.class);
+					json = null;
+					json = JSONObject.parseObject(l.get(i), Json.class);
 					if(json.getRet_code()==200){
 						JSONObject oo = JSONObject.parseObject(json.getData().toString());
 						String model = oo.get("model").toString();
