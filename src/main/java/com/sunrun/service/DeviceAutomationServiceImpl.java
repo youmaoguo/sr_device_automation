@@ -547,10 +547,10 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 						obj.put("exclusiveSwitchboardIp", host);
 						obj.put("exclusiveSwitchboardPort", port);
 						obj.put("exclusiveSwitchboardOrder", i+1);
-						obj.put("brandName", bean.getBrandName());
-						obj.put("modelName", bean.getModelDescribe());
+						obj.put("brandName", StringUtils.isEmpty(bean.getBrandName())?"":bean.getBrandName());
+						obj.put("modelName", StringUtils.isEmpty(bean.getModelDescribe())?"":bean.getModelDescribe());
 						obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
-						obj.put("showkvmDescribe", bean.getShowkvmDescribe());
+						obj.put("showkvmDescribe", StringUtils.isEmpty(bean.getShowkvmDescribe())?"":bean.getShowkvmDescribe());
 						li.add(obj);
 					}
 				}

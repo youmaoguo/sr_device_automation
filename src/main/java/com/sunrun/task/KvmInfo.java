@@ -1,6 +1,7 @@
 package com.sunrun.task;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -57,11 +58,11 @@ public class KvmInfo {
 	        Callable<String> task = new Callable<String>() {
 	            @Override
 	            public String call() throws Exception {
-	            	int time = rand.nextInt(100)*100;
+	            	int time = rand.nextInt(100)*10;
 	            	Thread.sleep(time);
 	            	//这里去调用交换机接口
 	            	String s = RestfulRequestUtil.getResponse(url, param, method, auth);
-	    			logger.info("thead:"+i+" time is:"+time + " s:"+s);
+	    			logger.info("thead:"+i+" time is:"+new Date() + " s:"+s);
 					return s;
 	            }
 	        };
