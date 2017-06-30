@@ -127,10 +127,11 @@ public class ITILRestfulInterface {
 	 * @param wsPwd				用户密码
 	 * @param itilPlannedEnd	期望完成时间
 	 * @param description		描述内容
+	 * @param area				区域
 	 * @return
 	 * @throws Exception
 	 */
-	public static String createChangeITIL(String wsURL, String usercode, String wsUser, String wsPwd, String itilPlannedEnd, String description) throws Exception{
+	public static String createChangeITIL(String wsURL, String usercode, String userName, String wsUser, String wsPwd, String itilPlannedEnd, String description, String area) throws Exception{
 		Json json = new Json();
 		//String wsURL = "http://10.1.248.21:13081/sc62server/PWS/CMBChange";
 		//String wsUser = "01091231";
@@ -156,18 +157,18 @@ public class ITILRestfulInterface {
 			
 			Calendar calendar = Calendar.getInstance();
 	        calendar.setTime(ds);
-	        calendar.add(Calendar.DAY_OF_MONTH, +3);//+3今天的时间加一天
+	        calendar.add(Calendar.HOUR_OF_DAY, +12);//+12hour
 	        Date d = calendar.getTime();
 	        String end = fmt.format(d);
 			header.setPlannedEndDate(new DateTimeType(end));
 			
-			header.setBriefDescription(new StringType("门户系统一键提单"));
+			header.setBriefDescription(new StringType("申请"+area.substring(0, area.length()-1)+"区接入交换机上线"));
 			header.setRequestedBy(new StringType(usercode));
 			instance.setHeader(header);
 			
 			CMBChangeInstanceTypeDescriptionStructure descriptionStructure = new CMBChangeInstanceTypeDescriptionStructure();
 			StringType[] des = new StringType[] {new StringType(description)};
-			descriptionStructure.setDescription(new CMBChangeInstanceTypeDescriptionStructureDescription("门户系统一键提单",des));
+			descriptionStructure.setDescription(new CMBChangeInstanceTypeDescriptionStructureDescription("申请"+area.substring(0, area.length()-1)+"区接入交换机上线",des));
 			instance.setDescriptionStructure(descriptionStructure);
 			
 			CMBChangeInstanceTypeMiddle middle = new CMBChangeInstanceTypeMiddle();
@@ -175,7 +176,7 @@ public class ITILRestfulInterface {
 			middle.setCmbDR(new BooleanType(true));
 			middle.setBusinesssubSYS(new StringType("业务网"));
 			middle.setBusinessSYS(new StringType("网络"));
-			middle.setBusinessCategory(new StringType("跳线"));
+			middle.setBusinessCategory(new StringType("业务网非核心网络新增或减少"));
 			
 			CMBChangeInstanceTypeMiddleChangePlan changePlan = new CMBChangeInstanceTypeMiddleChangePlan();
 			changePlan.setChangePlan(new StringType[] {new StringType("")});
@@ -183,7 +184,7 @@ public class ITILRestfulInterface {
 			instance.setMiddle(middle);
 			
 			instance.setCMBPlanImple(new StringType(usercode));
-			instance.setCmbplanimplefullname(new StringType(usercode));
+			instance.setCmbplanimplefullname(new StringType(userName));
 			
 			CMBChangeInstanceTypeCmbService cmbService = new CMBChangeInstanceTypeCmbService();
 			CMBChangeInstanceTypeCmbServiceImpact impact = new CMBChangeInstanceTypeCmbServiceImpact();

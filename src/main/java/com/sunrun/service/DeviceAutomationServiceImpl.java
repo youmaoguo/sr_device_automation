@@ -336,11 +336,11 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	
 	@Transactional
 	@Override
-	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId, String usercode) {
+	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId, String usercode, String area) {
 		boolean b = true;
 		try{
 			String description = concatDeviceItilInfo(taskId);
-			String sb = ITILRestfulInterface.createChangeITIL(wsURL, usercode,  itilUser, itilPwd, itilPlannedEnd, description);
+			String sb = ITILRestfulInterface.createChangeITIL(wsURL, usercode, updateUser, itilUser, itilPwd, itilPlannedEnd, description, area);
 			Json j = JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=201 || j.getSuccess()==false){
 				b = false;
@@ -617,8 +617,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				int n = i+1;
 				s += n + ".------------------------------------------------------------------\n";
 				s += "设备品牌:"+task.getBrandName() + ", 型号:"+task.getModelName()+", 区域:"+task.getAreaName()+
-						",\n 主汇聚交机:"+task.getMainSwitchboardIp()+", 主汇聚交机端口:"+task.getMainSwitchboardPort()+
-						",\n 备汇聚交机:"+task.getBackupSwitchboardIp()+", 备汇聚交机端口:"+task.getBackupSwitchboardPort()+
+						",\n 主汇聚交机:端口 ："+task.getMainSwitchboardIp()+":"+task.getMainSwitchboardPort()+
+						",\n 备汇聚交机:端口 ："+task.getBackupSwitchboardIp()+":"+task.getBackupSwitchboardPort()+
 						",\n 上线机架位置:"+task.getDevOnlineRack()+", hostname:"+task.getHostName()+
 						",\n 管理地址:"+task.getManagerIp()+", 带外交机信息:"+task.getExclusiveSwitchboardInfo()+"。\n";
 			}

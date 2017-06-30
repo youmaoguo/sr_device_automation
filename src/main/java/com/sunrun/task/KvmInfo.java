@@ -58,8 +58,13 @@ public class KvmInfo {
 	        Callable<String> task = new Callable<String>() {
 	            @Override
 	            public String call() throws Exception {
-	            	int time = rand.nextInt(100)*10;
-	            	Thread.sleep(time);
+	            	String type = param.get("type").toString();
+	            	if(type.equals("5548"))
+	            		Thread.sleep(5500);
+	            	else if(type.equals("4948E"))
+	            		Thread.sleep(3500);
+	            	else
+	            		Thread.sleep(3000);
 	            	//这里去调用交换机接口
 	            	String s = RestfulRequestUtil.getResponse(url, param, method, auth);
 	    			logger.info("thead:"+i+" time is:"+new Date() + " s:"+s);

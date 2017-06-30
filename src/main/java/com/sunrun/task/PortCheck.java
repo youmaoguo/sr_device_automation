@@ -65,6 +65,9 @@ public class PortCheck {
 				param.put("back_user", li.get(0).getBackupTelnetUser());
 				param.put("back_pwd", li.get(0).getBackupTelnetPwd());
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+				
+				//String sb = "{\"ret_code\":200,\"ret_info\":\"success\",\"data\":{\""+task.getMainSwitchboardIp()+"\":['g1-1','g2-1','g2-11','g2-111','g2-12','g2-31'],\""+task.getBackupSwitchboardIp()+"\":['g2-1','g1-1','g22-11','g22-111','g22-12','g22-31']}}";
+				
 				Json j = (Json) JSONObject.parseObject(sb, Json.class);
 				if(j.getRet_code()!=200){
 					code = j.getRet_code();
@@ -83,21 +86,9 @@ public class PortCheck {
 						backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
 					}
 					
-					List<String> mainp = new ArrayList<String>();	//保存数据库中所有使用了的主汇聚端口
-					List<String> backp = new ArrayList<String>();	//保存数据库中所有使用了的备汇聚端口
-					//从数据库查出所有未使用完（即switchState!=4）的主备端口，然后分配未使用的端口，
-					List<DevOnlineTask> ports = deviceAutomationService.findPort(null);
-					List<DevOnlineTask> pc = ports;
-					for(int i=0;i<pc.size();i++){
-						if(pc.get(i).getSwitchState()==4){
-							ports.remove(i);
-						}
-					}
+					List<String> mainp = findDBPorts(deviceAutomationService, 1);//保存数据库中所有使用了的主汇聚端口
+					List<String> backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
 					
-					for(int i=0;i<ports.size();i++){
-						mainp.add(ports.get(i).getMainSwitchboardPort());
-						backp.add(ports.get(i).getBackupSwitchboardPort());
-					}
 					int index = 0;
 					for(int i=0;i<mainlist.size();i++){
 						if(!mainp.contains(mainlist.get(i))){
@@ -118,12 +109,10 @@ public class PortCheck {
 					if(!bpc.equals("")){
 						boolean g = false;
 						//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
-						//for(int jj=0;jj<backp.size();jj++){
-							if(!backp.contains(bpc)){
-								g = true;
-								//break;
-							}
-						//}
+						backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
+						if(!backp.contains(bpc)){
+							g = true;
+						}
 						if(!g){
 							int index2 = 0;
 							for(int i=0;i<backuplist.size();i++){
@@ -139,6 +128,7 @@ public class PortCheck {
 						
 					}else{
 						int index2 = 0;
+						backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
 						for(int i=0;i<backuplist.size();i++){
 							if(!backp.contains(backuplist.get(i))){
 								index2 = i;
@@ -173,4 +163,27 @@ public class PortCheck {
 			}
 	   }
 	
+	   /**
+	    * 查询数据库中 工单未完成之前的占用的汇聚端口
+	    * @param deviceAutomationService
+	    * @param tag	1:查询主端口；2查询备端口
+	    * @return	端口集合
+	    */
+	   List<String> findDBPorts(DeviceAutomationService deviceAutomationService, int tag){
+		   List<DevOnlineTask> ports = deviceAutomationService.findPort(null);
+			List<DevOnlineTask> pc = ports;
+			List<String> mainp = new ArrayList<String>();
+			List<String> backp = new ArrayList<String>();
+			for(int i=0;i<pc.size();i++){
+				if(pc.get(i).getSwitchState()==4){
+					ports.remove(i);
+				}
+			}
+			for(int i=0;i<ports.size();i++){
+				mainp.add(ports.get(i).getMainSwitchboardPort());
+				backp.add(ports.get(i).getBackupSwitchboardPort());
+			}
+			return tag==1 ? mainp : backp;
+	   }
+	   
 }
