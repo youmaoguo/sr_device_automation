@@ -9,6 +9,7 @@ import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
+import com.sunrun.entity.UserBean;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.util.Json;
 
@@ -186,5 +187,7 @@ public interface DeviceAutomationService {
 	List<DevOnlineTask> findTaskByTime();
 	
 	void updateDevExclusiveSwitchboardInfo(DevExclusiveSwitchboardInfo info);
+	
+	List<UserBean> findUser(UserBean user);
 	
 }

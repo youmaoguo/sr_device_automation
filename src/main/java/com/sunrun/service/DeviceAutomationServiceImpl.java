@@ -26,6 +26,7 @@ import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevOnlineTaskItil;
 import com.sunrun.entity.DevTaskExecute;
+import com.sunrun.entity.UserBean;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.mapper.DevAreaSwitchboardIpMapper;
 import com.sunrun.mapper.DevBrandModelMapper;
@@ -36,6 +37,7 @@ import com.sunrun.mapper.DevOnlineBatchItilMapper;
 import com.sunrun.mapper.DevOnlineTaskItilMapper;
 import com.sunrun.mapper.DevOnlineTaskMapper;
 import com.sunrun.mapper.DevTaskExecuteMapper;
+import com.sunrun.mapper.UserBeanMapper;
 import com.sunrun.task.KvmInfo;
 import com.sunrun.util.ITILRestfulInterface;
 import com.sunrun.util.Json;
@@ -72,6 +74,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	private DevBrandModelMapper devBrandModelMapper; 
 	@Resource
 	private DevAreaSwitchboardIpMapper devAreaSwitchboardIpMapper;
+	@Resource
+	private UserBeanMapper userBeanMapper;
 	
 	@Transactional
 	@Override
@@ -648,6 +652,12 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	@Override
 	public void updateDevExclusiveSwitchboardInfo(DevExclusiveSwitchboardInfo info) {
 		devExclusiveSwitchboardInfoMapper.updateDevExclusiveSwitchboardInfo(info);
+	}
+
+
+	@Override
+	public List<UserBean> findUser(UserBean user) {
+		return userBeanMapper.findUser(user);
 	}
 
 
