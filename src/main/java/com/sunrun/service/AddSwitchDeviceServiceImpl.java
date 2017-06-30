@@ -1277,7 +1277,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("back_host", li.get(0).getBackupDevName());
 			param.put("accHostName", task.getHostName());//接入设备对应的host名称
 			param.put("vlanNu", task.getVlan());//接入设备的管理Vlan号
-			param.put("description", "网络室门户系统交换机模块请求写入接入交换机配置");//接入设备的描述配置信息
+			param.put("description", "");//接入设备的描述配置信息
 			param.put("newIp", task.getManagerIp());//在看板系统上申请的IP地址
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);

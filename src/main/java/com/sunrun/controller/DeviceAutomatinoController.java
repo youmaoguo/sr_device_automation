@@ -29,6 +29,7 @@ import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.SysSendEmailBean;
+import com.sunrun.entity.UserBean;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
@@ -494,6 +495,7 @@ public class DeviceAutomatinoController extends BaseController{
 				String email = j.getString("mailConsigneeEmail");
 				emails += email+",";
 				names += name+",";
+				//names += email.substring(0, email.indexOf("@")) + ",";
 			}
 			
 			//调用sr_public工程发送邮件通过接口方法
@@ -547,11 +549,20 @@ public class DeviceAutomatinoController extends BaseController{
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				data.put("mailTitle","设备自动化上线连接信息-"+fmt.format(new Date()));
 				data.put("mailContxt", content.replace("null", ""));
+				
+				List<Object> l = new ArrayList<Object>();
+				/*List<UserBean> users = deviceAutomationService.findUser(null);
+				for(int i=0;i<users.size();i++){
+					JSONObject o = new JSONObject();
+					o.put("mailConsigneeName", users.get(i).getUserName());
+					o.put("mailConsigneeEmail", users.get(i).getEmail());
+					o.put("mailConsigneeSelected", 1);
+					l.add(o);
+				}*/
 				JSONObject o = new JSONObject();
 				o.put("mailConsigneeName", "xubocmb");
 				o.put("mailConsigneeEmail", "xubocmb@cmbchina.com");
 				o.put("mailConsigneeSelected", 1);
-				List<Object> l = new ArrayList<Object>();
 				l.add(o);
 				data.put("mailConsignee", l);	//收件者的邮箱信息 暂时待定？？？
 			}
