@@ -153,34 +153,45 @@ public class ITILRestfulInterface {
 			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 			Date ds = f.parse(itilPlannedEnd);
-			String start = fmt.format(ds);
+			Calendar calendar1 = Calendar.getInstance();
+	        calendar1.setTime(ds);
+	        calendar1.add(Calendar.HOUR_OF_DAY, -8);//由于itil数据库时间比正常时间提前了8小时，所以这里减去8
+	        Date d1 = calendar1.getTime();
+	        String start = fmt.format(d1);
 			header.setPlannedStartDate(new DateTimeType(start));
 			Calendar calendar = Calendar.getInstance();
 	        calendar.setTime(ds);
-	        calendar.add(Calendar.HOUR_OF_DAY, +12);//+12hour
+	        calendar.add(Calendar.HOUR_OF_DAY, +4);//+4hour
 	        Date d = calendar.getTime();
 	        String end = fmt.format(d);
 			header.setPlannedEndDate(new DateTimeType(end));
 			
-			/*Date d1 = f.parse(itilPlannedStart);
+			/*Date ds = f.parse(itilPlannedStart);
+			Calendar calendar1 = Calendar.getInstance();
+	        calendar1.setTime(ds);
+	        calendar1.add(Calendar.HOUR_OF_DAY, -8);//由于itil数据库时间比正常时间提前了8小时，所以这里减去8
+	        Date d1 = calendar1.getTime();
 			String start1 = fmt.format(d1);
 			header.setPlannedStartDate(new DateTimeType(start1));
 			if(StringUtils.isEmpty(itilPlannedEnd)){
 				Calendar calendar = Calendar.getInstance();
-		        calendar.setTime(d1);
-		        calendar.add(Calendar.HOUR_OF_DAY, +12);//+12hour
+		        calendar.setTime(ds);
+		        calendar.add(Calendar.HOUR_OF_DAY, +4);//+4hour
 		        Date d = calendar.getTime();
 		        String end = fmt.format(d);
 				header.setPlannedEndDate(new DateTimeType(end));
 			}else{
 				Date d2 = f.parse(itilPlannedEnd);
+				Calendar calendar2 = Calendar.getInstance();
+		        calendar2.setTime(d2);
+		        calendar2.add(Calendar.HOUR_OF_DAY, -8);//由于itil数据库时间比正常时间提前了8小时，所以这里减去8
+		        d2 = calendar2.getTime();
 				String end2 = fmt.format(d2);
 				header.setPlannedStartDate(new DateTimeType(end2));
 			}*/
 			
 			header.setBriefDescription(new StringType("申请"+area+"区接入交换机上线"));
 			header.setRequestedBy(new StringType(usercode));
-			header.setCategory(new StringType("普通变更"));
 			instance.setHeader(header);
 			
 			CMBChangeInstanceTypeDescriptionStructure descriptionStructure = new CMBChangeInstanceTypeDescriptionStructure();
@@ -191,12 +202,23 @@ public class ITILRestfulInterface {
 			CMBChangeInstanceTypeMiddle middle = new CMBChangeInstanceTypeMiddle();
 			middle.setCm3RSource(new StringType("其他"));
 			middle.setCmbDR(new BooleanType(true));
-			middle.setBusinesssubSYS(new StringType("业务网"));
 			middle.setBusinessSYS(new StringType("网络"));
-			middle.setBusinessCategory(new StringType("业务网非核心网络新增或减少"));
+			middle.setBusinesssubSYS(new StringType("业务网"));
+			middle.setBusinessCategory(new StringType("业务网非核心网络新增或减少设备"));
 			
+			String plan = "1.变更方案说明\n";
+			plan += "确定接入交换机上线机架位置及区域\n";
+			plan += "准备接入交换机和汇聚交换机配置\n";
+			plan += "写入接入交换机配置并进行跳线连接到汇聚交换机\n";
+			plan += "写入汇聚交换机配置\n";
+			plan += "技术验证设备配置是否符合要求\n\n";
+			plan += "2.变更失败后果及规避措施\n";
+			plan += "新设备上线不会影响到原有配置，若变更失败进行回退\n\n";
+			plan += "3.回退方案\n";
+			plan += "断开接入交换机与汇聚交换机连线\n";
+			plan += "删除汇聚交换机接口配置并shutdown接口\n";
 			CMBChangeInstanceTypeMiddleChangePlan changePlan = new CMBChangeInstanceTypeMiddleChangePlan();
-			changePlan.setChangePlan(new StringType[] {new StringType("")});
+			changePlan.setChangePlan(new StringType[] {new StringType(plan)});
 			middle.setChangePlan(changePlan);
 			instance.setMiddle(middle);
 			

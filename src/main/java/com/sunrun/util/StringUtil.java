@@ -401,6 +401,8 @@ public final class StringUtil {
 			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;width:124pt'>上线机架位置</th>");
 			 sb.append("<th class='xl65' width='244' style='border:1px solid #ededed;width:183pt'>hostname</th>");
 			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;width:124pt'>管理地址</th>");
+			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;width:124pt'>接入交换机连接主汇聚端口</th>");
+			 sb.append("<th class='xl65' width='165' style='border:1px solid #ededed;width:124pt'>接入交换机连接备汇聚端口</th>");
 			 sb.append("<th class='xl65' width='238' style='border:1px solid #ededed;width:179pt'>带外交机信息</th></tr>");
 			return sb.toString();
 		 }

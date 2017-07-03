@@ -21,7 +21,21 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializa
 	private String managerSwitchboardIp;
 	private String exclusiveSwitchboardType;
 	private Integer exclusiveSwitchboardPortState;//端口连接状态 0 空闲，1代表实占
+	private String mainAccessPort;//接入交换机连接主汇聚端口
+	private String backAccessPort;//接入交换机连接备汇聚端口
 	
+	public String getMainAccessPort() {
+		return mainAccessPort;
+	}
+	public void setMainAccessPort(String mainAccessPort) {
+		this.mainAccessPort = mainAccessPort;
+	}
+	public String getBackAccessPort() {
+		return backAccessPort;
+	}
+	public void setBackAccessPort(String backAccessPort) {
+		this.backAccessPort = backAccessPort;
+	}
 	public Integer getExclusiveSwitchboardPortState() {
 		return exclusiveSwitchboardPortState;
 	}
@@ -99,9 +113,10 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializa
 				+ ", telnetPort=" + telnetPort + ", managerSwitchboardIp="
 				+ managerSwitchboardIp + ", exclusiveSwitchboardType="
 				+ exclusiveSwitchboardType + ", exclusiveSwitchboardPortState="
-				+ exclusiveSwitchboardPortState + "]";
+				+ exclusiveSwitchboardPortState + ", mainAccessPort="
+				+ mainAccessPort + ", backAccessPort=" + backAccessPort + "]";
 	}
-	 
+	
 	 
 	
 }

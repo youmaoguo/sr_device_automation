@@ -495,8 +495,8 @@ public class DeviceAutomatinoController extends BaseController{
 				String name = j.getString("mailConsigneeName");
 				String email = j.getString("mailConsigneeEmail");
 				emails += email+",";
-				names += name+",";
-				//names += email.substring(0, email.indexOf("@")) + ",";
+				//names += name+",";
+				names += email.substring(0, email.indexOf("@")) + ",";
 			}
 			
 			//调用sr_public工程发送邮件通过接口方法
