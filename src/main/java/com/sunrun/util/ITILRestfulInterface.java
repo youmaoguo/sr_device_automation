@@ -162,13 +162,13 @@ public class ITILRestfulInterface {
 	        String end = fmt.format(d);
 			header.setPlannedEndDate(new DateTimeType(end));
 			
-			header.setBriefDescription(new StringType("申请"+area.substring(0, area.length()-1)+"区接入交换机上线"));
+			header.setBriefDescription(new StringType("申请"+area+"区接入交换机上线"));
 			header.setRequestedBy(new StringType(usercode));
 			instance.setHeader(header);
 			
 			CMBChangeInstanceTypeDescriptionStructure descriptionStructure = new CMBChangeInstanceTypeDescriptionStructure();
 			StringType[] des = new StringType[] {new StringType(description)};
-			descriptionStructure.setDescription(new CMBChangeInstanceTypeDescriptionStructureDescription("申请"+area.substring(0, area.length()-1)+"区接入交换机上线",des));
+			descriptionStructure.setDescription(new CMBChangeInstanceTypeDescriptionStructureDescription("申请"+area+"区接入交换机上线",des));
 			instance.setDescriptionStructure(descriptionStructure);
 			
 			CMBChangeInstanceTypeMiddle middle = new CMBChangeInstanceTypeMiddle();

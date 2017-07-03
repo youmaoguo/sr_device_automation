@@ -1005,7 +1005,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}
 		
 		try{
-			boolean b = deviceAutomationService.switchDeviceITIL(thirdPartUrl, itilPlannedEnd, userName, taskId, usercode, area);
+			boolean b = deviceAutomationService.switchDeviceITIL(thirdPartUrl, itilPlannedEnd, userName, taskId, usercode, area.substring(0, area.length()-1));
 			if(!b){
 				info = "上线交换机ITIL工单申请程序不正常";
 				code = 500;
