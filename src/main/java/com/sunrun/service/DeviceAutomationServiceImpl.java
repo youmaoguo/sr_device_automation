@@ -355,9 +355,9 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				//it.setItilAssignee(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
 				it.setItilRequestor(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
 				it.setItilStatus(!StringUtils.isEmpty(bo.getString("cMBStatus")) ? bo.getString("cMBStatus") : null);
-				//it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getString("plannedEndDate")) ? bo.getString("plannedEndDate") : null);
-				it.setItilPlannedEnd(itilPlannedEnd);
-				it.setItilPlannedStart(itilPlannedStart);
+				it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getString("plannedEndDate")) ? bo.getString("plannedEndDate") : null);
+				//it.setItilPlannedEnd(itilPlannedEnd);
+				it.setItilPlannedStart(!StringUtils.isEmpty(bo.getString("plannedStartDate")) ? bo.getString("plannedStartDate") : null);
 				it.setId(StringUtil.getUuid());
 				it.setCreate_user(updateUser);
 				//往工单批次表插入数据
