@@ -62,9 +62,9 @@ public class AddSwitchDevice implements Runnable {
 	
 	@Override
 	public void run() {
-		if(executeStep!=null && executeStep<10){
+		if(executeStep!=null && executeStep<=10){
 			executeStep2();
-		}else if(executeStep!=null && executeStep>=12){
+		}else if(executeStep!=null && executeStep>=13){
 			executeStep3();
 		}else{
 			executeTask();
@@ -404,7 +404,7 @@ public class AddSwitchDevice implements Runnable {
 			}
 			if(json.getSuccess()){
 				task.setSwitchState(2);
-				task.setTaskState(3);
+				task.setTaskState(2);
 				deviceAutomationService.updateTask2(task, null, 11, userName);
 				
 				//ip地址回填 ，状态是3实分配
@@ -418,6 +418,25 @@ public class AddSwitchDevice implements Runnable {
 			}
 		}
 		
+		//10.在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
+		List<DevOnlineTask> l1 = deviceAutomationService.findPort(task.getId());
+		task = l1.get(0);
+		if(executeStep!=null && executeStep<=10){
+			json = null;
+			json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName);
+			if(!json.getSuccess()){
+				task.setSwitchState(3);
+				task.setTaskState(5);
+				deviceAutomationService.updateTask2(task, null, null, userName);
+				return;
+			}else{
+				task.setTaskState(3);
+				task.setSwitchState(2);
+				deviceAutomationService.updateTask2(task, null, null, userName);
+			}
+			
+		}
+		
 	}
 	
 	/**
@@ -428,8 +447,8 @@ public class AddSwitchDevice implements Runnable {
 		List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
 		if(li!=null && li.size()>0){
 			task = li.get(0);
-			//12.写入汇聚接入交换机配置
-			if(executeStep!=null && executeStep==12){
+			//13.写入汇聚接入交换机配置
+			if(executeStep!=null && executeStep==13){
 				json = addSwitchDeviceService.writeNewGatherConfig(thirdPartUrl, auth, task, userName);
 				if(!json.getSuccess()){
 					task.setSwitchState(3);
@@ -437,13 +456,14 @@ public class AddSwitchDevice implements Runnable {
 					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
 				}else{
-					task.setTaskState(2);
+					task.setTaskState(6);
+					task.setSwitchState(4);
 					deviceAutomationService.updateTask2(task, null, null, userName);
 				}
 			}
 			
 			//13.在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
-			if(executeStep!=null && executeStep<=13){
+			/*if(executeStep!=null && executeStep<=13){
 				json = null;
 				//json = addSwitchDeviceService.checkConfig(thirdPartUrl, auth, task, userName);
 				json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName);
@@ -458,7 +478,7 @@ public class AddSwitchDevice implements Runnable {
 					deviceAutomationService.updateTask2(task, null, null, userName);
 				}
 				
-			}
+			}*/
 			
 			
 		}

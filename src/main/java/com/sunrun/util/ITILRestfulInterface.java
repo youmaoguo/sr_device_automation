@@ -126,12 +126,13 @@ public class ITILRestfulInterface {
 	 * @param wsUser			用户名
 	 * @param wsPwd				用户密码
 	 * @param itilPlannedEnd	期望完成时间
+	 * @param itilPlannedStart	期望开始时间
 	 * @param description		描述内容
 	 * @param area				区域
 	 * @return
 	 * @throws Exception
 	 */
-	public static String createChangeITIL(String wsURL, String usercode, String userName, String wsUser, String wsPwd, String itilPlannedEnd, String description, String area) throws Exception{
+	public static String createChangeITIL(String wsURL, String usercode, String userName, String wsUser, String wsPwd, String itilPlannedEnd, String itilPlannedStart, String description, String area) throws Exception{
 		Json json = new Json();
 		//String wsURL = "http://10.1.248.21:13081/sc62server/PWS/CMBChange";
 		//String wsUser = "01091231";
@@ -154,13 +155,28 @@ public class ITILRestfulInterface {
 			Date ds = f.parse(itilPlannedEnd);
 			String start = fmt.format(ds);
 			header.setPlannedStartDate(new DateTimeType(start));
-			
 			Calendar calendar = Calendar.getInstance();
 	        calendar.setTime(ds);
 	        calendar.add(Calendar.HOUR_OF_DAY, +12);//+12hour
 	        Date d = calendar.getTime();
 	        String end = fmt.format(d);
 			header.setPlannedEndDate(new DateTimeType(end));
+			
+			/*Date d1 = f.parse(itilPlannedStart);
+			String start1 = fmt.format(d1);
+			header.setPlannedStartDate(new DateTimeType(start1));
+			if(StringUtils.isEmpty(itilPlannedEnd)){
+				Calendar calendar = Calendar.getInstance();
+		        calendar.setTime(d1);
+		        calendar.add(Calendar.HOUR_OF_DAY, +12);//+12hour
+		        Date d = calendar.getTime();
+		        String end = fmt.format(d);
+				header.setPlannedEndDate(new DateTimeType(end));
+			}else{
+				Date d2 = f.parse(itilPlannedEnd);
+				String end2 = fmt.format(d2);
+				header.setPlannedStartDate(new DateTimeType(end2));
+			}*/
 			
 			header.setBriefDescription(new StringType("申请"+area+"区接入交换机上线"));
 			header.setRequestedBy(new StringType(usercode));

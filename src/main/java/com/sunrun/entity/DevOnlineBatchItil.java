@@ -15,7 +15,6 @@ public class DevOnlineBatchItil extends BaseEntity implements Serializable{
 	private Integer batchState;			//'批次状态 1：新建；2：执行中；3：完成;4:废除;5:失败',
 	
 	private String itilNumber;		//'itil申请单编号 文本，唯一键 151200319843 itil系统返回',
-	//private String itilSourceId;  	//'来源ID GEN000002',
 	private String itilAssignee;	//'处理人 文本00203045 必须为ITIL操作员账号，一般是员工号',
 	private String itilCategory;	//' 类别 文本 流程管理',
 	private String itilSubcategory;	//'子类别 文本 ITIL系统',
@@ -25,12 +24,16 @@ public class DevOnlineBatchItil extends BaseEntity implements Serializable{
 	private String itilTitle;		//'标题 文本 评估体系平台系统请求',
 	private String itilDescription;	//'申请内容',
 	private String itilPlannedEnd;	//'期望完成时间',
-	//private Date itilRequestedDate; //'申请时间 日期时间 2015-12-07T14:02:07+00:00',
-	//private String itilSource; 		//'来源 文本 cloud',
-	//private String itilOpenedBy;	//'创建人 文本 cmb.int.cloud'
+	private String itilPlannedStart;	//'期望开始时间',
 	
 	public String getBatchName() {
 		return batchName;
+	}
+	public String getItilPlannedStart() {
+		return itilPlannedStart;
+	}
+	public void setItilPlannedStart(String itilPlannedStart) {
+		this.itilPlannedStart = itilPlannedStart;
 	}
 	public void setBatchName(String batchName) {
 		this.batchName = batchName;
@@ -117,9 +120,10 @@ public class DevOnlineBatchItil extends BaseEntity implements Serializable{
 				+ ", itilBusinessArea=" + itilBusinessArea + ", itilStatus="
 				+ itilStatus + ", itilRequestor=" + itilRequestor
 				+ ", itilTitle=" + itilTitle + ", itilDescription="
-				+ itilDescription + ", itilPlannedEnd=" + itilPlannedEnd + "]";
+				+ itilDescription + ", itilPlannedEnd=" + itilPlannedEnd
+				+ ", itilPlannedStart=" + itilPlannedStart + "]";
 	}
-	
+ 
 	
 	
 }

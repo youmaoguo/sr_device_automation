@@ -340,11 +340,11 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	
 	@Transactional
 	@Override
-	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId, String usercode, String area) {
+	public boolean switchDeviceITIL(String itil, String itilPlannedEnd, String itilPlannedStart, String updateUser, String[] taskId, String usercode, String area) {
 		boolean b = true;
 		try{
 			String description = concatDeviceItilInfo(taskId);
-			String sb = ITILRestfulInterface.createChangeITIL(wsURL, usercode, updateUser, itilUser, itilPwd, itilPlannedEnd, description, area);
+			String sb = ITILRestfulInterface.createChangeITIL(wsURL, usercode, updateUser, itilUser, itilPwd, itilPlannedEnd, itilPlannedStart, description, area);
 			Json j = JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=201 || j.getSuccess()==false){
 				b = false;
@@ -355,7 +355,9 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				//it.setItilAssignee(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
 				it.setItilRequestor(!StringUtils.isEmpty(bo.getString("requestedBy")) ? bo.getString("requestedBy") : null);
 				it.setItilStatus(!StringUtils.isEmpty(bo.getString("cMBStatus")) ? bo.getString("cMBStatus") : null);
-				it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getString("plannedEndDate")) ? bo.getString("plannedEndDate") : null);
+				//it.setItilPlannedEnd(!StringUtils.isEmpty(bo.getString("plannedEndDate")) ? bo.getString("plannedEndDate") : null);
+				it.setItilPlannedEnd(itilPlannedEnd);
+				it.setItilPlannedStart(itilPlannedStart);
 				it.setId(StringUtil.getUuid());
 				it.setCreate_user(updateUser);
 				//往工单批次表插入数据

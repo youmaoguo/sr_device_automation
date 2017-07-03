@@ -7,12 +7,12 @@
 		insert into dev_online_itil_execute(
 			id,				batch_name,				batch_describe,			batch_state,		 create_time,	      	state,
 			itil_number,	itil_assignee,			itil_category,			itil_subcategory,	itil_businessArea,		itil_status,
-			itil_requestor, itil_title,				itil_description,		itil_plannedEnd,	itil_sourceId,			itil_requestedDate,
+			itil_requestor, itil_title,				itil_description,		itil_plannedEnd,	itil_sourceId,			itil_requestedDate,		itil_plannedStart
 			itil_source,	itil_openedBy,			create_user
 		) values(
 			#{itil.id},		#{itil.batchName},		#{itil.batchDescribe},		1, 					now(),				 1,
 			#{itil.itilNumber},#{itil.itilAssignee},#{itil.itilCategory},	#{itil.itilSubcategory},#{itil.itilBusinessArea},#{itil.itilStatus},
-			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.itilSourceId},#{itil.itilRequestedDate},
+			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.itilSourceId},#{itil.itilRequestedDate},#{itil.itilPlannedStart}
 			#{itil.itilSource},	#{itil.itilOpenedBy},#{itil.create_user}
 		)
 	</insert>
@@ -37,6 +37,7 @@
 			itil_title AS itilTitle ,
 			itil_description AS itilDescription ,
 			itil_plannedEnd AS itilPlannedEnd ,
+			itil_plannedStart AS itilPlannedStart,
 			create_time,
 			create_user,
 			update_user,

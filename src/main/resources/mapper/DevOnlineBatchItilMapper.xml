@@ -7,11 +7,11 @@
 		insert into dev_online_batch_itil(
 			id,				batch_name,				batch_describe,			batch_state,		 create_time,	      	state,
 			itil_number,	itil_assignee,			itil_category,			itil_subcategory,	itil_businessArea,		itil_status,
-			itil_requestor, itil_title,				itil_description,		itil_plannedEnd,	 create_user
+			itil_requestor, itil_title,				itil_description,		itil_plannedEnd,	 create_user,			itil_plannedStart
 		) values(
 			#{itil.id},		#{itil.batchName},		#{itil.batchDescribe},		1, 					now(),				 1,
 			#{itil.itilNumber},#{itil.itilAssignee},#{itil.itilCategory},	#{itil.itilSubcategory},#{itil.itilBusinessArea},#{itil.itilStatus},
-			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.create_user}
+			#{itil.itilRequestor},#{itil.itilTitle},#{itil.itilDescription},#{itil.itilPlannedEnd},#{itil.create_user},	#{itil.itilPlannedStart}
 		)
 	</insert>
 	
@@ -25,6 +25,8 @@
 				<if test="itil.state != null">state=#{itil.state},</if>
 				<if test="itil.itilStatus != null">itil_status=#{itil.itilStatus},</if>
 				<if test="itil.update_user != null">update_user=#{itil.update_user},</if>
+				<if test="itil.itilPlannedStart != null">itil_plannedStart=#{itil.itilPlannedStart},</if>
+				<if test="itil.itilPlannedEnd != null">itil_plannedEnd=#{itil.itilPlannedEnd},</if>
 				
 			</trim>
 		where 1=1
@@ -59,7 +61,8 @@
 			 itil_requestor AS itilRequestor,
 			 itil_title AS itilTitle,
 			 itil_description AS itilDescription,
-			 itil_plannedEnd AS itilPlannedEnd
+			 itil_plannedEnd AS itilPlannedEnd,
+			 itil_plannedStart AS itilPlannedStart
 		from dev_online_batch_itil
 		where id = #{id}
 	</select>
@@ -72,7 +75,8 @@
 			 itil_requestor AS itilRequestor,
 			 itil_title AS itilTitle,
 			 itil_description AS itilDescription,
-			 itil_plannedEnd AS itilPlannedEnd
+			 itil_plannedEnd AS itilPlannedEnd,
+			 itil_plannedStart AS itilPlannedStart
 		from dev_online_batch_itil 
 		where 1=1 and itil_status like '%审核%' or itil_status like '%审批%' or  itil_status like '%登记%'
 	</select>
@@ -93,6 +97,7 @@
 				b.itil_title AS itilTitle,
 				b.itil_description AS itilDescription,
 				b.itil_plannedEnd AS itilPlannedEnd,
+				b.itil_plannedStart AS itilPlannedStart,
 			
 				t.id AS id,
 				t.task_type AS taskType,
@@ -194,6 +199,7 @@
 				b.itil_title AS itilTitle,
 				b.itil_description AS itilDescription,
 				b.itil_plannedEnd AS itilPlannedEnd,
+				b.itil_plannedStart AS itilPlannedStart,
 			
 				t.id AS id,
 				t.task_type AS taskType,

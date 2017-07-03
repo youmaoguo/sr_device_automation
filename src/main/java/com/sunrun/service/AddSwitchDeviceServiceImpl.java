@@ -968,7 +968,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				t.setId(taskId[i]);
 				t.setUpdate_user(userName);
 				t.setEmailId(id);
-				writeProcess(t, 10, info, success, userName, null);
+				writeProcess(t, 11, info, success, userName, null);
 			}
 			
 			json.setRet_code(code);
@@ -980,7 +980,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String[] taskId, String userName, String usercode) {
+	public Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String itilPlannedStart, String[] taskId, String userName, String usercode) {
 		Json json = new Json();
 		String info = "上线交换机ITIL工单申请正常";
 		Integer code = 201;	
@@ -1005,7 +1005,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}
 		
 		try{
-			boolean b = deviceAutomationService.switchDeviceITIL(thirdPartUrl, itilPlannedEnd, userName, taskId, usercode, area.substring(0, area.length()-1));
+			boolean b = deviceAutomationService.switchDeviceITIL(thirdPartUrl, itilPlannedEnd, itilPlannedStart, userName, taskId, usercode, area.substring(0, area.length()-1));
 			if(!b){
 				info = "上线交换机ITIL工单申请程序不正常";
 				code = 500;
@@ -1024,7 +1024,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				DevOnlineTask t = new DevOnlineTask();
 				t.setId(taskId[i]);
 				t.setUpdate_user(userName);
-				writeProcess(t, 11, info, success, userName, null);
+				writeProcess(t, 12, info, success, userName, null);
 			}
 			
 			json.setRet_code(code);
@@ -1219,7 +1219,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 13, success==true ? info : "检验配置不正常", success, userName, info);
+			writeProcess(t, 10, success==true ? info : "检验配置不正常", success, userName, info);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
@@ -1378,7 +1378,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 12, info, success, userName, data!=null ? data.toString() : null);
+			writeProcess(t, 13, info, success, userName, data!=null ? data.toString() : null);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);

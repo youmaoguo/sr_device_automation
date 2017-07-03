@@ -383,7 +383,7 @@ public class DeviceAutomatinoController extends BaseController{
 				t.start();
 				
 			}else if(switchState==2){
-				//当点击执行（写入汇聚配置和做验证）时候，必要要求工单状态是‘实施’；且当前时间大于等于工单期望完成时间,且在晚上19:00后；
+				//当点击执行（写入汇聚配置）时候，必要要求工单状态是‘实施’；且当前时间大于等于工单期望完成时间,且在晚上19:00后；
 				DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
 				batchView.setId(task.getId());
 				long i = System.currentTimeMillis();
@@ -444,6 +444,7 @@ public class DeviceAutomatinoController extends BaseController{
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
 			String itilPlannedEnd = obj.getString("itilPlannedEnd");
+			String itilPlannedStart = obj.getString("itilPlannedStart");
 			String updateUser = obj.getString("updateUser");
 			String userName = obj.getString("userName");
 			String usercode = obj.getString("usercode");	
@@ -452,7 +453,7 @@ public class DeviceAutomatinoController extends BaseController{
 			String[] a = new String[l.size()];
 			String[] taskId = l.toArray(a);
 			
-			json = addSwitchDeviceService.switchDeviceITIL(itil, itilPlannedEnd, taskId, userName, usercode);
+			json = addSwitchDeviceService.switchDeviceITIL(itil, itilPlannedEnd, itilPlannedStart, taskId, userName, usercode);
 			
 		}catch(Exception e){
 			logger.error("接口程序出错");
@@ -551,19 +552,21 @@ public class DeviceAutomatinoController extends BaseController{
 				data.put("mailContxt", content.replace("null", ""));
 				
 				List<Object> l = new ArrayList<Object>();
-				/*List<UserBean> users = deviceAutomationService.findUser(null);
+				UserBean user = new UserBean();
+				user.setSendEmail(1);
+				List<UserBean> users = deviceAutomationService.findUser(user);
 				for(int i=0;i<users.size();i++){
 					JSONObject o = new JSONObject();
 					o.put("mailConsigneeName", users.get(i).getUserName());
 					o.put("mailConsigneeEmail", users.get(i).getEmail());
-					o.put("mailConsigneeSelected", 1);
+					o.put("mailConsigneeSelected", users.get(i).getSendEmail());
 					l.add(o);
-				}*/
-				JSONObject o = new JSONObject();
+				}
+				/*JSONObject o = new JSONObject();
 				o.put("mailConsigneeName", "xubocmb");
 				o.put("mailConsigneeEmail", "xubocmb@cmbchina.com");
 				o.put("mailConsigneeSelected", 1);
-				l.add(o);
+				l.add(o);*/
 				data.put("mailConsignee", l);	//收件者的邮箱信息 暂时待定？？？
 			}
 			

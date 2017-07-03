@@ -119,7 +119,7 @@ public interface DeviceAutomationService {
 	 * @param updateUser
 	 * @param taskId
 	 */
-	boolean switchDeviceITIL(String itil, String itilPlannedEnd, String updateUser, String[] taskId, String usercode, String area);
+	boolean switchDeviceITIL(String itil, String itilPlannedEnd, String itilPlannedStart, String updateUser, String[] taskId, String usercode, String area);
 	
 	/**
 	 * 根据任务id查询任务执行情况

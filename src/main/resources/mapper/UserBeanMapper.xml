@@ -12,7 +12,9 @@
 			password AS passWord,
 			email AS email,
 			mobile_phone AS mobilePhone,
-			locked AS locked
+			locked AS locked,
+			department AS department,
+			send_email AS sendEmail
 			
 		from sys_user 
 		where 1=1
@@ -21,6 +23,12 @@
 		</if>
 		<if test="user.userCode != null">
 		    AND usercode = #{user.userCode}
+		</if>
+		<if test="user.department != null">
+		    AND department = #{user.department}
+		</if>
+		<if test="user.sendEmail != null">
+		    AND send_email = #{user.sendEmail}
 		</if>
 		
 	</select>

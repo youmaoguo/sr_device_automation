@@ -12,9 +12,22 @@ public class UserBean extends BaseEntity implements Serializable{
 	String email;
 	String userCode;
 	String mobilePhone;
-	Integer locked;
+	Integer locked;//是否发送邮件 0 不发送，1发送
+	Integer sendEmail;
+	String department;
 	
-	
+	public Integer getSendEmail() {
+		return sendEmail;
+	}
+	public void setSendEmail(Integer sendEmail) {
+		this.sendEmail = sendEmail;
+	}
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
+	}
 	public String getUserName() {
 		return userName;
 	}
@@ -52,14 +65,14 @@ public class UserBean extends BaseEntity implements Serializable{
 	public void setUserCode(String userCode) {
 		this.userCode = userCode;
 	}
-	
 	@Override
 	public String toString() {
 		return "UserBean [userName=" + userName + ", passWord=" + passWord
 				+ ", email=" + email + ", userCode=" + userCode
-				+ ", mobilePhone=" + mobilePhone + ", locked=" + locked + "]";
+				+ ", mobilePhone=" + mobilePhone + ", locked=" + locked
+				+ ", sendEmail=" + sendEmail + ", department=" + department
+				+ "]";
 	}
-	
-	
+	 
  
 }

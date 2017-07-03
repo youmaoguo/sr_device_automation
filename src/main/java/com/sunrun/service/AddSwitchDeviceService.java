@@ -60,7 +60,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json portCheck(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 	
-	/**添加设备第6步：
+	/**添加设备第6步：已经废弃
 	 * 生成汇聚交换机配置 并记录
 	 * @param thirdPartUrl
 	 * @param auth
@@ -69,7 +69,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json CreatConverPage(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName);
 	
-	/**添加设备第7步：
+	/**添加设备第7步：已经废弃
 	 * 生成接入交换机配置 并记录
 	 * @param thirdPartUrl
 	 * @param auth
@@ -78,7 +78,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json CreatAccessPage(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName);
 	
-	/**添加设备第8步：
+	/**添加设备第6步：
 	 * 保存带外交换机端口与接入交换机的连接
 	 * @param conn
 	 * @param userName
@@ -87,7 +87,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json exclusiveSwitchboardConn(DevExclusiveSwitchboardConn conn, DevOnlineTask task, String userName);
 	
-	/**添加设备第9步：
+	/**添加设备第7步：
 	 * 请求写入接入交换机配置管理口IP
 	 * @param thirdPartUrl
 	 * @param auth
@@ -106,7 +106,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json findDeviceIosVersion(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 	
-	/**添加设备第10步：
+	/**添加设备第8步：
 	 * 查看ios版本是否最新，不是最新需要升级ios版本
 	 * @param thirdPartUrl
 	 * @param auth
@@ -115,7 +115,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json checkIosVersion(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 	
-	/**添加设备第11步：
+	/**添加设备第9步：
 	 * 写入接入交换机配置
 	 * @param thirdPartUrl
 	 * @param auth
@@ -124,7 +124,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json writeAccessConfig(String thirdPartUrl, String auth, String taskId, String userName);
 	
-	/**添加设备第11步：(new)
+	/**添加设备第9步：(new)
 	 * 写入接入交换机配置(new)
 	 * @param thirdPartUrl
 	 * @param auth
@@ -136,7 +136,7 @@ public interface AddSwitchDeviceService {
 
 	
 	
-	/**添加设备第12步：
+	/**添加设备第11步：
 	 * 上线交换机邮件发送通知
 	 * @param thirdPartUrl
 	 * @param auth
@@ -145,16 +145,16 @@ public interface AddSwitchDeviceService {
 	 */
 	Json SendEmailswitchDevice(String thirdPartUrl, String auth, String[] taskId, String emails, String names, String title, String content, String userName);
 	
-	/**添加设备第13步：
+	/**添加设备第12步：
 	 * 上线交换机ITIL工单申请
 	 * @param thirdPartUrl
 	 * @param auth
 	 * @param taskId
 	 * @return
 	 */
-	Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String[] taskId, String userName, String usercode);
+	Json switchDeviceITIL(String thirdPartUrl, String itilPlannedEnd, String itilPlannedStart, String[] taskId, String userName, String usercode);
 	
-	/**添加设备第14步：
+	/**添加设备第13步：
 	 * 写入汇聚交换机配置
 	 * @param thirdPartUrl
 	 * @param auth
@@ -163,7 +163,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json writeGatherConfig(String thirdPartUrl, String auth, String taskId, String userName);
 	
-	/**添加设备第14步：(new)
+	/**添加设备第13步：(new)
 	 * 写入汇聚交换机配置(new)
 	 * @param thirdPartUrl
 	 * @param auth
@@ -173,7 +173,7 @@ public interface AddSwitchDeviceService {
 	Json writeNewGatherConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 	
 	
-	/**添加设备第15步：
+	/**添加设备第10步：
 	 * 在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
 	 * @param thirdPartUrl
 	 * @param auth
@@ -182,7 +182,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json checkConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 	
-	/**添加设备第15步：(new)
+	/**添加设备第10步：(new)
 	 * 在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错(new)
 	 * @param thirdPartUrl
 	 * @param auth
