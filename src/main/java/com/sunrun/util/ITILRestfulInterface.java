@@ -180,6 +180,7 @@ public class ITILRestfulInterface {
 			
 			header.setBriefDescription(new StringType("申请"+area+"区接入交换机上线"));
 			header.setRequestedBy(new StringType(usercode));
+			header.setCategory(new StringType("普通变更"));
 			instance.setHeader(header);
 			
 			CMBChangeInstanceTypeDescriptionStructure descriptionStructure = new CMBChangeInstanceTypeDescriptionStructure();
