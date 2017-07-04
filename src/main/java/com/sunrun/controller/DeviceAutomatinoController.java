@@ -701,9 +701,7 @@ public class DeviceAutomatinoController extends BaseController{
 			String brandName = obj.getString("brandName");
 			String modelName = obj.getString("modelName");
 			String currentIosVersion = obj.getString("currentIosVersion");
-			String exclusiveSwitchboardInfo = "";
-			if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
-				exclusiveSwitchboardInfo = "第"+exclusiveSwitchboardOrder+"口-"+brandName+"-"+modelName;
+			String exclusiveSwitchboardInfo = obj.getString("exclusiveSwitchboardInfo");
 			
 			DevOnlineTask task = new DevOnlineTask();
 			task.setSwitchState(switchState);
@@ -713,7 +711,7 @@ public class DeviceAutomatinoController extends BaseController{
 				task.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
 			if(!StringUtils.isEmpty(exclusiveSwitchboardPort))
 				task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-			if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
+			if(!StringUtils.isEmpty(exclusiveSwitchboardInfo))
 				task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
 			
 			if(!StringUtils.isEmpty(brandName))
