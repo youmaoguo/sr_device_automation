@@ -344,10 +344,10 @@ public class DeviceAutomatinoController extends BaseController{
 				if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
 					task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
 				
-				if(!StringUtils.isEmpty(brandName))
+				/*if(!StringUtils.isEmpty(brandName))
 					task.setBrandName(brandName);
 				if(!StringUtils.isEmpty(modelName))
-					task.setModelName(modelName);
+					task.setModelName(modelName);*/
 				if(!StringUtils.isEmpty(currentIosVersion))
 				task.setCurrentIosVersion(currentIosVersion);
 				task.setUpdate_user(updateUser);
@@ -714,10 +714,10 @@ public class DeviceAutomatinoController extends BaseController{
 			if(!StringUtils.isEmpty(exclusiveSwitchboardInfo))
 				task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
 			
-			if(!StringUtils.isEmpty(brandName))
+			/*if(!StringUtils.isEmpty(brandName))
 				task.setBrandName(brandName);
 			if(!StringUtils.isEmpty(modelName))
-				task.setModelName(modelName);
+				task.setModelName(modelName);*/
 			if(!StringUtils.isEmpty(currentIosVersion))
 				task.setCurrentIosVersion(currentIosVersion);
 			if(!StringUtils.isEmpty(updateUser))

@@ -528,6 +528,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			if(list!=null && list.size()>0){
 				DevExclusiveSwitchboardInfo d = list.get(0);
 				List<String> l = KvmInfo.completionServiceCount(ports, d, models, thirdPartUrl, "post", auth);
+				logger.info("kvm返回："+l.toString());
 				for(int i=0;i<l.size();i++){
 					json = null;
 					json = JSONObject.parseObject(l.get(i), Json.class);

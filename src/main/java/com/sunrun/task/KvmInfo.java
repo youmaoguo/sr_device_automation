@@ -49,6 +49,10 @@ public class KvmInfo {
 	            Future<String> s = completionService.submit(getTask(i, url, param, method, auth));
 	            list.add(s.get());
 	        }
+	        /*for(int i=0;i<ports.size();i++){
+	        	String s = completionService.take().get();
+	        	list.add(s);
+	        }*/
 	        executorService.shutdown();
 	        return list;
 	    }
