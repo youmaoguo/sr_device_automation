@@ -514,8 +514,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("main_pwd6", li.get(0).getTelnetPwd());
 			param.put("back_pwd6", li.get(0).getBackupTelnetPwd());
 			
-			param.put("accHostnmae", task.getHostName());	//接入设备对应的host名称
-			param.put("newip", map.get("ip"));			//在看板系统上申请的IP地址
+			param.put("accHostname", task.getHostName());	//接入设备对应的host名称
+			param.put("newip", task.getManagerIp());			//在看板系统上申请的IP地址
 			param.put("Type", task.getModelName());			//接入交换机的设备类型，分别为4948E和5548
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -854,7 +854,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 8, info, success, userName, success!=true?info:"");
+			writeProcess(t, 8, (success==true && tag==false)?"交换机ios版本正在升级...":info, success, userName, success!=true?info:"");
 			
 			code = (success==true && tag==false)?201:code;//200:表示不要升级；201：表示正在升级
 			json.setRet_code(code);

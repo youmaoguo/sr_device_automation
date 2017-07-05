@@ -60,7 +60,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json portCheck(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 	
-	/**添加设备第6步：已经废弃
+	/**添加设备第6步：
 	 * 生成汇聚交换机配置 并记录
 	 * @param thirdPartUrl
 	 * @param auth
@@ -183,7 +183,7 @@ public interface AddSwitchDeviceService {
 	Json checkConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
 	
 	/**添加设备第10步：(new)
-	 * 在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错(new)
+	 * 在接入交换机写入配置后，对现网的情况进行检验排错(new)
 	 * @param thirdPartUrl
 	 * @param auth
 	 * @param task

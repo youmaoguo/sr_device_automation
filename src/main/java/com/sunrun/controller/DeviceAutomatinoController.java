@@ -829,7 +829,7 @@ public class DeviceAutomatinoController extends BaseController{
 		try{
 			List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
 			if(l!=null && l.size()>0){
-				json = addSwitchDeviceService.CreatConverPage(taskId, auth, l.get(0), null, null);
+				json = addSwitchDeviceService.CreatConverPage(thirdPartUrl, auth, l.get(0), null, null);
 				response(json, response, request);
 			}else{
 				json.setRet_code(500);

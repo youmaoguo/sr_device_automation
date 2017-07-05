@@ -1,6 +1,7 @@
 package com.sunrun.task;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class PortCheck {
 	   @SuppressWarnings("finally")
 	   public synchronized Json portCheck(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName){
 		   Json json = new Json();
-			String info = " 判断汇聚交换机端口上是否有配置及端口状态是否为down,结果正常";
+			String info = "获取汇聚交换机端口结果正常";
 			Integer code = 200;	
 			Boolean success = true;
 			String mp = "", bp = "";
@@ -90,31 +91,47 @@ public class PortCheck {
 					List<String> backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
 					
 					int index = 0;
+					boolean t = false;
 					for(int i=0;i<mainlist.size();i++){
 						if(!mainp.contains(mainlist.get(i))){
 							index = i;
 							break;
 						}
 					}
-					mp = mainlist.size()>=index ? mainlist.get(index) : ""; //选定好了主端口
-					
-					//理论上最好备端口跟主端口一样
-					String bpc = "";
-					for(int i=0;i<backuplist.size();i++){
-						if(backuplist.get(i).equals(mp)){
-							bpc = mp;
-							break;
+					if(t){
+						mp = mainlist.size()>=index ? mainlist.get(index) : ""; //选定好了主端口
+						
+						//理论上最好备端口跟主端口一样
+						String bpc = "";
+						for(int i=0;i<backuplist.size();i++){
+							if(backuplist.get(i).equals(mp)){
+								bpc = mp;
+								break;
+							}
 						}
-					}
-					if(!bpc.equals("")){
-						boolean g = false;
-						//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
-						backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
-						if(!backp.contains(bpc)){
-							g = true;
-						}
-						if(!g){
+						if(!bpc.equals("")){
+							boolean g = false;
+							//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
+							backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
+							if(!backp.contains(bpc)){
+								g = true;
+							}
+							if(!g){
+								int index2 = 0;
+								for(int i=0;i<backuplist.size();i++){
+									if(!backp.contains(backuplist.get(i))){
+										index2 = i;
+										break;
+									}
+								}
+								bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+							}else{
+								bp = bpc;
+							}
+							
+						}else{
 							int index2 = 0;
+							backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
 							for(int i=0;i<backuplist.size();i++){
 								if(!backp.contains(backuplist.get(i))){
 									index2 = i;
@@ -122,28 +139,19 @@ public class PortCheck {
 								}
 							}
 							bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
-						}else{
-							bp = bpc;
 						}
-						
 					}else{
-						int index2 = 0;
-						backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
-						for(int i=0;i<backuplist.size();i++){
-							if(!backp.contains(backuplist.get(i))){
-								index2 = i;
-								break;
-							}
-						}
-						bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+						code = 400;
+						info = "主汇聚ip"+task.getMainSwitchboardIp()+"上暂时没有空闲可用端口";
+						success = false;
 					}
 					
 				}
 				
 			}catch(Exception e){
 				e.printStackTrace();
-				logger.error(" 判断汇聚交换机端口上是否有配置及端口状态是否为down，结果不正常");
-				info = " 判断汇聚交换机端口上是否有配置及端口状态是否为down，结果不正常";
+				logger.error("获取汇聚交换机端口结果不正常");
+				info = "获取汇聚交换机端口结果不正常";
 				code = 500;
 				success = false;
 				throw new RuntimeException(e);
@@ -154,7 +162,7 @@ public class PortCheck {
 				t.setBackupSwitchboardPort(bp);
 				t.setId(task.getId());
 				t.setUpdate_user(userName);
-				addSwitchDeviceService.writeProcess(t, 5, "判断汇聚交换机端口上是否有配置及端口状态是否为down", success, userName, success!=true?info:"");
+				addSwitchDeviceService.writeProcess(t, 5, "获取汇聚交换机端口", success, userName, success!=true?info:"");
 				
 				json.setRet_code(code);
 				json.setRet_info(info);
@@ -183,6 +191,12 @@ public class PortCheck {
 				mainp.add(ports.get(i).getMainSwitchboardPort());
 				backp.add(ports.get(i).getBackupSwitchboardPort());
 			}
+			HashSet<String> h1 = new HashSet<String>(mainp);
+			mainp.clear();
+			mainp.addAll(h1);
+			HashSet<String> h2 = new HashSet<String>(backp);
+			backp.clear();
+			backp.addAll(h2);
 			return tag==1 ? mainp : backp;
 	   }
 	   

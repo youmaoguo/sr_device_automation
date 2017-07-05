@@ -503,65 +503,69 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 							ports.add(key);
 						}
 					}
-				}
-				//从获取到的端口中去除掉数据库中被实占的
-				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
-				in.setExclusiveSwitchboardPortState(1);
-				List<DevExclusiveSwitchboardInfo> l1 = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(in);
-				List<String> cp = ports;
-				for(int z=0;z<l1.size();z++){
-					if(cp.contains(l1.get(z).getExclusiveSwitchboardPort())){
-						ports.remove(l1.get(z).getExclusiveSwitchboardPort());
-					}
-				}
-				// 去重
-				HashSet<String> h = new HashSet<String>(ports);
-				ports.clear();
-				ports.addAll(h);
-				//map.put(ips.get(0), ports);
-			//}
-			
-			//2.多线程去获取已链接的端口上的版本信息
-			//List<String> ps = (List<String>) map.get(ips.get(0));
-			info.setExclusiveSwitchboardIp(ips.get(0));
-			List<DevExclusiveSwitchboardInfo> list = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
-			if(list!=null && list.size()>0){
-				DevExclusiveSwitchboardInfo d = list.get(0);
-				List<String> l = KvmInfo.completionServiceCount(ports, d, models, thirdPartUrl, "post", auth);
-				logger.info("kvm返回："+l.toString());
-				for(int i=0;i<l.size();i++){
-					json = null;
-					json = JSONObject.parseObject(l.get(i), Json.class);
-					if(json.getRet_code()==200){
-						JSONObject oo = JSONObject.parseObject(json.getData().toString());
-						String model = oo.get("model").toString();
-						String port = oo.get("port").toString();
-						String host = oo.get("host").toString();
-						com.alibaba.fastjson.JSONArray iosList = (com.alibaba.fastjson.JSONArray) oo.get("iosList");
-						String ios = "";
-						for(int z=0;z<iosList.size();z++){
-							ios += iosList.get(z).toString() + ",";
+					//从获取到的端口中去除掉数据库中被实占的
+					DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
+					in.setExclusiveSwitchboardPortState(1);
+					List<DevExclusiveSwitchboardInfo> l1 = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(in);
+					List<String> cp = ports;
+					for(int z=0;z<l1.size();z++){
+						if(cp.contains(l1.get(z).getExclusiveSwitchboardPort())){
+							ports.remove(l1.get(z).getExclusiveSwitchboardPort());
 						}
-						//在根据model去查询品牌型号表
-						DevBrandModel bean = new DevBrandModel();
-						//bean.setModelName(model);
-						bean.setModelDescribe(model);
-						List<DevBrandModel> ll = devBrandModelMapper.findBrandModel(bean);
-						if(ll!=null && ll.size()>0){
-							bean = ll.get(0);
-						}
-						JSONObject obj = new JSONObject();
-						obj.put("exclusiveSwitchboardIp", host);
-						obj.put("exclusiveSwitchboardPort", port);
-						obj.put("exclusiveSwitchboardOrder", i+1);
-						obj.put("brandName", StringUtils.isEmpty(bean.getBrandName())?"":bean.getBrandName());
-						obj.put("modelName", StringUtils.isEmpty(bean.getModelDescribe())?"":bean.getModelDescribe());
-						obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
-						obj.put("showkvmDescribe", StringUtils.isEmpty(bean.getShowkvmDescribe())?"":bean.getShowkvmDescribe());
-						li.add(obj);
 					}
+					// 去重
+					HashSet<String> h = new HashSet<String>(ports);
+					ports.clear();
+					ports.addAll(h);
+					//map.put(ips.get(0), ports);
+					//}
+					
+					//2.多线程去获取已链接的端口上的版本信息
+					//List<String> ps = (List<String>) map.get(ips.get(0));
+					info.setExclusiveSwitchboardIp(ips.get(0));
+					List<DevExclusiveSwitchboardInfo> list = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
+					if(list!=null && list.size()>0){
+						DevExclusiveSwitchboardInfo d = list.get(0);
+						List<String> l = KvmInfo.completionServiceCount(ports, d, models, thirdPartUrl, "post", auth);
+						logger.info("kvm返回："+l.toString());
+						for(int i=0;i<l.size();i++){
+							json = null;
+							json = JSONObject.parseObject(l.get(i), Json.class);
+							if(json.getRet_code()==200){
+								JSONObject oo = JSONObject.parseObject(json.getData().toString());
+								String model = oo.get("model").toString();
+								String port = oo.get("port").toString();
+								String host = oo.get("host").toString();
+								com.alibaba.fastjson.JSONArray iosList = (com.alibaba.fastjson.JSONArray) oo.get("iosList");
+								String ios = "";
+								for(int z=0;z<iosList.size();z++){
+									ios += iosList.get(z).toString() + ",";
+								}
+								//在根据model去查询品牌型号表
+								DevBrandModel bean = new DevBrandModel();
+								//bean.setModelName(model);
+								bean.setModelDescribe(model);
+								List<DevBrandModel> ll = devBrandModelMapper.findBrandModel(bean);
+								if(ll!=null && ll.size()>0){
+									bean = ll.get(0);
+								}
+								JSONObject obj = new JSONObject();
+								obj.put("exclusiveSwitchboardIp", host);
+								obj.put("exclusiveSwitchboardPort", port);
+								obj.put("exclusiveSwitchboardOrder", i+1);
+								obj.put("brandName", StringUtils.isEmpty(bean.getBrandName())?"":bean.getBrandName());
+								obj.put("modelName", StringUtils.isEmpty(bean.getModelDescribe())?"":bean.getModelDescribe());
+								obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
+								obj.put("showkvmDescribe", StringUtils.isEmpty(bean.getShowkvmDescribe())?"":bean.getShowkvmDescribe());
+								li.add(obj);
+							}
+						}
+					}
+				}else{
+					code = 500;
+					s = "获取kvm接口所对应的设备型号信息失败";
+					success = false;
 				}
-			}
 			
 		}catch(Exception e){
 			logger.error("kvm接口所对应的设备型号信息接口出错");
@@ -571,9 +575,9 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			j.setSuccess(false);
 			return j;
 		}
-		j.setRet_code(code);
-		j.setRet_info(s);
-		j.setSuccess(success);
+		j.setRet_code((li!=null && li.size()>0)?code:500);
+		j.setRet_info((li!=null && li.size()>0)?"获取kvm接口所对应的设备型号信息成功":"获取kvm接口所对应的设备型号信息失败");
+		j.setSuccess((li!=null && li.size()>0)?true:false);
 		j.setData(li); 
 		return j;
 	}

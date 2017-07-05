@@ -418,7 +418,7 @@ public class AddSwitchDevice implements Runnable {
 			}
 		}
 		
-		//10.在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
+		//10.在接入交换机写入配置后，对现网的情况进行检验排错
 		List<DevOnlineTask> l1 = deviceAutomationService.findPort(task.getId());
 		task = l1.get(0);
 		if(executeStep!=null && executeStep<=10){

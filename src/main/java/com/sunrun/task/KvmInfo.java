@@ -46,13 +46,13 @@ public class KvmInfo {
 				param.put("user", d.getTelnetUser()!=null ?d.getTelnetUser() : null);
 				param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : null);
 				param.put("type", models);
-	            Future<String> s = completionService.submit(getTask(i, url, param, method, auth));
-	            list.add(s.get());
+	            /*Future<String> s = */completionService.submit(getTask(i, url, param, method, auth));
+	            //list.add(s.get());
 	        }
-	        /*for(int i=0;i<ports.size();i++){
+	        for(int i=0;i<ports.size();i++){
 	        	String s = completionService.take().get();
 	        	list.add(s);
-	        }*/
+	        }
 	        executorService.shutdown();
 	        return list;
 	    }
@@ -62,13 +62,13 @@ public class KvmInfo {
 	        Callable<String> task = new Callable<String>() {
 	            @Override
 	            public String call() throws Exception {
-	            	String type = param.get("type").toString();
+	            	/*String type = param.get("type").toString();
 	            	if(type.equals("5548"))
 	            		Thread.sleep(5500);
 	            	else if(type.equals("4948E"))
 	            		Thread.sleep(3500);
 	            	else
-	            		Thread.sleep(3000);
+	            		Thread.sleep(3000);*/
 	            	//这里去调用交换机接口
 	            	String s = RestfulRequestUtil.getResponse(url, param, method, auth);
 	    			logger.info("thead:"+i+" time is:"+new Date() + " s:"+s);

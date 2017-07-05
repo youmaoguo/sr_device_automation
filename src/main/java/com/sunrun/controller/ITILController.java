@@ -1,8 +1,12 @@
 package com.sunrun.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.service.DeviceAutomationService;
 import com.sunrun.util.Json;
@@ -40,6 +46,7 @@ public class ITILController extends BaseController{
 			@RequestParam(value = "itilNumber", required = false) String itilNumber){
 		logger.info("sr_device_automation查询变更ITIL单子,请求参数是：itilNumber="+itilNumber);
 		Json json = new Json();
+		List<Object> data = new ArrayList<Object>();
 		if(StringUtils.isEmpty(itilNumber)){
 			json.setRet_code(401);
 			json.setRet_info("缺少查询参数itilNumber");
@@ -72,12 +79,13 @@ public class ITILController extends BaseController{
 				json.setRet_code(200);
 				json.setRet_info("查询变更ITIL单子返回成功");
 				json.setSuccess(true);
-				json.setData(sb);
+				data.add(JSONObject.parseObject(sb));
+				json.setData(data);
 			}else{
 				json.setRet_code(500);
 				json.setRet_info("查询变更ITIL单子返回空");
 				json.setSuccess(false);
-				json.setData(sb);
+				json.setData(null);
 			}
 			logger.info("sr_device_automation查询变更ITIL单子返回："+sb);
 			
