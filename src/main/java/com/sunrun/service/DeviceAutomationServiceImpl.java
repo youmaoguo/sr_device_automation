@@ -637,7 +637,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 						",\n 主汇聚交机:端口 ："+task.getMainSwitchboardIp()+":"+task.getMainSwitchboardPort()+
 						",\n 备汇聚交机:端口 ："+task.getBackupSwitchboardIp()+":"+task.getBackupSwitchboardPort()+
 						",\n 上线机架位置:"+task.getDevOnlineRack()+", hostname:"+task.getHostName()+
-						",\n 管理地址:"+task.getManagerIp()+", 带外交机信息:"+task.getExclusiveSwitchboardInfo()+"。\n";
+						",\n 管理地址:"+task.getManagerIp()+", 带外交换机信息:"+task.getExclusiveSwitchboardInfo()+"。\n";
 			}
 		}
 		return s;
