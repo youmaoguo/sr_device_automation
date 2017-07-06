@@ -290,7 +290,6 @@ public class DeviceAutomatinoController extends BaseController{
 		logger.info("执行上线交换机executeSwitchDevice接口入参是："+jsonStr);
 		try{
 			JSONObject obj = JSONObject.parseObject(jsonStr);
-			//DevExclusiveSwitchboardConn conn = new DevExclusiveSwitchboardConn();
 			DevOnlineTask task = new DevOnlineTask();
 			int switchState = obj.getIntValue("switchState");
 			String taskId = obj.getString("taskId");
@@ -343,22 +342,9 @@ public class DeviceAutomatinoController extends BaseController{
 					task.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
 				if(!StringUtils.isEmpty(exclusiveSwitchboardOrder) && !StringUtils.isEmpty(brandName) && !StringUtils.isEmpty(modelName))
 					task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
-				
-				/*if(!StringUtils.isEmpty(brandName))
-					task.setBrandName(brandName);
-				if(!StringUtils.isEmpty(modelName))
-					task.setModelName(modelName);*/
 				if(!StringUtils.isEmpty(currentIosVersion))
-				task.setCurrentIosVersion(currentIosVersion);
+					task.setCurrentIosVersion(currentIosVersion);
 				task.setUpdate_user(updateUser);
-				
-				/*addSwitchDeviceService.exclusiveSwitchboardConn(null, task, updateUser);
-				//将kvm端口实占掉
-				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
-				in.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
-				in.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-				in.setExclusiveSwitchboardPortState(1);
-				deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);*/
 				
 				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, executeStep, usercode); 
 				Thread t = new Thread(addTask);
@@ -369,7 +355,6 @@ public class DeviceAutomatinoController extends BaseController{
 				DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
 				batchView.setId(task.getId());
 				long i = System.currentTimeMillis();
-				//DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
 				List<DevOnlineBatchTaskView> views = deviceAutomationService.findDevBatchTask(batchView, null, null, null, null);
 				DevOnlineBatchTaskView view = views.get(0);
 				//SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -397,8 +382,6 @@ public class DeviceAutomatinoController extends BaseController{
 					t.start();
 				}
 			}
-			
-			
 		}catch(Exception e){
 			code = 500;
 			success = false;
@@ -714,15 +697,10 @@ public class DeviceAutomatinoController extends BaseController{
 			if(!StringUtils.isEmpty(exclusiveSwitchboardInfo))
 				task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
 			
-			/*if(!StringUtils.isEmpty(brandName))
-				task.setBrandName(brandName);
-			if(!StringUtils.isEmpty(modelName))
-				task.setModelName(modelName);*/
 			if(!StringUtils.isEmpty(currentIosVersion))
 				task.setCurrentIosVersion(currentIosVersion);
 			if(!StringUtils.isEmpty(updateUser))
 				task.setUpdate_user(updateUser);
-			//deviceAutomationService.updateTask2(task, null, null, updateUser);
 			
 			addSwitchDeviceService.exclusiveSwitchboardConn(null, task, updateUser);
 			//将kvm端口实占掉

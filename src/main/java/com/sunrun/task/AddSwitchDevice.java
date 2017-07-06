@@ -81,7 +81,6 @@ public class AddSwitchDevice implements Runnable {
 		//2.从看板申请ip和vlan
 		Json json = new Json();
 		Map<String, String> map = new HashMap<String, String>();
-		//map = step2_appIpAndVlan();
 		ManagerIpAanVlan mv = new ManagerIpAanVlan();
 		map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 		if(map==null || map.size()==0){
@@ -101,7 +100,6 @@ public class AddSwitchDevice implements Runnable {
 				//网络ping通，被占了，回填不可用状态
 				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, -1, usercode);
 				//重新申请ip,vlan
-				//map = step2_appIpAndVlan();
 				map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 				if(map==null || map.size()==0){
 					return;
@@ -137,7 +135,6 @@ public class AddSwitchDevice implements Runnable {
 		
 		//5.判断汇聚交换机端口上是否有配置及端口状态是否为down；
 		json = null;
-		//json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
 		PortCheckSington pc = new PortCheckSington();
 		json = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName);
 		if(!json.getSuccess()){
@@ -149,23 +146,6 @@ public class AddSwitchDevice implements Runnable {
 			task.setTaskState(3);
 			deviceAutomationService.updateTask2(task, null, null, userName);
 		}
-		//ip地址回填 ，状态是3实分配
-		//addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3);
-		
-		/*//6.生成汇聚交换机配置 并记录
-		json = null;
-		task = deviceAutomationService.findPort(task.getId()).get(0);
-		json = addSwitchDeviceService.CreatConverPage(thirdPartUrl, auth, task, map, userName);
-		//ip地址回填 ，状态是3实分配
-		addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1);
-		if(!json.getSuccess())
-			return;
-		
-		//7.生成接入交换机配置 并记录（待定）
-		json = null;
-		json = addSwitchDeviceService.CreatAccessPage(thirdPartUrl, auth, task, map, userName);
-		if(!json.getSuccess())
-			return;*/
 		
 	}
 	
@@ -183,7 +163,6 @@ public class AddSwitchDevice implements Runnable {
 		}
 		//2.从看板申请ip和vlan
 		if(executeStep!=null && executeStep==2){
-			//map = step2_appIpAndVlan();
 			ManagerIpAanVlan mv = new ManagerIpAanVlan();
 			map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 			if(map==null || map.size()==0){
@@ -241,7 +220,6 @@ public class AddSwitchDevice implements Runnable {
 						deviceAutomationService.updateTask2(task, null, null, userName);
 					}
 				}
-				//return;
 			}
 			if(code==200){
 				task.setTaskState(2);
@@ -257,7 +235,6 @@ public class AddSwitchDevice implements Runnable {
 				DevTaskExecute d = l.get(i);
 				if(d.getExecuteStep()==3 && d.getTaskExecuteState()==4){
 					//重新申请ip,vlan
-					//map = step2_appIpAndVlan();
 					ManagerIpAanVlan mv = new ManagerIpAanVlan();
 					map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 					if(map==null || map.size()==0){
@@ -302,7 +279,6 @@ public class AddSwitchDevice implements Runnable {
 		//5.判断汇聚交换机端口上是否有配置及端口状态是否为down；
 		if(executeStep!=null && executeStep<=5){
 			json = null;
-			//json = addSwitchDeviceService.portCheck(thirdPartUrl, auth, task, userName);
 			PortCheckSington pc = new PortCheckSington();
 			json = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName);
 			if(!json.getSuccess()){
@@ -315,24 +291,6 @@ public class AddSwitchDevice implements Runnable {
 				deviceAutomationService.updateTask2(task, null, null, userName);
 			}
 		}
-		
-		/*//6.生成汇聚交换机配置 并记录
-		if(executeStep!=null && executeStep<=6){
-			json = null;
-			json = addSwitchDeviceService.CreatConverPage(thirdPartUrl, auth, task, map, userName);
-			//ip地址回填 ，状态是3实分配
-			addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 1);
-			if(!json.getSuccess())
-				return;
-		}
-		
-		//7.生成接入交换机配置 并记录（待定）
-		if(executeStep!=null && executeStep<=7){
-			json = null;
-			json = addSwitchDeviceService.CreatAccessPage(thirdPartUrl, auth, task, map, userName);
-			if(!json.getSuccess())
-				return;
-		}*/
 		
 		if(StringUtils.isEmpty(task.getExclusiveSwitchboardInfo()) || StringUtils.isEmpty(task.getExclusiveSwitchboardPort()) || StringUtils.isEmpty(task.getExclusiveSwitchboardIp()))
 			return;
@@ -350,11 +308,6 @@ public class AddSwitchDevice implements Runnable {
 			task.setTaskState(2);
 			deviceAutomationService.updateTask2(task, execute, 6, userName);
 		}
-		/*
-		json = null;
-		json = addSwitchDeviceService.exclusiveSwitchboardConn(conn, task, userName);
-		if(!json.getSuccess())
-			return;*/
 		
 		//7.写入接入交换机配置管理口IP
 		if(executeStep!=null && executeStep<=7){
@@ -429,17 +382,6 @@ public class AddSwitchDevice implements Runnable {
 			task.setTaskState(3);
 			task.setSwitchState(2);
 			deviceAutomationService.updateTask2(task, null, null, userName);
-			/*if(!json.getSuccess()){
-				task.setSwitchState(3);
-				task.setTaskState(5);
-				deviceAutomationService.updateTask2(task, null, null, userName);
-				return;
-			}else{
-				task.setTaskState(3);
-				task.setSwitchState(2);
-				deviceAutomationService.updateTask2(task, null, null, userName);
-			}*/
-			
 		}
 		
 	}
@@ -466,26 +408,6 @@ public class AddSwitchDevice implements Runnable {
 					deviceAutomationService.updateTask2(task, null, null, userName);
 				}
 			}
-			
-			//13.在汇聚交换机和接入交换机写入配置后，对现网的情况进行检验排错
-			/*if(executeStep!=null && executeStep<=13){
-				json = null;
-				//json = addSwitchDeviceService.checkConfig(thirdPartUrl, auth, task, userName);
-				json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName);
-				if(!json.getSuccess()){
-					task.setSwitchState(3);
-					task.setTaskState(5);
-					deviceAutomationService.updateTask2(task, null, null, userName);
-					return;
-				}else{
-					task.setTaskState(6);
-					task.setSwitchState(4);
-					deviceAutomationService.updateTask2(task, null, null, userName);
-				}
-				
-			}*/
-			
-			
 		}
 	}
 	

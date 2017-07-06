@@ -316,7 +316,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("subnet", li.get(0).getSubnet());	//本系统申请ip的网段(根据区域名称查询表'dev_area_switchboard_ip'中subnet)
 			param.put("state", state);
 			param.put("assignerId", usercode);//申请人工号
-			param.put("assignerName", usercode);//申请人姓名
+			param.put("assignerName", userName);//申请人姓名
 			param.put("contactId", usercode);//contactId
 			param.put("contactName", userName);//使用人姓名
 			param.put("bizsysName", "门户portal");//业务系统
@@ -679,10 +679,6 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		Object data = null;
 		try{
-			/*DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
-			area.setAreaName(task.getAreaName());
-			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);*/
-			
 			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
 			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
 			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
@@ -693,12 +689,6 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
 			param.put("port", d.getExclusiveSwitchboardPort());		//交换机的telnet登录端口号
 			param.put("type", task.getModelName());		//交换机的类型，分别为4948E和5548
-			
-			//通过带外交换机的ip和端口查询
-			/*DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
-			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
-			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
-			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);*/
 			param.put("user", d.getTelnetUser());		//交换机的telnet登录账号 没有
 			param.put("password", d.getTelnetPwd());	//交换机的telnet登录密码 没有
 			
@@ -789,14 +779,6 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			version.setBrandName(task.getBrandName());
 			version.setModelName(task.getModelName());
 			List<DevIosVersions> li = devIosVersionsMapper.findIosVersion(version);
-			
-			//查询交换机的版本 与最新版本作比较  ???
-			/*Json jj = findDeviceIosVersion(thirdPartUrl, auth, task, userName);
-			if(jj.getRet_code()==200){
-				List<String> l = (List<String>) jj.getData();
-				
-			}*/
-			//String[] currentIosVersion = task.getCurrentIosVersion().split(",");
 			String[] currentIosVersion = li.get(0).getIosVersion().split(",");
 			String sourceFileName = "", iosName = "";
 			for(int i=0;i<currentIosVersion.length;i++){
@@ -1199,7 +1181,6 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("name", task.getHostName());//设备名称
 			param.put("ipaddr", task.getManagerIp());//设置IP
 			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
-			//param.remove("method_name");
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			//测试环境： http://10.1.251.234/neteagle3/newdevice/newDevice/newdevice.action
 			//生产环境： http://10.1.251.238/neteagle3/newdevice/newDevice/newdevice.action
