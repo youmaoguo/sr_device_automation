@@ -362,12 +362,7 @@ public class AddSwitchDevice implements Runnable {
 				
 				//ip地址回填 ，状态是3实分配
 				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3, usercode);
-				////将kvm端口释放
-				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
-				in.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
-				in.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
-				in.setExclusiveSwitchboardPortState(0);
-				deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
+				
 			}
 		}
 		
@@ -396,6 +391,13 @@ public class AddSwitchDevice implements Runnable {
 			task = li.get(0);
 			//13.写入汇聚接入交换机配置
 			if(executeStep!=null && executeStep==13){
+				//将kvm端口释放
+				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
+				in.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+				in.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+				in.setExclusiveSwitchboardPortState(0);
+				deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
+				
 				json = addSwitchDeviceService.writeNewGatherConfig(thirdPartUrl, auth, task, userName);
 				if(!json.getSuccess()){
 					task.setSwitchState(3);

@@ -17,7 +17,7 @@
 		update dev_task_execute
 		<trim prefix="set" suffixOverrides=",">
 				update_time = now(),
-				<if test="execute.executeStep != null">execute_step=#{execute.executeStep},</if>
+				<!-- <if test="execute.executeStep != null">execute_step=#{execute.executeStep},</if> -->
 				<if test="execute.taskOrder != null">task_order=#{execute.taskOrder},</if>
 				<if test="execute.taskDescribe != null">task_describe=#{execute.taskDescribe},</if>
 				<if test="execute.taskExecuteState != null">task_execute_state=#{execute.taskExecuteState},</if>

@@ -760,11 +760,29 @@ public class DeviceAutomatinoController extends BaseController{
 					map.put("ip", task.getManagerIp());
 					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, list.get(0), map, task.getUserName(), 3, task.getUsercode());
 					
+					//将kvm端口释放
+					DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
+					in.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+					in.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+					in.setExclusiveSwitchboardPortState(0);
+					deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
+					
+					//把设备状态改成“成功工单”
 					DevOnlineTask t = new DevOnlineTask();
 					t.setId(task.getId());
 					t.setSwitchState(4);
 					t.setTaskState(6);
 					deviceAutomationService.updateTask2(t, null, null, task.getUserName());
+					
+					//标记为强制执行
+					List<DevTaskExecute> li = deviceAutomationService.findTaskExecute(task.getId(), "execute_step");
+					if(li!=null && li.size()>0){
+						DevTaskExecute execute = new DevTaskExecute();
+						execute.setId(li.get(0).getId());
+						execute.setTaskExecuteNote("剩下步骤均强制执行完成了");
+						deviceAutomationService.updateExecute(execute);
+					}
+					
 				}
 			}
 			json.setRet_code(201);
