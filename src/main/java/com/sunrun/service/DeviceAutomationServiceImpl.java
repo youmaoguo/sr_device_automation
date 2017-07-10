@@ -598,29 +598,35 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	@Override
 	public String concatDeviceInfo(String[] ids) {
 		String content = StringUtil.emailHeadStr();
-		for(int i=0;i<ids.length;i++){
-			List<DevOnlineTask> view = findPort(ids[i]);
-			if(view!=null && view.size()>0){
-				DevOnlineTask task = view.get(0);
-				DevExclusiveSwitchboardInfo info = new DevExclusiveSwitchboardInfo();
-				info.setMainAccessPort(task.getExclusiveSwitchboardIp());
-				info.setBackAccessPort(task.getExclusiveSwitchboardPort());
-				List<DevExclusiveSwitchboardInfo> infos = findDevExclusiveSwitchboardInfo(info);
-				content += "<tr height='80' style='mso-height-source:userset;height:25.0pt'>";
-				content += "<td height='80' class='xl66' width='85' style='border:1px solid #ededed;height:25.0pt;border-top:none;width:64pt'>"+task.getBrandName()+"</td>";
-				content += "<td class='xl66' width='72' style='border:1px solid #ededed;width:54pt'>"+task.getModelName()+"</td>";
-				content += "<td class='xl66' width='125' style='border:1px solid #ededed;width:94pt'>"+task.getAreaName()+"</td>";
-				content += "<td class='xl69' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>:"+task.getMainSwitchboardPort()+"</font></td>";
-				content += "<td class='xl67' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>:"+task.getBackupSwitchboardPort()+"</font></td>";
-				content += "<td class='xl68' width='165' style='border:1px solid #ededed;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
-				content += "<td class='xl66' width='244' style='border:1px solid #ededed;width:183pt'>"+task.getHostName()+"</td>";
-				content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getManagerIp()+"</td>";
-				content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+infos.get(0).getMainAccessPort()+"</td>";
-				content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+infos.get(0).getBackAccessPort()+"</td>";
-				content += "<td class='xl66' width='238' style='border:1px solid #ededed;width:179pt'>"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
+		try{
+			for(int i=0;i<ids.length;i++){
+				List<DevOnlineTask> view = findPort(ids[i]);
+				if(view!=null && view.size()>0){
+					DevOnlineTask task = view.get(0);
+					DevExclusiveSwitchboardInfo info = new DevExclusiveSwitchboardInfo();
+					info.setMainAccessPort(task.getExclusiveSwitchboardIp());
+					info.setBackAccessPort(task.getExclusiveSwitchboardPort());
+					List<DevExclusiveSwitchboardInfo> infos = findDevExclusiveSwitchboardInfo(info);
+					content += "<tr height='80' style='mso-height-source:userset;height:25.0pt'>";
+					content += "<td height='80' class='xl66' width='85' style='border:1px solid #ededed;height:25.0pt;border-top:none;width:64pt'>"+task.getBrandName()+"</td>";
+					content += "<td class='xl66' width='72' style='border:1px solid #ededed;width:54pt'>"+task.getModelName()+"</td>";
+					content += "<td class='xl66' width='125' style='border:1px solid #ededed;width:94pt'>"+task.getAreaName()+"</td>";
+					content += "<td class='xl69' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>:"+task.getMainSwitchboardPort()+"</font></td>";
+					content += "<td class='xl67' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>:"+task.getBackupSwitchboardPort()+"</font></td>";
+					content += "<td class='xl68' width='165' style='border:1px solid #ededed;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
+					content += "<td class='xl66' width='244' style='border:1px solid #ededed;width:183pt'>"+task.getHostName()+"</td>";
+					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getManagerIp()+"</td>";
+					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+infos.get(0).getMainAccessPort()+"</td>";
+					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+infos.get(0).getBackAccessPort()+"</td>";
+					content += "<td class='xl66' width='238' style='border:1px solid #ededed;width:179pt'>"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
+				}
 			}
+			content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		content += "</tbody></table></div><div><includetail><!--<![endif]--></includetail></div>";
 		return content;
 	}
 	
