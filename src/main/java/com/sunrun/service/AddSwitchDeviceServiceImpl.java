@@ -526,13 +526,15 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			}else{
 				org.json.JSONObject obj1 = new org.json.JSONObject(j.getData().toString());
 				org.json.JSONArray ip1 = obj1.getJSONArray(param.get("ipPortNameUserPass1").toString());
-				org.json.JSONArray ip2 = obj1.getJSONArray(param.get("ipPortNameUserPass1").toString());
+				org.json.JSONArray ip2 = obj1.getJSONArray(param.get("ipPortNameUserPass2").toString());
 				List<String> l1 = JSONArray.parseArray(ip1.toString(), String.class);	//主汇聚交换机配置信息
 				List<String> l2 = JSONArray.parseArray(ip2.toString(), String.class);	//备汇聚交换机配置信息
 				
 				JSONObject obj = new JSONObject();
 				obj.put("mainSwitchInfo", l1);
 				obj.put("backSwitchInfo", l2);
+				obj.put("mainSwitchboardIp", task.getMainSwitchboardIp());
+				obj.put("backupSwitchboardIp", task.getBackupSwitchboardIp());
 				data.add(obj);
 				//接下来要保存相关的汇聚交换机配置信息	
 				/*for(int i=0;i<l1.size();i++){
