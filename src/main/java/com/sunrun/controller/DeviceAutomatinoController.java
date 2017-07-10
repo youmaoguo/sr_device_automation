@@ -24,11 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.sunrun.entity.DevExclusiveSwitchboardConn;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
-import com.sunrun.entity.SysSendEmailBean;
 import com.sunrun.entity.UserBean;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.service.AddSwitchDeviceService;
@@ -262,6 +260,7 @@ public class DeviceAutomatinoController extends BaseController{
 			
 		}catch(Exception e){
 			code = 500;
+			info = "删除出错";
 			success = false;
 			logger.error("删除出错");
 			e.printStackTrace();
@@ -385,6 +384,7 @@ public class DeviceAutomatinoController extends BaseController{
 		}catch(Exception e){
 			code = 500;
 			success = false;
+			info = "执行上线交换机出错";
 			logger.error("执行上线交换机出错");
 			e.printStackTrace();
 		}
@@ -422,6 +422,9 @@ public class DeviceAutomatinoController extends BaseController{
 			
 		}catch(Exception e){
 			logger.error("接口程序出错");
+			json.setRet_code(500);
+			json.setRet_info("申请工单出现异常");
+			json.setSuccess(false);
 			e.printStackTrace();
 		}
 		//返回数据
@@ -473,6 +476,7 @@ public class DeviceAutomatinoController extends BaseController{
 		}catch(Exception e){
 			code = 500;
 			success = false;
+			info = "上线交换机邮件发送出错";
 			logger.error("上线交换机邮件发送出错");
 			e.printStackTrace();
 		}
@@ -538,6 +542,7 @@ public class DeviceAutomatinoController extends BaseController{
 		}catch(Exception e){
 			code = 500;
 			success = false;
+			info = "上线交换机生成邮件内容出错";
 			logger.error("上线交换机生成邮件内容出错");
 			e.printStackTrace();
 		}
