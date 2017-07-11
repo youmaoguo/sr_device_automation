@@ -95,6 +95,7 @@ public class PortCheck {
 					for(int i=0;i<mainlist.size();i++){
 						if(!mainp.contains(mainlist.get(i))){
 							index = i;
+							t=true;
 							break;
 						}
 					}
