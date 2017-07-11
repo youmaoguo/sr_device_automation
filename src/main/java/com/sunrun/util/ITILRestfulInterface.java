@@ -152,7 +152,7 @@ public class ITILRestfulInterface {
 			CMBChangeInstanceTypeHeader header = new CMBChangeInstanceTypeHeader();
 			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-			Date ds = f.parse(itilPlannedEnd);
+			/*Date ds = f.parse(itilPlannedEnd);
 			Calendar calendar1 = Calendar.getInstance();
 	        calendar1.setTime(ds);
 	        calendar1.add(Calendar.HOUR_OF_DAY, -8);//由于itil数据库时间比正常时间提前了8小时，所以这里减去8
@@ -164,9 +164,9 @@ public class ITILRestfulInterface {
 	        calendar.add(Calendar.HOUR_OF_DAY, +4);//+4hour
 	        Date d = calendar.getTime();
 	        String end = fmt.format(d);
-			header.setPlannedEndDate(new DateTimeType(end));
+			header.setPlannedEndDate(new DateTimeType(end));*/
 			
-			/*Date ds = f.parse(itilPlannedStart);
+			Date ds = f.parse(itilPlannedStart);
 			Calendar calendar1 = Calendar.getInstance();
 	        calendar1.setTime(ds);
 	        calendar1.add(Calendar.HOUR_OF_DAY, -8);//由于itil数据库时间比正常时间提前了8小时，所以这里减去8
@@ -188,15 +188,15 @@ public class ITILRestfulInterface {
 		        d2 = calendar2.getTime();
 				String end2 = fmt.format(d2);
 				header.setPlannedStartDate(new DateTimeType(end2));
-			}*/
+			}
 			
-			header.setBriefDescription(new StringType("申请"+area+"区接入交换机上线"));
+			header.setBriefDescription(new StringType("申请"+area+"接入交换机上线"));
 			header.setRequestedBy(new StringType(usercode));
 			instance.setHeader(header);
 			
 			CMBChangeInstanceTypeDescriptionStructure descriptionStructure = new CMBChangeInstanceTypeDescriptionStructure();
 			StringType[] des = new StringType[] {new StringType(description)};
-			descriptionStructure.setDescription(new CMBChangeInstanceTypeDescriptionStructureDescription("申请"+area+"区接入交换机上线",des));
+			descriptionStructure.setDescription(new CMBChangeInstanceTypeDescriptionStructureDescription("申请"+area+"接入交换机上线",des));
 			instance.setDescriptionStructure(descriptionStructure);
 			
 			CMBChangeInstanceTypeMiddle middle = new CMBChangeInstanceTypeMiddle();
