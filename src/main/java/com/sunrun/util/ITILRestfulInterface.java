@@ -187,7 +187,7 @@ public class ITILRestfulInterface {
 		        calendar2.add(Calendar.HOUR_OF_DAY, -8);//由于itil数据库时间比正常时间提前了8小时，所以这里减去8
 		        d2 = calendar2.getTime();
 				String end2 = fmt.format(d2);
-				header.setPlannedStartDate(new DateTimeType(end2));
+				header.setPlannedEndDate(new DateTimeType(end2));
 			}
 			
 			header.setBriefDescription(new StringType("申请"+area+"接入交换机上线"));

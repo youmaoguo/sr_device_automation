@@ -46,7 +46,7 @@
 			<trim prefix="set" suffixOverrides=",">
 				update_time = now(),
 				<if test="info.exclusiveSwitchboardPortState != null">exclusive_switchboard_port_state=#{info.exclusiveSwitchboardPortState},</if>
-				<if test="info.state != null">state=#{info.state},</if>
+				
 			</trim>
 		where state=1
 		<if test="info.exclusiveSwitchboardIp != null">
