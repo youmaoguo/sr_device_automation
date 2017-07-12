@@ -583,24 +583,30 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	@SuppressWarnings("finally")
 	@Override
 	public Json CreatAccessPage(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName) {
-		/*Json json = new Json();
+		Json json = new Json();
 		String info = "生成接入交换机配置正常";
 		Integer code = 200;	
 		Boolean success = true;
+		List<Object> data = new ArrayList<Object>();
 		try{
+			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+			//area.setAreaName(task.getAreaName());
+			area.setAreaDescribe(task.getAreaName());
+			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/CreatAccessPage");
-			param.put("ipPortName1", task.getMainSwitchboardIp() main_ip7);//主ip	???
-			param.put("ipPortName2", task.getBackupSwitchboardIp() back_ip7);//备ip	???
-			param.put("mainSwitchboardPort", task.getMainSwitchboardPort() main_port7);//主端口	???
-			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort() back_port7);//备端口	???
-			param.put("main_user7", main_host7);
-			param.put("back_user7", back_host7);
+			param.put("ipPortName1", task.getMainSwitchboardIp());//主ip	
+			param.put("ipPortName2", task.getBackupSwitchboardIp());//备ip
+			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口
+			param.put("backupSwitchboardPort", task.getBackupSwitchboardPort());//备端口
+			param.put("main_host", li.get(0).getDevName());
+			param.put("back_host", li.get(0).getBackupDevName());
 			param.put("accHostName", task.getHostName());//接入设备对应的host名称
-			param.put("vlanNu", map.get("vlanId"));//接入设备的管理Vlan号
+			param.put("vlanNu", task.getVlan());//接入设备的管理Vlan号
 			param.put("description", "");//接入设备的描述配置信息
-			param.put("newip", map.get("ip"));//在看板系统上申请的IP地址
-			param.put("Type", type7);//接入交换机的设备类型，分别为4948E和5548
+			param.put("newIp", task.getManagerIp());//在看板系统上申请的IP地址
+			param.put("Type", task.getModelName());//接入交换机的设备类型，分别为4948E和5548
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -609,8 +615,9 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				success = j.getSuccess();
 			}else{
 				List<String> l = JSONArray.parseArray(j.getData().toString(), String.class);
+				data.addAll(l);
 				//接下来要保存相关的接入交换机配置信息  	
-				for(int i=0;i<l.size();i++){
+				/*for(int i=0;i<l.size();i++){
 					DevScriptConfig config = new DevScriptConfig();
 					config.setId(StringUtil.getUuid());
 					config.setDevType(1); //'设备类型：1、接入交换机； 2 、主汇聚交换机； 3 、备汇聚交换机',
@@ -619,7 +626,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 					config.setScriptOrder(i+1);
 					config.setScriptType(1); 
 					devScriptConfigMapper.saveDevScriptConfig(config);
-				}
+				}*/
 			}
 			
 		}catch(Exception e){
@@ -632,15 +639,10 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		}finally{
 			json.setRet_code(code);
 			json.setRet_info(info);
+			json.setData(data);
 			json.setSuccess(success);
-			//记录任务执行步骤
-			DevOnlineTask t = new DevOnlineTask();
-			t.setId(task.getId());
-			t.setUpdate_user(userName);
-			writeProcess(t, 7, info, success, userName, null);
 			return json;
-		}*/
-		return null;
+		}
 	}
 
 	@SuppressWarnings("finally")
@@ -1166,7 +1168,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	
 	@SuppressWarnings("finally")
 	@Override
-	public Json checkNewConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
+	public Json checkNewConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer tag) {
 		Json json = new Json();
 		String info = "校验配置正常";
 		Integer code = 200;	
@@ -1183,6 +1185,13 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("name", task.getHostName());//设备名称
 			param.put("ipaddr", task.getManagerIp());//设置IP
 			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
+			if(tag==1){
+				Json j = CreatAccessPage(thirdPartUrl, auth, task, null, userName);
+				param.put("commands", j.getData().toString());
+			}else if(tag==2){
+				String[] a = {};
+				param.put("commands", a);
+			}
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			//测试环境： http://10.1.251.234/neteagle3/newdevice/newDevice/newdevice.action
 			//生产环境： http://10.1.251.238/neteagle3/newdevice/newDevice/newdevice.action
@@ -1202,7 +1211,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, 10, success==true ? info : "检验配置不正常", success, userName, info);
+			writeProcess(t, tag==1?10:14, success==true ? info : "检验配置不正常", success, userName, info);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);

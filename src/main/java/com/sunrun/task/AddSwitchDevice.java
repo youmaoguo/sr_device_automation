@@ -371,7 +371,7 @@ public class AddSwitchDevice implements Runnable {
 		task = l1.get(0);
 		if(executeStep!=null && executeStep<=10){
 			json = null;
-			json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName);
+			json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName, 1);
 			
 			//暂时成功
 			task.setTaskState(3);
@@ -390,7 +390,7 @@ public class AddSwitchDevice implements Runnable {
 		if(li!=null && li.size()>0){
 			task = li.get(0);
 			//13.写入汇聚接入交换机配置
-			if(executeStep!=null && executeStep==13){
+			if(executeStep!=null && executeStep<=13){
 				//将kvm端口释放
 				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
 				in.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
@@ -405,11 +405,27 @@ public class AddSwitchDevice implements Runnable {
 					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
 				}else{
+					task.setTaskState(2);
+					deviceAutomationService.updateTask2(task, null, null, userName);
+				}
+			}
+			
+			//14.再次做检验配置
+			if(executeStep!=null && executeStep<=14){
+				json = null;
+				json = addSwitchDeviceService.checkNewConfig(thirdPartUrl, auth, task, userName, 2);
+				if(!json.getSuccess()){
+					task.setSwitchState(3);
+					task.setTaskState(5);
+					deviceAutomationService.updateTask2(task, null, null, userName);
+					return;
+				}else{
 					task.setTaskState(6);
 					task.setSwitchState(4);
 					deviceAutomationService.updateTask2(task, null, null, userName);
 				}
 			}
+			
 		}
 	}
 	

@@ -69,7 +69,7 @@ public interface AddSwitchDeviceService {
 	 */
 	Json CreatConverPage(String thirdPartUrl, String auth, DevOnlineTask task, Map<String, String> map, String userName);
 	
-	/**添加设备第7步：已经废弃
+	/**添加设备第7步：
 	 * 生成接入交换机配置 并记录
 	 * @param thirdPartUrl
 	 * @param auth
@@ -189,7 +189,7 @@ public interface AddSwitchDeviceService {
 	 * @param task
 	 * @return
 	 */
-	Json checkNewConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
+	Json checkNewConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer tag);
 
 	void writeProcess(DevOnlineTask t,  Integer executeStep, String info, boolean success, String userName, String taskExecuteNote);
 	
