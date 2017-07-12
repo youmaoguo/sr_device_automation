@@ -111,10 +111,12 @@ public class DeviceAutomatinoController extends BaseController{
 			info = json.getRet_info();
 			success = json.getSuccess();
 			
-			//先保存这条数据的基本信息，然后分线程去执行剩下的步骤
-			AddSwitchDevice addSwitchDevice = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, usercode);
-			Thread t = new Thread(addSwitchDevice);
-	        t.start();
+			if(success){
+				//先保存这条数据的基本信息，然后分线程去执行剩下的步骤
+				AddSwitchDevice addSwitchDevice = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, usercode);
+				Thread t = new Thread(addSwitchDevice);
+		        t.start();
+			}
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -241,6 +243,15 @@ public class DeviceAutomatinoController extends BaseController{
 					 Map<String, String> map = new HashMap<String, String>();
 					 map.put("ip", l.get(0).getManagerIp());
 					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, l.get(0), map, updateUser, 2, usercode);
+					
+					if(!StringUtils.isEmpty(l.get(0).getExclusiveSwitchboardIp()) && !StringUtils.isEmpty(l.get(0).getExclusiveSwitchboardPort())){
+						//将kvm端口释放
+						DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
+						in.setExclusiveSwitchboardIp(l.get(0).getExclusiveSwitchboardIp());
+						in.setExclusiveSwitchboardPort(l.get(0).getExclusiveSwitchboardPort());
+						in.setExclusiveSwitchboardPortState(0);
+						deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
+					}
 				}
 				success = deviceAutomationService.deleteTask(taskId);
 				if(!success){
