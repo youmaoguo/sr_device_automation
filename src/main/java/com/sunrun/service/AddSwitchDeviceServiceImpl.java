@@ -1187,18 +1187,26 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
 			if(tag==1){
 				Json j = showConfig(thirdPartUrl, auth, task);
-				param.put("commands", j.getData().toString());
+				if(j.getSuccess()){
+					param.put("commands", j.getData().toString());
+				}else{
+					code = j.getRet_code();
+					info = j.getRet_info();
+					success = j.getSuccess();
+				}
 			}else if(tag==2){
 				String[] a = {};
 				param.put("commands", a);
 			}
-			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
-			//测试环境： http://10.1.251.234/neteagle3/newdevice/newDevice/newdevice.action
-			//生产环境： http://10.1.251.238/neteagle3/newdevice/newDevice/newdevice.action
-			json = (Json) JSONObject.parseObject(sb, Json.class);
-			code = json.getRet_code();
-			success = json.getSuccess();
-			info = json.getRet_info();
+			if(success){
+				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+				//测试环境： http://10.1.251.234/neteagle3/newdevice/newDevice/newdevice.action
+				//生产环境： http://10.1.251.238/neteagle3/newdevice/newDevice/newdevice.action
+				json = (Json) JSONObject.parseObject(sb, Json.class);
+				code = json.getRet_code();
+				success = json.getSuccess();
+				info = json.getRet_info();
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("校验配置不正常");
