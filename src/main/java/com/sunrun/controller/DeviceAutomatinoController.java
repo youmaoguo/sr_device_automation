@@ -403,7 +403,7 @@ public class DeviceAutomatinoController extends BaseController{
 		json.setRet_info(info);
 		json.setSuccess(success);
 		//返回数据
-		response(json, response, request); 
+		response(json, response, request);
 	}
 	
 	/**

@@ -1186,7 +1186,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("ipaddr", task.getManagerIp());//设置IP
 			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
 			if(tag==1){
-				Json j = CreatAccessPage(thirdPartUrl, auth, task, null, userName);
+				Json j = showConfig(thirdPartUrl, auth, task);
 				param.put("commands", j.getData().toString());
 			}else if(tag==2){
 				String[] a = {};
@@ -1378,6 +1378,39 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			json.setData(data);
 			return json;
 		}
+	}
+
+	@Override
+	public Json showConfig(String thirdPartUrl, String auth, DevOnlineTask task) {
+		Json json = new Json();
+		try{
+			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
+			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
+			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
+			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
+			
+			JSONObject param = new JSONObject();
+			param.put("method_name", "/interchanger/v1/showConfig");
+			param.put("host", d.getExclusiveSwitchboardIp());
+			param.put("port", d.getExclusiveSwitchboardPort());
+			param.put("user", d.getTelnetUser()!=null ?d.getTelnetUser() : "");
+			param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");
+			param.put("type", task.getModelName());
+			
+			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+			json = (Json) JSONObject.parseObject(sb, Json.class);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("查看接入交换机写入后的配置成功不正常");
+			json.setSuccess(false);
+			json.setRet_code(500);
+			json.setRet_info("查看接入交换机写入后的配置成功不正常");
+			json.setData(null);
+			throw new RuntimeException(e);
+		}
+		return json;
+		
 	}
 
 	

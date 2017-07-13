@@ -193,5 +193,13 @@ public interface AddSwitchDeviceService {
 
 	void writeProcess(DevOnlineTask t,  Integer executeStep, String info, boolean success, String userName, String taskExecuteNote);
 	
+	/**
+	 * 查看接入交换机写入后的配置
+	 * @param thirdPartUrl
+	 * @param auth
+	 * @param task
+	 * @return
+	 */
+	Json showConfig(String thirdPartUrl, String auth, DevOnlineTask task);
 	
 }
