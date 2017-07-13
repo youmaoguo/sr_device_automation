@@ -361,7 +361,7 @@ public class DeviceAutomatinoController extends BaseController{
 				t.start();
 				
 			}else if(switchState==2){
-				//当点击执行（写入汇聚配置）时候，必要要求工单状态是‘实施’；且当前时间大于等于工单期望完成时间,且在晚上19:00后；
+				//当点击执行（写入汇聚配置）时候，必要要求工单状态是‘实施’；且当前时间大于等于工单计划开始时间,且在晚上19:00后；
 				DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
 				batchView.setId(task.getId());
 				long i = System.currentTimeMillis();
@@ -370,8 +370,8 @@ public class DeviceAutomatinoController extends BaseController{
 				//SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				Date d = null;
-				if(view!=null && !view.getItilPlannedEnd().equals("") && view.getItilPlannedEnd()!=null){
-					d = fmt.parse(view.getItilPlannedEnd());
+				if(view!=null && !view.getItilPlannedStart().equals("") && view.getItilPlannedStart()!=null){
+					d = fmt.parse(view.getItilPlannedStart());
 				}
 				
 				if(view==null || StringUtils.isEmpty(view.getItilNumber()) || !view.getItilStatus().trim().contains("已批准") ){
@@ -381,7 +381,7 @@ public class DeviceAutomatinoController extends BaseController{
 				}else if(d.getTime()<i || d.getHours()<19){
 					code = 500;
 					success = false;
-					info = "未到时候执行，请在"+view.getItilPlannedEnd()+"后执行";
+					info = "未到时候执行，请在"+view.getItilPlannedStart()+"后执行";
 				}else if(StringUtils.isEmpty(view.getEmailId())){
 					code = 500;
 					info = "请发送下邮件通知再执行";

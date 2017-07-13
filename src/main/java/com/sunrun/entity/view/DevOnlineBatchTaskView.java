@@ -26,6 +26,7 @@ public class DevOnlineBatchTaskView {
 	private String itilTitle;		//'标题 文本 评估体系平台系统请求',
 	private String itilDescription;	//'申请内容',
 	private Date itilPlannedEnd;	//'期望完成时间',
+	private Date itilPlannedStart;	//'期望开始时间',
 	private String itilRequestedDate; //'申请时间 日期时间 2015-12-07T14:02:07+00:00',
 	private String itilSource; 		//'来源 文本 cloud',
 	private String itilOpenedBy;	//'创建人 文本 cmb.int.cloud'
@@ -72,6 +73,17 @@ public class DevOnlineBatchTaskView {
 	private Integer executeStep;		//任务步骤
 	private Integer taskCurrentStep;	//任务步骤
 	
+	public String getItilPlannedStart() {
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = "";
+		if(itilPlannedStart!=null){
+			s = fmt.format(itilPlannedStart);
+		}
+		return s;
+	}
+	public void setItilPlannedStart(Date itilPlannedStart) {
+		this.itilPlannedStart = itilPlannedStart;
+	}
 	public String getUserName() {
 		return userName;
 	}
@@ -428,7 +440,7 @@ public class DevOnlineBatchTaskView {
 	}
 	@Override
 	public String toString() {
-		return "DevOnlineBatchTaskView [id=" + id + ", batchName=" + batchName
+		return "DevOnlineBatchTaskView [batchName=" + batchName
 				+ ", batchDescribe=" + batchDescribe + ", batchState="
 				+ batchState + ", itilNumber=" + itilNumber + ", itilSourceId="
 				+ itilSourceId + ", itilAssignee=" + itilAssignee
@@ -437,15 +449,15 @@ public class DevOnlineBatchTaskView {
 				+ ", itilStatus=" + itilStatus + ", itilRequestor="
 				+ itilRequestor + ", itilTitle=" + itilTitle
 				+ ", itilDescription=" + itilDescription + ", itilPlannedEnd="
-				+ itilPlannedEnd + ", itilRequestedDate=" + itilRequestedDate
-				+ ", itilSource=" + itilSource + ", itilOpenedBy="
-				+ itilOpenedBy + ", taskType="
-				+ taskType + ", groupKey=" + groupKey + ", taskDescribe="
-				+ taskDescribe + ", taskState=" + taskState + ", brandName="
-				+ brandName + ", modelName=" + modelName + ", areaName="
-				+ areaName + ", areaDescribe=" + areaDescribe + ", hostName="
-				+ hostName + ", managerIp=" + managerIp + ", vlan=" + vlan
-				+ ", mainSwitchboardIp=" + mainSwitchboardIp
+				+ itilPlannedEnd + ", itilPlannedStart=" + itilPlannedStart
+				+ ", itilRequestedDate=" + itilRequestedDate + ", itilSource="
+				+ itilSource + ", itilOpenedBy=" + itilOpenedBy + ", id=" + id
+				+ ", taskType=" + taskType + ", groupKey=" + groupKey
+				+ ", taskDescribe=" + taskDescribe + ", taskState=" + taskState
+				+ ", brandName=" + brandName + ", modelName=" + modelName
+				+ ", areaName=" + areaName + ", areaDescribe=" + areaDescribe
+				+ ", hostName=" + hostName + ", managerIp=" + managerIp
+				+ ", vlan=" + vlan + ", mainSwitchboardIp=" + mainSwitchboardIp
 				+ ", mainSwitchboardPort=" + mainSwitchboardPort
 				+ ", backupSwitchboardIp=" + backupSwitchboardIp
 				+ ", backupSwitchboardPort=" + backupSwitchboardPort
@@ -463,13 +475,14 @@ public class DevOnlineBatchTaskView {
 				+ ", switchState=" + switchState
 				+ ", backupSwitchboardConfigWrite="
 				+ backupSwitchboardConfigWrite + ", emailId=" + emailId
-				+ ", accessSwitchboardCheck=" + accessSwitchboardCheck
-				+ ", accessSwitchboardCheckInfo=" + accessSwitchboardCheckInfo
-				+ ", taskCurrentStepDescribe=" + taskCurrentStepDescribe
+				+ ", userName=" + userName + ", accessSwitchboardCheck="
+				+ accessSwitchboardCheck + ", accessSwitchboardCheckInfo="
+				+ accessSwitchboardCheckInfo + ", taskCurrentStepDescribe="
+				+ taskCurrentStepDescribe + ", taskAllStep=" + taskAllStep
 				+ ", executeStep=" + executeStep + ", taskCurrentStep="
 				+ taskCurrentStep + "]";
 	}
-
+	 
 	
 	 
 	
