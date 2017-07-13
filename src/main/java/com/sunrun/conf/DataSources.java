@@ -80,7 +80,7 @@ public class DataSources{
         //用来检测是否有效的sql
         dataSource.setValidationQuery("select 'x'");
         dataSource.setTestWhileIdle(true);
-        dataSource.setTestOnBorrow(false);
+        dataSource.setTestOnBorrow(true);
         dataSource.setTestOnReturn(false);
         //打开PSCache,并指定每个连接的PSCache大小
         dataSource.setPoolPreparedStatements(true);
