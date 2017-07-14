@@ -514,6 +514,20 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 							ports.remove(l1.get(z).getExclusiveSwitchboardPort());
 						}
 					}
+					
+					//去除数据库中没有保存的带外交换机端口
+					List<DevExclusiveSwitchboardInfo> l2 = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(null);
+					List<String> all = new ArrayList<String>();
+					for(int x=0;x<l2.size();x++){
+						all.add(l2.get(x).getExclusiveSwitchboardPort());
+					}
+					cp = ports;
+					for(int x=0;x<cp.size();x++){
+						if(!all.contains(cp.get(x))){
+							ports.remove(cp.get(x));
+						}
+					}
+					
 					// 去重
 					HashSet<String> h = new HashSet<String>(ports);
 					ports.clear();
@@ -550,10 +564,18 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 								if(ll!=null && ll.size()>0){
 									bean = ll.get(0);
 								}
+								DevExclusiveSwitchboardInfo n = new DevExclusiveSwitchboardInfo();
+								in.setExclusiveSwitchboardIp(host);
+								in.setExclusiveSwitchboardPort(port);
+								List<DevExclusiveSwitchboardInfo> ns = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(n);
+								int order = i+1;
+								if(ns!=null && ns.size()>0){
+									order = ns.get(0).getExclusiveSwitchboardOrder();
+								}
 								JSONObject obj = new JSONObject();
 								obj.put("exclusiveSwitchboardIp", host);
 								obj.put("exclusiveSwitchboardPort", port);
-								obj.put("exclusiveSwitchboardOrder", i+1);
+								obj.put("exclusiveSwitchboardOrder", order);
 								obj.put("brandName", StringUtils.isEmpty(bean.getBrandName())?"":bean.getBrandName());
 								obj.put("modelName", StringUtils.isEmpty(bean.getModelDescribe())?"":bean.getModelDescribe());
 								obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
