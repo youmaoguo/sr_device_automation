@@ -575,7 +575,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 								JSONObject obj = new JSONObject();
 								obj.put("exclusiveSwitchboardIp", host);
 								obj.put("exclusiveSwitchboardPort", port);
-								obj.put("exclusiveSwitchboardOrder", order);
+								obj.put("exclusiveSwitchboardOrder", order); 
 								obj.put("brandName", StringUtils.isEmpty(bean.getBrandName())?"":bean.getBrandName());
 								obj.put("modelName", StringUtils.isEmpty(bean.getModelDescribe())?"":bean.getModelDescribe());
 								obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
