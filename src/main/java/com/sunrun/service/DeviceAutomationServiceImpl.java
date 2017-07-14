@@ -681,6 +681,12 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	}
 
 
+	@Override
+	public Integer countDevBatchTask(DevOnlineBatchTaskView batchView, String like, String sortBy, String order) {
+		return devOnlineBatchItilMapper.countItilTask(batchView, like, sortBy, order);
+	}
+
+
 	
 	
 

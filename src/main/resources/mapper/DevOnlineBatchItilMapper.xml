@@ -192,14 +192,13 @@
 				b.itil_assignee AS itilAssignee,
 				b.itil_category AS itilCategory,
 				b.itil_subcategory AS itilSubcategory,
-				b.itil_businessArea As itilBusinessArea,
+				b.itil_businessarea As itilBusinessArea,
 				b.itil_status AS itilStatus,
 				b.itil_requestor AS itilRequestor,
 				b.itil_title AS itilTitle,
 				b.itil_description AS itilDescription,
-				b.itil_plannedEnd AS itilPlannedEnd,
-				b.itil_plannedStart AS itilPlannedStart,
-			
+				b.itil_plannedend AS itilPlannedEnd,
+				b.itil_plannedstart AS itilPlannedStart, 
 				t.id AS id,
 				t.task_type AS taskType,
 				t.group_key AS groupKey,
@@ -219,7 +218,7 @@
 				t.dev_online_rack AS devOnlineRack,
 				t.exclusive_switchboard_ip AS exclusiveSwitchboardIp,
 				t.exclusive_switchboard_port AS exclusiveSwitchboardPort,
-				t.create_time AS createTime,
+				t.create_time AS createTime, 
 				t.update_time AS updateTime,
 				t.username AS createUser,
 				t.manager_ip_write AS managerIpWrite,
@@ -231,7 +230,7 @@
 				t.access_version_write AS accessVersionWrite,
 				t.switch_state AS switchState,
 				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
-				t.backup_switchboard_config_write AS backupSwitchboardConfigWrite,
+				t.access_switchboard_check AS accessSwitchboardCheck,
 				13 AS taskAllStep,
 				t.email_id AS emailId,
 				(SELECT Max(execute_step) FROM dev_task_execute WHERE task_id=t.id) AS executeStep,
@@ -243,7 +242,7 @@
 				LEFT JOIN  dev_online_task_itil ti ON ti.dev_online_task_id=t.id
 				LEFT JOIN dev_online_batch_itil b on b.itil_number = ti.itil_number
 				LEFT JOIN sys_send_email e ON e.id = t.email_id
-			WHERE t.state=1   
+			WHERE t.state=1 
 		) taskView	where 1=1 
 		<if test="taskView.id!=null">
 		    AND id = #{taskView.id}
@@ -272,9 +271,9 @@
 		<if test="order!=null">
 				${order}
 		</if>
-		<if test="limit!=null">
+		<!-- <if test="limit!=null">
 				limit ${limit}
-		</if>
+		</if> -->
 	</select>
 	
 	<sql id="taskLikeQuery">

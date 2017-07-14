@@ -61,6 +61,16 @@ public interface DeviceAutomationService {
 	List<DevOnlineBatchTaskView> findDevBatchTask(DevOnlineBatchTaskView batchView, String like, String sortBy, String order, String limit);
 	
 	/**
+	 * 统计查询条数
+	 * @param batchView
+	 * @param like
+	 * @param sortBy
+	 * @param order
+	 * @return
+	 */
+	Integer countDevBatchTask(DevOnlineBatchTaskView batchView, String like, String sortBy, String order);
+	
+	/**
 	 * 修改某一批次
 	 * @param batch
 	 * @return

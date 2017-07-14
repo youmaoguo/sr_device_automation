@@ -60,11 +60,10 @@ public interface DevOnlineBatchItilMapper {
 	 * @param like		模糊查询值/搜索值
 	 * @param sortBy	排序值（根据哪个属性排序）
 	 * @param order		排序方式（desc,asc）
-	 * @param limit		分页条件
 	 * @return
 	 */
 	Integer countItilTask(@Param("taskView") DevOnlineBatchTaskView taskView,
-			@Param("like") String like, @Param("sortBy") String sortBy, @Param("order") String order, @Param("limit") String limit);
+			@Param("like") String like, @Param("sortBy") String sortBy, @Param("order") String order);
 	
 	/**
 	 * 统计itil还未完成审批的单子（包含‘登记’和‘审批’2种状态）
