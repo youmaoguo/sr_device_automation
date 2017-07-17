@@ -861,5 +861,49 @@ public class DeviceAutomatinoController extends BaseController{
 		}
 	}
 	
+	/**
+	 * 查看接入交换机配置信息
+	 * @param taskId	taskId
+	 * @param auth		Authorization认证参数
+	 * @param response	response响应对象
+	 * @param request	request请求对象
+	 * @return			返回json格式的字符串
+	 */
+	@RequestMapping(value = "/deviceAutomation/v1/findAccessConfig", method = RequestMethod.GET, produces="application/json")
+	public void findAccessConfig(HttpServletRequest request, HttpServletResponse response, 
+									@RequestHeader("Authorization") String auth,
+									@RequestParam(value = "taskId", required = false) String taskId){
+		
+		logger.info("查看接入交换机配置信息接口入参是："+request.getQueryString());
+		Json json = new Json();
+		if(StringUtils.isEmpty(taskId)){
+			json.setRet_code(400);
+			json.setRet_info("缺少请求参数");
+			json.setSuccess(false);
+			response(json, response, request);
+			return;
+		}
+		try{
+			List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
+			if(l!=null && l.size()>0){
+				json = addSwitchDeviceService.showConfig(thirdPartUrl, auth, l.get(0));
+				response(json, response, request);
+			}else{
+				json.setRet_code(500);
+				json.setRet_info("系统内部异常");
+				json.setSuccess(false);
+				response(json, response, request);
+			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("查看接入交换机配置信息出现异常");
+			json.setRet_code(201);
+			json.setRet_info("查看接入交换机配置信息失败");
+			json.setSuccess(true);
+			response(json, response, request);
+		}
+	}
+	
 
 }
