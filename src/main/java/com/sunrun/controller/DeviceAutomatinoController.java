@@ -295,7 +295,7 @@ public class DeviceAutomatinoController extends BaseController{
 	public void executeSwitchDevice(@RequestBody String jsonStr, @RequestHeader("Authorization") String auth, 
 									HttpServletRequest request,HttpServletResponse response){
 		Json json = new Json();
-		String info = "执行上线交换机成功";
+		String info = "将进入后台执行";
 		Integer code = 201;	//201:用户新建或修改数据成功
 		Boolean success = true;
 		logger.info("执行上线交换机executeSwitchDevice接口入参是："+jsonStr);
