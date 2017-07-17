@@ -639,8 +639,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					content += "<td height='80' class='xl66' width='85' style='border:1px solid #ededed;height:25.0pt;border-top:none;width:64pt'>"+task.getBrandName()+"</td>";
 					content += "<td class='xl66' width='72' style='border:1px solid #ededed;width:54pt'>"+task.getModelName()+"</td>";
 					content += "<td class='xl66' width='125' style='border:1px solid #ededed;width:94pt'>"+task.getAreaName()+"</td>";
-					content += "<td class='xl69' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>:"+task.getMainSwitchboardPort()+"</font></br>"+li.get(0).getDevName()+"</td>";
-					content += "<td class='xl67' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>:"+task.getBackupSwitchboardPort()+"</font</br>"+li.get(0).getBackupDevName()+"</td>";
+					content += "<td class='xl69' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>:"+task.getMainSwitchboardPort()+"</font></br>--"+li.get(0).getDevName()+"</td>";
+					content += "<td class='xl67' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>:"+task.getBackupSwitchboardPort()+"</font</br>--"+li.get(0).getBackupDevName()+"</td>";
 					content += "<td class='xl68' width='165' style='border:1px solid #ededed;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
 					content += "<td class='xl66' width='244' style='border:1px solid #ededed;width:183pt'>"+task.getHostName()+"</td>";
 					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getManagerIp()+"</td>";
