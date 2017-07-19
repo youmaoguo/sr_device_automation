@@ -243,7 +243,7 @@ public class DeviceAutomatinoController extends BaseController{
 				if(l!=null && l.size()>0){
 					 Map<String, String> map = new HashMap<String, String>();
 					 map.put("ip", l.get(0).getManagerIp());
-					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, l.get(0), map, updateUser, 2, usercode);
+					addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, l.get(0), map, l.get(0).getUserName(), 2, usercode);
 					
 					if(!StringUtils.isEmpty(l.get(0).getExclusiveSwitchboardIp()) && !StringUtils.isEmpty(l.get(0).getExclusiveSwitchboardPort())){
 						//将kvm端口释放
@@ -355,9 +355,9 @@ public class DeviceAutomatinoController extends BaseController{
 					task.setExclusiveSwitchboardInfo(exclusiveSwitchboardInfo);
 				if(!StringUtils.isEmpty(currentIosVersion))
 					task.setCurrentIosVersion(currentIosVersion);
-				task.setUpdate_user(updateUser);
+				//task.setUpdate_user(userName);
 				
-				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, executeStep, usercode); 
+				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), executeStep, usercode); 
 				Thread t = new Thread(addTask);
 				t.start();
 				
@@ -371,15 +371,23 @@ public class DeviceAutomatinoController extends BaseController{
 				//SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 				SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				Date d = null;
+				Long d1 = null;
+				Integer h = null;
 				if(view!=null && !view.getItilPlannedStart().equals("") && view.getItilPlannedStart()!=null){
 					d = fmt.parse(view.getItilPlannedStart());
+					d1 = d.getTime();
+					h = d.getHours();
+					String f1 = fmt.format(new Date());
+					String f = f1.substring(0, f1.indexOf(" ")) + " 19:00";
+					Date dd = fmt.parse(f);
+					i = dd.getTime();
 				}
 				
 				if(view==null || StringUtils.isEmpty(view.getItilNumber()) || !view.getItilStatus().trim().contains("已批准") ){
 					code = 500;
 					info = "itil工单未审批";
 					success = false;
-				}else if(d.getTime()<i || d.getHours()<19){
+				}else if(d1<i || h<19){
 					code = 500;
 					success = false;
 					info = "未到时候执行，请在"+view.getItilPlannedStart()+"后执行";
@@ -388,7 +396,7 @@ public class DeviceAutomatinoController extends BaseController{
 					info = "请发送下邮件通知再执行";
 					success = false;
 				}else{
-					AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, updateUser, executeStep, usercode); 
+					AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), executeStep, usercode); 
 					Thread t = new Thread(addTask);
 					t.start();
 				}

@@ -84,6 +84,9 @@ public class AddSwitchDevice implements Runnable {
 		ManagerIpAanVlan mv = new ManagerIpAanVlan();
 		map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 		if(map==null || map.size()==0){
+			task.setSwitchState(3);
+			task.setTaskState(5);
+			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
 		}else {
 			List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
@@ -102,6 +105,9 @@ public class AddSwitchDevice implements Runnable {
 				//重新申请ip,vlan
 				map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 				if(map==null || map.size()==0){
+					task.setSwitchState(3);
+					task.setTaskState(5);
+					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
 				}else {
 					List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
@@ -166,6 +172,9 @@ public class AddSwitchDevice implements Runnable {
 			ManagerIpAanVlan mv = new ManagerIpAanVlan();
 			map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 			if(map==null || map.size()==0){
+				task.setSwitchState(3);
+				task.setTaskState(5);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 				return;
 			}else {
 				li = deviceAutomationService.findPort(task.getId());
@@ -198,6 +207,9 @@ public class AddSwitchDevice implements Runnable {
 					ManagerIpAanVlan mv = new ManagerIpAanVlan();
 					map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 					if(map==null || map.size()==0){
+						task.setSwitchState(3);
+						task.setTaskState(5);
+						deviceAutomationService.updateTask2(task, null, null, userName);
 						return;
 					}else {
 						li = deviceAutomationService.findPort(task.getId());
@@ -238,6 +250,9 @@ public class AddSwitchDevice implements Runnable {
 					ManagerIpAanVlan mv = new ManagerIpAanVlan();
 					map = mv.step2_appIpAndVlan(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 					if(map==null || map.size()==0){
+						task.setSwitchState(3);
+						task.setTaskState(5);
+						deviceAutomationService.updateTask2(task, null, null, userName);
 						return;
 					}else {
 						li = deviceAutomationService.findPort(task.getId());
@@ -292,8 +307,11 @@ public class AddSwitchDevice implements Runnable {
 			}
 		}
 		
-		if(StringUtils.isEmpty(task.getExclusiveSwitchboardInfo()) || StringUtils.isEmpty(task.getExclusiveSwitchboardPort()) || StringUtils.isEmpty(task.getExclusiveSwitchboardIp()))
+		if(StringUtils.isEmpty(task.getExclusiveSwitchboardInfo()) || StringUtils.isEmpty(task.getExclusiveSwitchboardPort()) || StringUtils.isEmpty(task.getExclusiveSwitchboardIp())){
+			task.setTaskState(3);
+			deviceAutomationService.updateTask2(task, null, null, userName);
 			return;
+		}
 		//6.第八步保存带外交换机端口与接入交换机的连接在进入这个方法前的控制器层已经调用方法执行了,此处不要重复执行了,只要记录任务执行详情
 		if(executeStep!=null && executeStep<=6){
 			DevTaskExecute execute = new DevTaskExecute();

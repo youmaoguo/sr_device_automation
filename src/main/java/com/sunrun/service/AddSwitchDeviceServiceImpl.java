@@ -260,7 +260,9 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("port", li.get(0).getTelnetPort());
 			param.put("user", li.get(0).getTelnetUser());
 			param.put("password", li.get(0).getTelnetPwd());
-			param.put("type", li.get(0).getDevType());//dev_type
+			String[] ss = li.get(0).getDevName().split("-");
+			String type = ss[ss.length-1];
+			param.put("type", type);//dev_type
 			
 			String ips = map.get("ip");
 			String[] ip = ips.split(",");
@@ -319,7 +321,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("assignerName", userName);//申请人姓名
 			param.put("contactId", usercode);//contactId
 			param.put("contactName", userName);//使用人姓名
-			param.put("bizsysName", "门户portal");//业务系统
+			param.put("bizsysName", task.getAreaName()+"接入交换机"+task.getHostName()+"管理ip");//业务系统
 			param.put("bizsysId", "portal");//业务系统ID
 			param.put("description", "门户portal项目交换机模块回填ip");
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
@@ -1186,17 +1188,10 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("ipaddr", task.getManagerIp());//设置IP
 			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
 			if(tag==1){
-				Json j = showConfig(thirdPartUrl, auth, task);
-				if(j.getSuccess()){
-					param.put("commands", j.getData().toString());
-				}else{
-					code = j.getRet_code();
-					info = j.getRet_info();
-					success = j.getSuccess();
-				}
+				param.put("port", task.getExclusiveSwitchboardPort());
+				param.put("tag", "1");
 			}else if(tag==2){
-				String[] a = {};
-				param.put("commands", a);
+				param.put("tag", "0");
 			}
 			if(success){
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
@@ -1219,7 +1214,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			DevOnlineTask t = new DevOnlineTask();
 			t.setId(task.getId());
 			t.setUpdate_user(userName);
-			writeProcess(t, tag==1?10:14, success==true ? info : "检验配置不正常", success, userName, info);
+			writeProcess(t, tag==1?10:14, success==true ? info : "检验配置不正常", success, userName, success==true?"":info);
 			
 			json.setRet_code(code);
 			json.setRet_info(info);
