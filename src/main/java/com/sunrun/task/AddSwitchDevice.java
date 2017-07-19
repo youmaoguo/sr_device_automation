@@ -377,10 +377,6 @@ public class AddSwitchDevice implements Runnable {
 				task.setSwitchState(2);
 				task.setTaskState(2);
 				deviceAutomationService.updateTask2(task, null, 11, userName);
-				
-				//ip地址回填 ，状态是3实分配
-				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3, usercode);
-				
 			}
 		}
 		
@@ -409,6 +405,10 @@ public class AddSwitchDevice implements Runnable {
 			task = li.get(0);
 			//13.写入汇聚接入交换机配置
 			if(executeStep!=null && executeStep<=13){
+				//ip地址回填 ，状态是3实分配
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("ip", task.getManagerIp());
+				addSwitchDeviceService.adminRequestIP(thirdPartUrl, auth, task, map, userName, 3, usercode);
 				//将kvm端口释放
 				DevExclusiveSwitchboardInfo in = new DevExclusiveSwitchboardInfo();
 				in.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
