@@ -639,8 +639,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					content += "<td height='80' class='xl66' width='85' style='border:1px solid #ededed;height:25.0pt;border-top:none;width:64pt'>"+task.getBrandName()+"</td>";
 					content += "<td class='xl66' width='72' style='border:1px solid #ededed;width:54pt'>"+task.getModelName()+"</td>";
 					content += "<td class='xl66' width='125' style='border:1px solid #ededed;width:94pt'>"+task.getAreaName()+"</td>";
-					content += "<td class='xl69' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>:"+task.getMainSwitchboardPort()+"</font></br>--"+li.get(0).getDevName()+"</td>";
-					content += "<td class='xl67' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>:"+task.getBackupSwitchboardPort()+"</font></br>--"+li.get(0).getBackupDevName()+"</td>";
+					content += "<td class='xl69' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getMainSwitchboardIp()+"<font class='font7'>:"+task.getMainSwitchboardPort()+"</font><br/>\r\n"+li.get(0).getDevName()+"</td>";
+					content += "<td class='xl67' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getBackupSwitchboardIp()+"<font class='font7'>:"+task.getBackupSwitchboardPort()+"</font><br/>\r\n"+li.get(0).getBackupDevName()+"</td>";
 					content += "<td class='xl68' width='165' style='border:1px solid #ededed;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
 					content += "<td class='xl66' width='244' style='border:1px solid #ededed;width:183pt'>"+task.getHostName()+"</td>";
 					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getManagerIp()+"</td>";
@@ -665,11 +665,15 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 			List<DevOnlineTask> view = findPort(ids[i]);
 			if(view!=null && view.size()>0){
 				DevOnlineTask task = view.get(0);
+				DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+				//area.setAreaName(task.getAreaName());
+				area.setAreaDescribe(task.getAreaName());
+				List<DevAreaSwitchboardIp> li = findAreaIp(area);
 				int n = i+1;
 				s += n + ".------------------------------------------------------------------\n";
 				s += "设备品牌:"+task.getBrandName() + ", 型号:"+task.getModelName()+", 区域:"+task.getAreaName()+
-						",\n 主汇聚交机:端口 ："+task.getMainSwitchboardIp()+":"+task.getMainSwitchboardPort()+
-						",\n 备汇聚交机:端口 ："+task.getBackupSwitchboardIp()+":"+task.getBackupSwitchboardPort()+
+						",\n 主汇聚交机:端口 ："+task.getMainSwitchboardIp()+":"+task.getMainSwitchboardPort()+"["+li.get(0).getDevName()+"]"+
+						",\n 备汇聚交机:端口 ："+task.getBackupSwitchboardIp()+":"+task.getBackupSwitchboardPort()+"["+li.get(0).getBackupDevName()+"]"+
 						",\n 上线机架位置:"+task.getDevOnlineRack()+", hostname:"+task.getHostName()+
 						",\n 管理地址:"+task.getManagerIp()+", 带外交换机信息:"+task.getExclusiveSwitchboardInfo()+"。\n";
 			}
