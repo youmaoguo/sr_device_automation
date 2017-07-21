@@ -32,6 +32,7 @@ import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
 import com.sunrun.task.AddSwitchDevice;
+import com.sunrun.task.PortCheckSington;
 import com.sunrun.util.Json;
 import com.sunrun.util.StringUtil;
 
@@ -307,6 +308,8 @@ public class DeviceAutomatinoController extends BaseController{
 			String usercode = obj.getString("usercode");//用户编号：如 ：01091231
 			String updateUser = obj.getString("updateUser");
 			String userName = obj.getString("userName");
+			String telNetUser = obj.getString("switchboardUser");
+			String telNetPwd = obj.getString("switchboardPW");
 
 			//查询出该任务执行到第几步骤 然后分多线程继续执行之后的步骤（写入接入交换机配置管理口ip、更新ios版本、写入接入交换机配置信息）
 			Integer executeStep = null;
@@ -357,7 +360,7 @@ public class DeviceAutomatinoController extends BaseController{
 					task.setCurrentIosVersion(currentIosVersion);
 				//task.setUpdate_user(userName);
 				
-				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), executeStep, usercode); 
+				AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), executeStep, usercode,null,null); 
 				Thread t = new Thread(addTask);
 				t.start();
 				
@@ -396,9 +399,25 @@ public class DeviceAutomatinoController extends BaseController{
 					info = "请发送下邮件通知再执行";
 					success = false;
 				}else{
-					AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), executeStep, usercode); 
-					Thread t = new Thread(addTask);
-					t.start();
+					//检验该条task的汇聚端口是否是down的
+					PortCheckSington pc = new PortCheckSington();
+					Json jj = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), 2);
+					Json j = (Json) JSONObject.parseObject(jj.getData().toString(), Json.class);
+					org.json.JSONObject result = new org.json.JSONObject(j.getData().toString());
+					Object main = result.getJSONArray(task.getMainSwitchboardIp());
+					List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
+					Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
+					List<String> backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
+					if(mainlist.contains(task.getMainSwitchboardPort()) && backuplist.contains(task.getBackupSwitchboardPort())){
+						AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), executeStep, usercode, telNetUser, telNetPwd); 
+						Thread t = new Thread(addTask);
+						t.start();
+					}else{
+						code = 500;
+						success = false;
+						info = "该条交换机记录的汇聚端口被占,不能写汇聚了";
+						addSwitchDeviceService.writeProcess(task, 13, "写入汇聚交换机配置", false, task.getUserName(), "该条交换机记录的汇聚端口被占,不能写汇聚了");
+					}
 				}
 			}
 		}catch(Exception e){
@@ -656,7 +675,7 @@ public class DeviceAutomatinoController extends BaseController{
 			List<DevOnlineTask> li = deviceAutomationService.findPort(task.getId());
 			task = null;
 			task = li.get(0);
-			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUpdate_user(), 9, task.getUsercode()); 
+			AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUpdate_user(), 9, task.getUsercode(),null,null); 
 			Thread t = new Thread(addTask);
 			t.start();
 			

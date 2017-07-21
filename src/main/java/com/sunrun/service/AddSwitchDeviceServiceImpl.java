@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevAreaSwitchboardIp;
+import com.sunrun.entity.DevBrandModel;
 import com.sunrun.entity.DevExclusiveSwitchboardConn;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevIosVersions;
@@ -24,6 +25,7 @@ import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevScriptConfig;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
+import com.sunrun.mapper.DevBrandModelMapper;
 import com.sunrun.mapper.DevExclusiveSwitchboardConnMapper;
 import com.sunrun.mapper.DevIosVersionsMapper;
 import com.sunrun.mapper.DevScriptConfigMapper;
@@ -43,6 +45,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	private DevExclusiveSwitchboardConnMapper devExclusiveSwitchboardConnMapper;
 	@Resource
 	private DevIosVersionsMapper devIosVersionsMapper;
+	@Resource
+	private DevBrandModelMapper devBrandModelMapper;
 	
 	@Value("${device.serverIp}")
 	private String serverIp;
@@ -1176,6 +1180,12 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Integer code = 200;	
 		Boolean success = true;
 		try{
+			//在根据model去查询品牌型号表
+			DevBrandModel bean = new DevBrandModel();
+			//bean.setModelName(model);
+			bean.setModelDescribe(task.getModelName());
+			List<DevBrandModel> ll = devBrandModelMapper.findBrandModel(bean);
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/checkNewConfig");
 			param.put("device_manuf", task.getBrandName());//设备品牌
@@ -1187,11 +1197,16 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("name", task.getHostName());//设备名称
 			param.put("ipaddr", task.getManagerIp());//设置IP
 			param.put("info", task.getExclusiveSwitchboardInfo());//带交换机信息
+			param.put("master_switch_port", task.getMainSwitchboardPort());//主汇聚交换机端口
+			param.put("slave_switch_port", task.getBackupSwitchboardPort());//备汇聚交换机端口
+			param.put("ipaddr_master_port", ll.get(0).getMainAccessPort());
+			param.put("ipaddr_slave_port", ll.get(0).getBackAccessPort());
 			if(tag==1){
 				param.put("port", task.getExclusiveSwitchboardPort());
 				param.put("tag", "1");
 			}else if(tag==2){
 				param.put("tag", "0");
+				param.put("port", "");
 			}
 			if(success){
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
@@ -1310,18 +1325,13 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 
 	@SuppressWarnings("finally")
 	@Override
-	public Json writeNewGatherConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName) {
+	public Json writeNewGatherConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName, String telNetUser, String telNetPwd) {
 		Json json = new Json();
 		String info = "写入汇聚交换机配置正常";
 		Integer code = 200;	
 		Boolean success = true;
 		Object data = null;
 		try{
-			DevExclusiveSwitchboardInfo dev = new DevExclusiveSwitchboardInfo();
-			dev.setExclusiveSwitchboardIp(task.getExclusiveSwitchboardIp());
-			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
-			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
-			
 			DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
 			//area.setAreaName(task.getAreaName());
 			area.setAreaDescribe(task.getAreaName());
@@ -1349,6 +1359,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("newip", task.getManagerIp());//在看板系统上申请的IP地址
 			param.put("vlanNu", task.getVlan());
 			param.put("accHostName", task.getHostName());
+			param.put("user", telNetUser);
+			param.put("password", telNetPwd);
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){

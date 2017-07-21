@@ -41,12 +41,22 @@ public class PortCheck {
 	       Flag = flag;  
 	   }  
 	   
-	   
+	   /**
+	    * 获取汇聚交换机端口
+	    * @param deviceAutomationService
+	    * @param addSwitchDeviceService
+	    * @param thirdPartUrl
+	    * @param auth
+	    * @param task
+	    * @param userName
+	    * @param tag	tag=1:获取汇聚端口写入task；tag=2：再次获取端口，跟第一次获取的做比较，看是否有相同的口返回，有则正常
+	    * @return
+	    */
 	   @SuppressWarnings("finally")
-	   public synchronized Json portCheck(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName){
+	   public synchronized Json portCheck(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, int tag){
 		   Json json = new Json();
 			String info = "获取汇聚交换机端口结果正常";
-			Integer code = 200;	
+			Integer code = 200;
 			Boolean success = true;
 			String mp = "", bp = "";
 			try{
@@ -66,59 +76,74 @@ public class PortCheck {
 				param.put("back_user", li.get(0).getBackupTelnetUser());
 				param.put("back_pwd", li.get(0).getBackupTelnetPwd());
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
-				
-				//String sb = "{\"ret_code\":200,\"ret_info\":\"success\",\"data\":{\""+task.getMainSwitchboardIp()+"\":['g1-1','g2-1','g2-11','g2-111','g2-12','g2-31'],\""+task.getBackupSwitchboardIp()+"\":['g2-1','g1-1','g22-11','g22-111','g22-12','g22-31']}}";
-				
-				Json j = (Json) JSONObject.parseObject(sb, Json.class);
-				if(j.getRet_code()!=200){
-					code = j.getRet_code();
-					info = j.getRet_info();
-					success = j.getSuccess();
-				}else{
-					//解析出取到的所有主备ip对应的端口
-					//JSONObject result = (JSONObject) j.getData();
-					org.json.JSONObject result = new org.json.JSONObject(j.getData().toString());
-					Object main = result.getJSONArray(task.getMainSwitchboardIp());
-					List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
+				if(tag==1){
+					json.setData(sb);
+				}else if(tag==2){
 					
-					Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
-					List<String> backuplist = null;
-					if(backup!=null){
-						backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
-					}
-					
-					List<String> mainp = findDBPorts(deviceAutomationService, 1);//保存数据库中所有使用了的主汇聚端口
-					List<String> backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
-					
-					int index = 0;
-					boolean t = false;
-					for(int i=0;i<mainlist.size();i++){
-						if(!mainp.contains(mainlist.get(i))){
-							index = i;
-							t=true;
-							break;
-						}
-					}
-					if(t){
-						mp = mainlist.size()>=index ? mainlist.get(index) : ""; //选定好了主端口
+					Json j = (Json) JSONObject.parseObject(sb, Json.class);
+					if(j.getRet_code()!=200){
+						code = j.getRet_code();
+						info = j.getRet_info();
+						success = j.getSuccess();
+					}else{
+						//解析出取到的所有主备ip对应的端口
+						//JSONObject result = (JSONObject) j.getData();
+						org.json.JSONObject result = new org.json.JSONObject(j.getData().toString());
+						Object main = result.getJSONArray(task.getMainSwitchboardIp());
+						List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
 						
-						//理论上最好备端口跟主端口一样
-						String bpc = "";
-						for(int i=0;i<backuplist.size();i++){
-							if(backuplist.get(i).equals(mp)){
-								bpc = mp;
+						Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
+						List<String> backuplist = null;
+						if(backup!=null){
+							backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
+						}
+						
+						List<String> mainp = findDBPorts(deviceAutomationService, 1);//保存数据库中所有使用了的主汇聚端口
+						List<String> backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
+						
+						int index = 0;
+						boolean t = false;
+						for(int i=0;i<mainlist.size();i++){
+							if(!mainp.contains(mainlist.get(i))){
+								index = i;
+								t=true;
 								break;
 							}
 						}
-						if(!bpc.equals("")){
-							boolean g = false;
-							//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
-							backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
-							if(!backp.contains(bpc)){
-								g = true;
+						if(t){
+							mp = mainlist.size()>=index ? mainlist.get(index) : ""; //选定好了主端口
+							
+							//理论上最好备端口跟主端口一样
+							String bpc = "";
+							for(int i=0;i<backuplist.size();i++){
+								if(backuplist.get(i).equals(mp)){
+									bpc = mp;
+									break;
+								}
 							}
-							if(!g){
+							if(!bpc.equals("")){
+								boolean g = false;
+								//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
+								backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
+								if(!backp.contains(bpc)){
+									g = true;
+								}
+								if(!g){
+									int index2 = 0;
+									for(int i=0;i<backuplist.size();i++){
+										if(!backp.contains(backuplist.get(i))){
+											index2 = i;
+											break;
+										}
+									}
+									bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+								}else{
+									bp = bpc;
+								}
+								
+							}else{
 								int index2 = 0;
+								backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
 								for(int i=0;i<backuplist.size();i++){
 									if(!backp.contains(backuplist.get(i))){
 										index2 = i;
@@ -126,27 +151,13 @@ public class PortCheck {
 									}
 								}
 								bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
-							}else{
-								bp = bpc;
 							}
-							
 						}else{
-							int index2 = 0;
-							backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
-							for(int i=0;i<backuplist.size();i++){
-								if(!backp.contains(backuplist.get(i))){
-									index2 = i;
-									break;
-								}
-							}
-							bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+							code = 400;
+							info = "主汇聚ip"+task.getMainSwitchboardIp()+"上暂时没有空闲可用端口";
+							success = false;
 						}
-					}else{
-						code = 400;
-						info = "主汇聚ip"+task.getMainSwitchboardIp()+"上暂时没有空闲可用端口";
-						success = false;
 					}
-					
 				}
 				
 			}catch(Exception e){
@@ -158,13 +169,14 @@ public class PortCheck {
 				throw new RuntimeException(e);
 			}finally{
 				//记录任务执行步骤
-				DevOnlineTask t = new DevOnlineTask();
-				t.setMainSwitchboardPort(mp);
-				t.setBackupSwitchboardPort(bp);
-				t.setId(task.getId());
-				t.setUpdate_user(userName);
-				addSwitchDeviceService.writeProcess(t, 5, "获取汇聚交换机端口", success, userName, success!=true?info:"");
-				
+				if(tag==1){
+					DevOnlineTask t = new DevOnlineTask();
+					t.setMainSwitchboardPort(mp);
+					t.setBackupSwitchboardPort(bp);
+					t.setId(task.getId());
+					t.setUpdate_user(userName);
+					addSwitchDeviceService.writeProcess(t, 5, "获取汇聚交换机端口", success, userName, success!=true?info:"");
+				}
 				json.setRet_code(code);
 				json.setRet_info(info);
 				json.setSuccess(success);

@@ -24,13 +24,13 @@ public class PortCheckSington {
 	 * 同步锁 - 去除重复从看板上申请到的ip
 	 * @return
 	 */
-	public Json portCheck(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName){
+	public Json portCheck(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, int tag){
 		 Json json = new Json();
 		 try{
 		    while (true) { 
 	            if (portCheck.getFlag()) {  
 	            	portCheck.setFlag(false);
-	            	 json = portCheck.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName);
+	            	 json = portCheck.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, tag);
 	            	 portCheck.setFlag(true);
 	                break;//执行完毕退出循环  
 	            }else {  

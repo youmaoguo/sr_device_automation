@@ -34,6 +34,8 @@ public class AddSwitchDevice implements Runnable {
 	private String userName;		//登录的用户名
 	private Integer executeStep;	//任务执行到第几步骤
 	private String usercode;		//用户编号 如：01091231
+	private String telNetUser;
+	private String telNetPwd;
 	
 	public AddSwitchDevice(){
 		super();
@@ -49,7 +51,7 @@ public class AddSwitchDevice implements Runnable {
 		this.usercode = usercode;
 	}
 	
-	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer executeStep, String usercode){
+	public AddSwitchDevice(DeviceAutomationService deviceAutomationService, AddSwitchDeviceService addSwitchDeviceService, String thirdPartUrl, String auth, DevOnlineTask task, String userName, Integer executeStep, String usercode, String telNetUser, String telNetPwd){
 		this.deviceAutomationService = deviceAutomationService;
 		this.addSwitchDeviceService = addSwitchDeviceService;
 		this.thirdPartUrl = thirdPartUrl;
@@ -58,6 +60,8 @@ public class AddSwitchDevice implements Runnable {
 		this.task = task;
 		this.executeStep = executeStep;
 		this.usercode = usercode;
+		this.telNetPwd = telNetPwd;
+		this.telNetUser = telNetUser;
 	}
 	
 	@Override
@@ -142,7 +146,7 @@ public class AddSwitchDevice implements Runnable {
 		//5.判断汇聚交换机端口上是否有配置及端口状态是否为down；
 		json = null;
 		PortCheckSington pc = new PortCheckSington();
-		json = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName);
+		json = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 		if(!json.getSuccess()){
 			task.setSwitchState(3);
 			task.setTaskState(5);
@@ -295,7 +299,7 @@ public class AddSwitchDevice implements Runnable {
 		if(executeStep!=null && executeStep<=5){
 			json = null;
 			PortCheckSington pc = new PortCheckSington();
-			json = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName);
+			json = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, userName, 1);
 			if(!json.getSuccess()){
 				task.setSwitchState(3);
 				task.setTaskState(5);
@@ -416,7 +420,7 @@ public class AddSwitchDevice implements Runnable {
 				in.setExclusiveSwitchboardPortState(0);
 				deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
 				
-				json = addSwitchDeviceService.writeNewGatherConfig(thirdPartUrl, auth, task, userName);
+				json = addSwitchDeviceService.writeNewGatherConfig(thirdPartUrl, auth, task, userName, telNetUser, telNetPwd);
 				if(!json.getSuccess()){
 					task.setSwitchState(3);
 					task.setTaskState(5);

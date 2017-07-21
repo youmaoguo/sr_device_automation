@@ -15,7 +15,21 @@ public class DevBrandModel extends BaseEntity implements Serializable{
 	private String iosVersion2;	//'备用字段',
 	private String modelDescribe;
 	private String showkvmDescribe;
+	private String mainAccessPort;//接入交换机连接主汇聚端口
+	private String backAccessPort;//接入交换机连接备汇聚端口
 	
+	public String getMainAccessPort() {
+		return mainAccessPort;
+	}
+	public void setMainAccessPort(String mainAccessPort) {
+		this.mainAccessPort = mainAccessPort;
+	}
+	public String getBackAccessPort() {
+		return backAccessPort;
+	}
+	public void setBackAccessPort(String backAccessPort) {
+		this.backAccessPort = backAccessPort;
+	}
 	public String getShowkvmDescribe() {
 		return showkvmDescribe;
 	}
@@ -57,9 +71,9 @@ public class DevBrandModel extends BaseEntity implements Serializable{
 		return "DevBrandModel [brandName=" + brandName + ", modelName="
 				+ modelName + ", iosVersion=" + iosVersion + ", iosVersion2="
 				+ iosVersion2 + ", modelDescribe=" + modelDescribe
-				+ ", showkvmDescribe=" + showkvmDescribe + "]";
+				+ ", showkvmDescribe=" + showkvmDescribe + ", mainAccessPort="
+				+ mainAccessPort + ", backAccessPort=" + backAccessPort + "]";
 	}
-	 
 	 
 	
 	

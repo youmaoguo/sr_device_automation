@@ -170,7 +170,7 @@ public interface AddSwitchDeviceService {
 	 * @param taskId
 	 * @return
 	 */
-	Json writeNewGatherConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName);
+	Json writeNewGatherConfig(String thirdPartUrl, String auth, DevOnlineTask task, String userName, String telNetUser, String telNetPwd);
 	
 	
 	/**添加设备第10步：

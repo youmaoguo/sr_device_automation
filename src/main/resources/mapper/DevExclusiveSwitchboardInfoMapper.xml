@@ -21,9 +21,7 @@
 			telnet_type AS telnetType,
 			telnet_user AS telnetUser,
 			telnet_pwd AS telnetPwd,
-			telnet_port AS telnetPort,
-			main_access_port AS mainAccessPort,
-			back_access_port AS backAccessPort
+			telnet_port AS telnetPort 
 			
 		from dev_exclusive_switchboard_info
 		where state=1

@@ -626,10 +626,16 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 				List<DevOnlineTask> view = findPort(ids[i]);
 				if(view!=null && view.size()>0){
 					DevOnlineTask task = view.get(0);
-					DevExclusiveSwitchboardInfo info = new DevExclusiveSwitchboardInfo();
+					/*DevExclusiveSwitchboardInfo info = new DevExclusiveSwitchboardInfo();
 					info.setMainAccessPort(task.getExclusiveSwitchboardIp());
 					info.setBackAccessPort(task.getExclusiveSwitchboardPort());
-					List<DevExclusiveSwitchboardInfo> infos = findDevExclusiveSwitchboardInfo(info);
+					List<DevExclusiveSwitchboardInfo> infos = findDevExclusiveSwitchboardInfo(info);*/
+					
+					//在根据model去查询品牌型号表
+					DevBrandModel bean = new DevBrandModel();
+					//bean.setModelName(model);
+					bean.setModelDescribe(task.getModelName());
+					List<DevBrandModel> ll = devBrandModelMapper.findBrandModel(bean);
 					
 					DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
 					//area.setAreaName(task.getAreaName());
@@ -644,8 +650,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					content += "<td class='xl68' width='165' style='border:1px solid #ededed;width:124pt'><font class='font6'>"+task.getDevOnlineRack()+"</font></td>";
 					content += "<td class='xl66' width='244' style='border:1px solid #ededed;width:183pt'>"+task.getHostName()+"</td>";
 					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+task.getManagerIp()+"</td>";
-					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+infos.get(0).getMainAccessPort()+"</td>";
-					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+infos.get(0).getBackAccessPort()+"</td>";
+					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+ll.get(0).getMainAccessPort()+"</td>";
+					content += "<td class='xl66' width='165' style='border:1px solid #ededed;width:124pt'>"+ll.get(0).getBackAccessPort()+"</td>";
 					content += "<td class='xl66' width='238' style='border:1px solid #ededed;width:179pt'>"+task.getExclusiveSwitchboardInfo()+"</td></tr>";
 				}
 			}
