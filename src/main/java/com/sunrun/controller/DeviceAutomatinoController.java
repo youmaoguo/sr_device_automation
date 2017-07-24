@@ -399,6 +399,12 @@ public class DeviceAutomatinoController extends BaseController{
 					info = "请发送下邮件通知再执行";
 					success = false;
 				}else{
+					if(StringUtils.isEmpty(telNetUser) || StringUtils.isEmpty(telNetPwd)){
+						code = 400;
+						info = "用户名或密码为空";
+						success = false;
+						return;
+					}
 					//检验该条task的汇聚端口是否是down的
 					PortCheckSington pc = new PortCheckSington();
 					Json jj = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), 2);
