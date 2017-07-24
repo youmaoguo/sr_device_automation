@@ -76,9 +76,9 @@ public class PortCheck {
 				param.put("back_user", li.get(0).getBackupTelnetUser());
 				param.put("back_pwd", li.get(0).getBackupTelnetPwd());
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
-				if(tag==1){
+				if(tag==2){
 					json.setData(sb);
-				}else if(tag==2){
+				}else if(tag==1){
 					
 					Json j = (Json) JSONObject.parseObject(sb, Json.class);
 					if(j.getRet_code()!=200){
