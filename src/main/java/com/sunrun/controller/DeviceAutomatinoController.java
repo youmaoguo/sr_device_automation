@@ -752,7 +752,6 @@ public class DeviceAutomatinoController extends BaseController{
 			if(!StringUtils.isEmpty(updateUser))
 				task.setUpdate_user(updateUser);
 			
-			addSwitchDeviceService.exclusiveSwitchboardConn(null, task, updateUser);
 			
 			//如果是同一条记录重复选择kvm,则需要将之前的口释放掉，然后再占用新口
 			List<DevOnlineTask> l = deviceAutomationService.findPort(taskId);
@@ -773,6 +772,7 @@ public class DeviceAutomatinoController extends BaseController{
 			in.setExclusiveSwitchboardPortState(1);
 			deviceAutomationService.updateDevExclusiveSwitchboardInfo(in);
 			
+			addSwitchDeviceService.exclusiveSwitchboardConn(null, task, updateUser);
 		}catch(Exception e){
 			e.printStackTrace();
 			info = "编辑交换机设备出错了";
