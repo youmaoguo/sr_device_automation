@@ -164,6 +164,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			json.setSuccess(false);
 			
 			DevOnlineTask t = new DevOnlineTask();
+			t.setTaskState(5);
+			t.setSwitchState(3);
 			t.setId(task.getId());
 			writeProcess(t, 2, "从看板申请ip失败", false, userName, "程序异常了，请联系后台开发人员");
 			return json;

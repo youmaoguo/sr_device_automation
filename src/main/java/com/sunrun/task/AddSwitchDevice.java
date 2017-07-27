@@ -130,6 +130,10 @@ public class AddSwitchDevice implements Runnable {
 					deviceAutomationService.updateTask2(task, null, null, userName);
 					return;
 				}
+			}else{
+				task.setSwitchState(3);
+				task.setTaskState(5);
+				deviceAutomationService.updateTask2(task, null, null, userName);
 			}
 		}
 		
@@ -187,7 +191,7 @@ public class AddSwitchDevice implements Runnable {
 				}
 			}
 			
-			if(!json.getSuccess()){
+			/*if(!json.getSuccess()){
 				task.setSwitchState(3);
 				task.setTaskState(5);
 				deviceAutomationService.updateTask2(task, null, null, userName);
@@ -195,7 +199,7 @@ public class AddSwitchDevice implements Runnable {
 			}else{
 				task.setTaskState(2);
 				deviceAutomationService.updateTask2(task, null, null, userName);
-			}
+			}*/
 		}
 		
 		//3.看网络是否通
@@ -235,6 +239,10 @@ public class AddSwitchDevice implements Runnable {
 						task.setTaskState(2);
 						deviceAutomationService.updateTask2(task, null, null, userName);
 					}
+				}else{
+					task.setSwitchState(3);
+					task.setTaskState(5);
+					deviceAutomationService.updateTask2(task, null, null, userName);
 				}
 			}
 			if(code==200){

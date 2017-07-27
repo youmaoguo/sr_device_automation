@@ -1,8 +1,12 @@
 package com.sunrun.task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +64,7 @@ public class PortCheck {
 			Boolean success = true;
 			String mp = "", bp = "";
 			try{
-				DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+				/*DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
 				//area.setAreaName(task.getAreaName());
 				area.setAreaDescribe(task.getAreaName());
 				List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
@@ -75,7 +79,8 @@ public class PortCheck {
 				param.put("back_host", li.get(0).getBackupDevName());
 				param.put("back_user", li.get(0).getBackupTelnetUser());
 				param.put("back_pwd", li.get(0).getBackupTelnetPwd());
-				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);*/
+				String sb="{\"ret_code\" : 200,\"ret_info\" : \"success\",\"data\" : {\"10.1.254.70\" : ['Ethernet1/28', 'Ethernet1/24', 'Ethernet4/26' ],\"10.0.191.252\" :['Ethernet1/24', 'Ethernet1/21', 'Ethernet1/4', 'Ethernet3/26', 'Ethernet4/23', 'Ethernet4/24',   'Ethernet4/27',]}}";
 				if(tag==2){
 					json.setData(sb);
 				}else if(tag==1){
@@ -101,35 +106,72 @@ public class PortCheck {
 						List<String> mainp = findDBPorts(deviceAutomationService, 1);//保存数据库中所有使用了的主汇聚端口
 						List<String> backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
 						
-						int index = 0;
-						boolean t = false;
-						for(int i=0;i<mainlist.size();i++){
-							if(!mainp.contains(mainlist.get(i))){
-								index = i;
-								t=true;
-								break;
+						//=======start===先挑选返回的主备一致的保存在map中
+						Map<String, String> map = new HashMap<String, String>();
+						for(String m : mainlist){
+							if(backuplist.contains(m)){
+								map.put(m, m);
 							}
 						}
-						if(t){
-							mp = mainlist.size()>=index ? mainlist.get(index) : ""; //选定好了主端口
-							
-							//理论上最好备端口跟主端口一样
-							String bpc = "";
-							for(int i=0;i<backuplist.size();i++){
-								if(backuplist.get(i).equals(mp)){
-									bpc = mp;
+						//再比较map中的主备端口是否已经在数据库中使用
+						boolean b = false;
+						if(map!=null && map.size()>0){
+							Set<String> set = map.keySet();
+							for (Iterator<String> it = set.iterator(); it.hasNext();) {
+								String key = (String) it.next();
+								if(!mainp.contains(key) && !backp.contains(key)){
+									mp = key;
+									bp = key;
+									b = true;
 									break;
 								}
 							}
-							if(!bpc.equals("")){
-								boolean g = false;
-								//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
-								backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
-								if(!backp.contains(bpc)){
-									g = true;
+						}
+						//======end====先挑选返回的主备一致的保存在map中
+						if(!b){
+							int index = 0;
+							boolean t = false;
+							for(int i=0;i<mainlist.size();i++){
+								if(!mainp.contains(mainlist.get(i))){
+									index = i;
+									t=true;
+									break;
 								}
-								if(!g){
+							}
+							if(t){
+								mp = mainlist.size()>=index ? mainlist.get(index) : ""; //选定好了主端口
+								
+								//理论上最好备端口跟主端口一样
+								String bpc = "";
+								for(int i=0;i<backuplist.size();i++){
+									if(backuplist.get(i).equals(mp)){
+										bpc = mp;
+										break;
+									}
+								}
+								if(!bpc.equals("")){
+									boolean g = false;
+									//假设找到了跟主端口一样的备端口，则再次比较下从数据库里已经使用的备端口
+									backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
+									if(!backp.contains(bpc)){
+										g = true;
+									}
+									if(!g){
+										int index2 = 0;
+										for(int i=0;i<backuplist.size();i++){
+											if(!backp.contains(backuplist.get(i))){
+												index2 = i;
+												break;
+											}
+										}
+										bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+									}else{
+										bp = bpc;
+									}
+									
+								}else{
 									int index2 = 0;
+									backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
 									for(int i=0;i<backuplist.size();i++){
 										if(!backp.contains(backuplist.get(i))){
 											index2 = i;
@@ -137,26 +179,14 @@ public class PortCheck {
 										}
 									}
 									bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
-								}else{
-									bp = bpc;
 								}
-								
 							}else{
-								int index2 = 0;
-								backp = findDBPorts(deviceAutomationService, 2);	//保存数据库中所有使用了的备汇聚端口
-								for(int i=0;i<backuplist.size();i++){
-									if(!backp.contains(backuplist.get(i))){
-										index2 = i;
-										break;
-									}
-								}
-								bp = backuplist.size()>=index2 ? backuplist.get(index2) : "";
+								code = 400;
+								info = "主汇聚ip"+task.getMainSwitchboardIp()+"上暂时没有空闲可用端口";
+								success = false;
 							}
-						}else{
-							code = 400;
-							info = "主汇聚ip"+task.getMainSwitchboardIp()+"上暂时没有空闲可用端口";
-							success = false;
 						}
+						
 					}
 				}
 				
