@@ -410,9 +410,17 @@ public class DeviceAutomatinoController extends BaseController{
 					Json jj = pc.portCheck(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), 2);
 					Json j = (Json) JSONObject.parseObject(jj.getData().toString(), Json.class);
 					org.json.JSONObject result = new org.json.JSONObject(j.getData().toString());
-					Object main = result.getJSONArray(task.getMainSwitchboardIp());
+					//Object main = result.getJSONArray(task.getMainSwitchboardIp());
+					Object main = null, backup = null;
+					if(task.getBrandName().toLowerCase().equals("cisco")){
+						main = result.getJSONArray(task.getMainSwitchboardIp());
+						backup = result.getJSONArray(task.getBackupSwitchboardIp());
+					}else if(task.getBrandName().toLowerCase().equals("h3c")){
+						main = result.getJSONArray("master");
+						backup = result.getJSONArray("backup");
+					}
 					List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
-					Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
+					//Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
 					List<String> backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口
 					if(mainlist.contains(task.getMainSwitchboardPort()) && backuplist.contains(task.getBackupSwitchboardPort())){
 						AddSwitchDevice addTask = new AddSwitchDevice(deviceAutomationService, addSwitchDeviceService, thirdPartUrl, auth, task, task.getUserName(), executeStep, usercode, telNetUser, telNetPwd); 
@@ -609,6 +617,7 @@ public class DeviceAutomatinoController extends BaseController{
 	 * @param exclusiveSwitchboardIp	带外交换机IP
 	 * @param exclusiveSwitchboardPort 带外交换机端口
 	 * @param model	设备型号
+	 * @param brandName	品牌
 	 */
 	@RequestMapping(value = "/v1/thirdparty/kvmInfo", method = RequestMethod.GET, produces="application/json")
 	public void kvmInfo(HttpServletRequest request, HttpServletResponse response,  @RequestHeader("Authorization") String auth,
@@ -629,7 +638,7 @@ public class DeviceAutomatinoController extends BaseController{
 			DevExclusiveSwitchboardInfo bean = new DevExclusiveSwitchboardInfo();
 			bean.setExclusiveSwitchboardIp(exclusiveSwitchboardIp);
 			bean.setExclusiveSwitchboardPort(exclusiveSwitchboardPort);
-			json = deviceAutomationService.findKvmInfo2(bean, model, thirdPartUrl, auth);
+			json = deviceAutomationService.findKvmInfo2(bean, model, thirdPartUrl, auth, brandName);
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error(json.getRet_info());

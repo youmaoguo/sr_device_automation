@@ -1,7 +1,6 @@
 package com.sunrun.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,6 @@ import com.sunrun.entity.DevExclusiveSwitchboardConn;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
 import com.sunrun.entity.DevIosVersions;
 import com.sunrun.entity.DevOnlineTask;
-import com.sunrun.entity.DevScriptConfig;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.mapper.DevBrandModelMapper;
@@ -269,6 +267,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			String[] ss = li.get(0).getDevName().split("-");
 			String type = ss[ss.length-1];
 			param.put("type", type);//dev_type
+			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			
 			String ips = map.get("ip");
 			String[] ip = ips.split(",");
@@ -525,6 +524,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("accHostname", task.getHostName());	//接入设备对应的host名称
 			param.put("newip", task.getManagerIp());			//在看板系统上申请的IP地址
 			param.put("Type", task.getModelName());			//接入交换机的设备类型，分别为4948E和5548
+			param.put("port", "");		//汇聚交换机备设备远程端口（目前是h3c设备使用，cisco可为none）
+			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -615,6 +616,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("description", "");//接入设备的描述配置信息
 			param.put("newIp", task.getManagerIp());//在看板系统上申请的IP地址
 			param.put("Type", task.getModelName());//接入交换机的设备类型，分别为4948E和5548
+			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -701,9 +703,9 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
 			param.put("port", d.getExclusiveSwitchboardPort());		//交换机的telnet登录端口号
 			param.put("type", task.getModelName());		//交换机的类型，分别为4948E和5548
-			param.put("user", d.getTelnetUser());		//交换机的telnet登录账号 没有
-			param.put("password", d.getTelnetPwd());	//交换机的telnet登录密码 没有
-			
+			param.put("user", d.getTelnetUser());		//交换机的telnet登录账号 
+			param.put("password", d.getTelnetPwd());	//交换机的telnet登录密码  
+			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){
@@ -756,7 +758,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("user", d.getTelnetUser()!=null ? d.getTelnetUser() : "");		//交换机的telnet登录账号
 			param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");	//交换机的telnet登录密码
 			param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
-			
+			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			json = (Json) JSONObject.parseObject(sb, Json.class);
 			if(json.getRet_code()==200){
@@ -814,6 +816,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 					param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");	//交换机的telnet登录密码
 					param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
 					param.put("serverIp", serverIp);		//更新源服务器的IP 配置文件静态获得
+					param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 					
 					if(d.getExclusiveSwitchboardType().equals("5548")){
 						param.put("desFileName", iosName);	//目的文件名 
@@ -1413,6 +1416,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("user", d.getTelnetUser()!=null ?d.getTelnetUser() : "");
 			param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");
 			param.put("type", task.getModelName());
+			param.put("deviceBrand", task.getBrandName());
 			
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			json = (Json) JSONObject.parseObject(sb, Json.class);

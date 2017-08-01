@@ -64,7 +64,7 @@ public class PortCheck {
 			Boolean success = true;
 			String mp = "", bp = "";
 			try{
-				/*DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
+				DevAreaSwitchboardIp area = new DevAreaSwitchboardIp();
 				//area.setAreaName(task.getAreaName());
 				area.setAreaDescribe(task.getAreaName());
 				List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
@@ -79,8 +79,10 @@ public class PortCheck {
 				param.put("back_host", li.get(0).getBackupDevName());
 				param.put("back_user", li.get(0).getBackupTelnetUser());
 				param.put("back_pwd", li.get(0).getBackupTelnetPwd());
-				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);*/
-				String sb="{\"ret_code\" : 200,\"ret_info\" : \"success\",\"data\" : {\"10.1.254.70\" : ['Ethernet1/28', 'Ethernet1/24', 'Ethernet4/26' ],\"10.0.191.252\" :['Ethernet1/24', 'Ethernet1/21', 'Ethernet1/4', 'Ethernet3/26', 'Ethernet4/23', 'Ethernet4/24',   'Ethernet4/27',]}}";
+				param.put("port", "");//汇聚交换机备设备远程端口（目前是h3c设备使用，cisco可为none）
+				param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
+				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
+				//String sb="{\"ret_code\" : 200,\"ret_info\" : \"success\",\"data\" : {\"10.1.254.70\" : ['Ethernet1/28', 'Ethernet1/24', 'Ethernet4/26' ],\"10.0.191.252\" :['Ethernet1/24', 'Ethernet1/21', 'Ethernet1/4', 'Ethernet3/26', 'Ethernet4/23', 'Ethernet4/24',   'Ethernet4/27',]}}";
 				if(tag==2){
 					json.setData(sb);
 				}else if(tag==1){
@@ -94,10 +96,17 @@ public class PortCheck {
 						//解析出取到的所有主备ip对应的端口
 						//JSONObject result = (JSONObject) j.getData();
 						org.json.JSONObject result = new org.json.JSONObject(j.getData().toString());
-						Object main = result.getJSONArray(task.getMainSwitchboardIp());
+						Object main = null, backup = null;
+						if(task.getBrandName().toLowerCase().equals("cisco")){
+							main = result.getJSONArray(task.getMainSwitchboardIp());
+							backup = result.getJSONArray(task.getBackupSwitchboardIp());
+						}else if(task.getBrandName().toLowerCase().equals("h3c")){
+							main = result.getJSONArray("master");
+							backup = result.getJSONArray("backup");
+						}
 						List<String> mainlist = com.alibaba.fastjson.JSONArray.parseArray(main.toString(), String.class);	//从接口中获取所有主汇聚端口
 						
-						Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
+						//Object backup = result.getJSONArray(task.getBackupSwitchboardIp());
 						List<String> backuplist = null;
 						if(backup!=null){
 							backuplist = com.alibaba.fastjson.JSONArray.parseArray(backup.toString(), String.class);//从接口中获取所有备汇聚端口

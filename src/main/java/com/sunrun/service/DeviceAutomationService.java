@@ -151,12 +151,13 @@ public interface DeviceAutomationService {
 	/**
 	 * kvm接口所对应的设备型号信息接口
 	 * @param info
-	 * @param model
+	 * @param model型号
 	 * @param thirdPartUrl
 	 * @param auth
+	 * @param brandName品牌
 	 * @return
 	 */
-	Json findKvmInfo2(DevExclusiveSwitchboardInfo info, String model, String thirdPartUrl, String auth);
+	Json findKvmInfo2(DevExclusiveSwitchboardInfo info, String model, String thirdPartUrl, String auth, String brandName);
 	
 	/**
 	 * 查询区域汇聚交换机ip对应

@@ -34,7 +34,7 @@ public class KvmInfo {
 	     * @throws ExecutionException 
 	     * @throws InterruptedException 
 	     */
-	    public static List<String> completionServiceCount(List<String> ports, DevExclusiveSwitchboardInfo d, String models, String url, String method, String auth) throws InterruptedException, ExecutionException {
+	    public static List<String> completionServiceCount(List<String> ports, DevExclusiveSwitchboardInfo d, String models, String url, String method, String auth, String brandName) throws InterruptedException, ExecutionException {
 	        ExecutorService executorService = Executors.newCachedThreadPool();
 	        CompletionService<String> completionService = new ExecutorCompletionService<String>(executorService);
 	        List<String> list = new ArrayList<String>();
@@ -46,6 +46,7 @@ public class KvmInfo {
 				param.put("user", d.getTelnetUser()!=null ?d.getTelnetUser() : null);
 				param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : null);
 				param.put("type", models);
+				param.put("deviceBrand", brandName);
 	            /*Future<String> s = */completionService.submit(getTask(i, url, param, method, auth));
 	            //list.add(s.get());
 	        }

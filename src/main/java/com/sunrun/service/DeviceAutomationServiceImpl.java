@@ -460,7 +460,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	}
 	
 	@Override
-	public Json findKvmInfo2(DevExclusiveSwitchboardInfo info, String models, String thirdPartUrl, String auth) {
+	public Json findKvmInfo2(DevExclusiveSwitchboardInfo info, String models, String thirdPartUrl, String auth, String brandName) {
 		Json j = new Json();
 		String s = "获取kvm接口所对应的设备型号信息成功";
 		Integer code = 200;	//200:用户查询数据成功
@@ -541,7 +541,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					List<DevExclusiveSwitchboardInfo> list = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
 					if(list!=null && list.size()>0){
 						DevExclusiveSwitchboardInfo d = list.get(0);
-						List<String> l = KvmInfo.completionServiceCount(ports, d, models, thirdPartUrl, "post", auth);
+						List<String> l = KvmInfo.completionServiceCount(ports, d, models, thirdPartUrl, "post", auth, brandName);
 						logger.info("kvm返回："+l.toString());
 						for(int i=0;i<l.size();i++){
 							json = null;
