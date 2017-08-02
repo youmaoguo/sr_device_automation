@@ -524,7 +524,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("accHostname", task.getHostName());	//接入设备对应的host名称
 			param.put("newip", task.getManagerIp());			//在看板系统上申请的IP地址
 			param.put("Type", task.getModelName());			//接入交换机的设备类型，分别为4948E和5548
-			param.put("port", "");		//汇聚交换机备设备远程端口（目前是h3c设备使用，cisco可为none）
+			param.put("port", Integer.parseInt(li.get(0).getTelnetPort()));		//汇聚交换机备设备远程端口（目前是h3c设备使用，cisco可为none）
 			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -1341,12 +1341,14 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			//area.setAreaName(task.getAreaName());
 			area.setAreaDescribe(task.getAreaName());
 			List<DevAreaSwitchboardIp> li = deviceAutomationService.findAreaIp(area);
+			String[] ss = li.get(0).getDevName().split("-");
+			String type = ss[ss.length-1];
 			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/writeNewGatherConfig");
 			param.put("deviceBrand", task.getBrandName());	//品牌型号，列如cisco,huawei,h3c等
 			param.put("host", task.getMainSwitchboardIp());	//交换机的telnet登录IP地址	
-			param.put("type", li.get(0).getDevType());	//汇聚交换机的类型，分别为N7KA、N7KB、65A、65B，四种类型  
+			param.put("type", type);	//汇聚交换机的类型，分别为N7KA、N7KB、65A、65B，四种类型  
 			param.put("ipPortNameUserPass1", task.getMainSwitchboardIp());//主ip	
 			param.put("ipPortNameUserPass2", task.getBackupSwitchboardIp());//备ip	
 			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口	

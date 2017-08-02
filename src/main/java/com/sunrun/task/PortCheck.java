@@ -79,7 +79,7 @@ public class PortCheck {
 				param.put("back_host", li.get(0).getBackupDevName());
 				param.put("back_user", li.get(0).getBackupTelnetUser());
 				param.put("back_pwd", li.get(0).getBackupTelnetPwd());
-				param.put("port", "");//汇聚交换机备设备远程端口（目前是h3c设备使用，cisco可为none）
+				param.put("port", Integer.parseInt(li.get(0).getTelnetPort()));//汇聚交换机备设备远程端口（目前是h3c设备使用，cisco可为none）
 				param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 				String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 				//String sb="{\"ret_code\" : 200,\"ret_info\" : \"success\",\"data\" : {\"10.1.254.70\" : ['Ethernet1/28', 'Ethernet1/24', 'Ethernet4/26' ],\"10.0.191.252\" :['Ethernet1/24', 'Ethernet1/21', 'Ethernet1/4', 'Ethernet3/26', 'Ethernet4/23', 'Ethernet4/24',   'Ethernet4/27',]}}";
