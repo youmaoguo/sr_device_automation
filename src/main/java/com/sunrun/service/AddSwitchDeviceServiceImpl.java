@@ -806,7 +806,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			if(li!=null && li.size()>0){
 				String newVersion = li.get(0).getIosVersion();
 				//如果当前版本和最新版本不一致 则更新当前版本
-				if(!task.getCurrentIosVersion().contains(newVersion)){
+				if(!task.getCurrentIosVersion().toLowerCase().contains(newVersion.toLowerCase())){
 					tag = false;
 					JSONObject param = new JSONObject();
 					param.put("method_name", "/interchanger/v1/updateIos");
