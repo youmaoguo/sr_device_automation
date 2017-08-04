@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
+import com.sunrun.entity.DevIosFtpInfo;
 import com.sunrun.util.RestfulRequestUtil;
 
 @Component
@@ -34,7 +35,7 @@ public class KvmInfo {
 	     * @throws ExecutionException 
 	     * @throws InterruptedException 
 	     */
-	    public static List<String> completionServiceCount(List<String> ports, DevExclusiveSwitchboardInfo d, String models, String url, String method, String auth, String brandName) throws InterruptedException, ExecutionException {
+	    public static List<String> completionServiceCount(List<String> ports, DevExclusiveSwitchboardInfo d, String models, String url, String method, String auth, String brandName, DevIosFtpInfo version) throws InterruptedException, ExecutionException {
 	        ExecutorService executorService = Executors.newCachedThreadPool();
 	        CompletionService<String> completionService = new ExecutorCompletionService<String>(executorService);
 	        List<String> list = new ArrayList<String>();
@@ -43,8 +44,8 @@ public class KvmInfo {
 				param.put("method_name", "/interchanger/v1/checkModel");
 				param.put("host", d.getExclusiveSwitchboardIp());
 				param.put("port", ports.get(i));
-				param.put("user", d.getTelnetUser()!=null ?d.getTelnetUser() : null);
-				param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : null);
+				param.put("user", /*d.getTelnetUser()!=null ?d.getTelnetUser() : null*/version.getTelnetUser());
+				param.put("password", /*d.getTelnetPwd()!=null ? d.getTelnetPwd() : null*/version.getTelnetPwd());
 				param.put("type", models);
 				param.put("deviceBrand", brandName);
 	            /*Future<String> s = */completionService.submit(getTask(i, url, param, method, auth));

@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevAreaSwitchboardIp;
 import com.sunrun.entity.DevBrandModel;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
+import com.sunrun.entity.DevIosFtpInfo;
 import com.sunrun.entity.DevOnlineBatchItil;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevOnlineTaskItil;
@@ -32,6 +33,7 @@ import com.sunrun.mapper.DevAreaSwitchboardIpMapper;
 import com.sunrun.mapper.DevBrandModelMapper;
 import com.sunrun.mapper.DevExclusiveSwitchboardConnMapper;
 import com.sunrun.mapper.DevExclusiveSwitchboardInfoMapper;
+import com.sunrun.mapper.DevIosFtpInfoMapper;
 import com.sunrun.mapper.DevIosVersionsMapper;
 import com.sunrun.mapper.DevOnlineBatchItilMapper;
 import com.sunrun.mapper.DevOnlineTaskItilMapper;
@@ -76,6 +78,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 	private DevAreaSwitchboardIpMapper devAreaSwitchboardIpMapper;
 	@Resource
 	private UserBeanMapper userBeanMapper;
+	@Resource
+	private DevIosFtpInfoMapper devIosFtpInfoMapper;
 	
 	@Transactional
 	@Override
@@ -536,13 +540,20 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 					//map.put(ips.get(0), ports);
 					//}
 					
+					DevIosFtpInfo version = new DevIosFtpInfo();
+					version.setBrandName(brandName);
+					version.setModelName(models);
+					List<DevIosFtpInfo> ss = devIosFtpInfoMapper.findIosFtpInfo(version);
+					if(ss!=null && ss.size()>0)
+						version = ss.get(0);
+					
 					//2.多线程去获取已链接的端口上的版本信息
 					//List<String> ps = (List<String>) map.get(ips.get(0));
 					info.setExclusiveSwitchboardIp(ips.get(0));
 					List<DevExclusiveSwitchboardInfo> list = devExclusiveSwitchboardInfoMapper.findDevExclusiveSwitchboardInfo(info);
 					if(list!=null && list.size()>0){
 						DevExclusiveSwitchboardInfo d = list.get(0);
-						List<String> l = KvmInfo.completionServiceCount(ports, d, models, thirdPartUrl, "post", auth, brandName);
+						List<String> l = KvmInfo.completionServiceCount(ports, d, models, thirdPartUrl, "post", auth, brandName, version);
 						logger.info("kvm返回："+l.toString());
 						for(int i=0;i<l.size();i++){
 							json = null;

@@ -14,10 +14,10 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializa
 	private String exclusiveSwitchboardPort;//'带外交机端口(console)',
 	private Integer exclusiveSwitchboardOrder;//'带外交机顺序',
 	private String exclusiveSwitchboardNote;//'带外交机要信息备注',
-	private String telnetType;
+	/*private String telnetType;
 	private String telnetUser;
 	private String telnetPwd;
-	private String telnetPort;
+	private String telnetPort;*/
 	private String managerSwitchboardIp;
 	private String exclusiveSwitchboardType;
 	private Integer exclusiveSwitchboardPortState;//端口连接状态 0 空闲，1代表实占
@@ -40,7 +40,7 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializa
 	public void setExclusiveSwitchboardType(String exclusiveSwitchboardType) {
 		this.exclusiveSwitchboardType = exclusiveSwitchboardType;
 	}
-	public String getTelnetType() {
+	/*public String getTelnetType() {
 		return telnetType;
 	}
 	public void setTelnetType(String telnetType) {
@@ -63,7 +63,7 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializa
 	}
 	public void setTelnetPort(String telnetPort) {
 		this.telnetPort = telnetPort;
-	}
+	}*/
 	public String getExclusiveSwitchboardIp() {
 		return exclusiveSwitchboardIp;
 	}
@@ -94,9 +94,7 @@ public class DevExclusiveSwitchboardInfo extends BaseEntity implements Serializa
 				+ exclusiveSwitchboardIp + ", exclusiveSwitchboardPort="
 				+ exclusiveSwitchboardPort + ", exclusiveSwitchboardOrder="
 				+ exclusiveSwitchboardOrder + ", exclusiveSwitchboardNote="
-				+ exclusiveSwitchboardNote + ", telnetType=" + telnetType
-				+ ", telnetUser=" + telnetUser + ", telnetPwd=" + telnetPwd
-				+ ", telnetPort=" + telnetPort + ", managerSwitchboardIp="
+				+ exclusiveSwitchboardNote + ", managerSwitchboardIp="
 				+ managerSwitchboardIp + ", exclusiveSwitchboardType="
 				+ exclusiveSwitchboardType + ", exclusiveSwitchboardPortState="
 				+ exclusiveSwitchboardPortState + ", mainAccessPort="+ "]";

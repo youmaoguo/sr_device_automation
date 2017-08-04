@@ -19,12 +19,14 @@ import com.sunrun.entity.DevAreaSwitchboardIp;
 import com.sunrun.entity.DevBrandModel;
 import com.sunrun.entity.DevExclusiveSwitchboardConn;
 import com.sunrun.entity.DevExclusiveSwitchboardInfo;
+import com.sunrun.entity.DevIosFtpInfo;
 import com.sunrun.entity.DevIosVersions;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevTaskExecute;
 import com.sunrun.entity.view.DevOnlineBatchTaskView;
 import com.sunrun.mapper.DevBrandModelMapper;
 import com.sunrun.mapper.DevExclusiveSwitchboardConnMapper;
+import com.sunrun.mapper.DevIosFtpInfoMapper;
 import com.sunrun.mapper.DevIosVersionsMapper;
 import com.sunrun.mapper.DevScriptConfigMapper;
 import com.sunrun.util.Json;
@@ -45,6 +47,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 	private DevIosVersionsMapper devIosVersionsMapper;
 	@Resource
 	private DevBrandModelMapper devBrandModelMapper;
+	@Resource
+	private DevIosFtpInfoMapper devIosFtpInfoMapper;
 	
 	@Value("${device.serverIp}")
 	private String serverIp;
@@ -702,13 +706,23 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
 			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
 			
+			DevIosFtpInfo version = new DevIosFtpInfo();
+			version.setBrandName(task.getBrandName());
+			version.setModelName(task.getModelName());
+			List<DevIosFtpInfo> infos = devIosFtpInfoMapper.findIosFtpInfo(version);
+			String user = "", pwd = "";
+			if(infos!=null && infos.size()>0){
+				user = infos.get(0).getTelnetUser();
+				pwd = infos.get(0).getTelnetPwd();
+			}
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/managementPort");
 			param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
 			param.put("port", d.getExclusiveSwitchboardPort());		//交换机的telnet登录端口号
 			param.put("type", task.getModelName());		//交换机的类型，分别为4948E和5548
-			param.put("user", d.getTelnetUser());		//交换机的telnet登录账号 
-			param.put("password", d.getTelnetPwd());	//交换机的telnet登录密码  
+			param.put("user", /*d.getTelnetUser()*/user);		//交换机的telnet登录账号 
+			param.put("password", /*d.getTelnetPwd()*/pwd);	//交换机的telnet登录密码  
 			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
@@ -754,12 +768,22 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
 			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
 			
+			DevIosFtpInfo version = new DevIosFtpInfo();
+			version.setBrandName(task.getBrandName());
+			version.setModelName(task.getModelName());
+			List<DevIosFtpInfo> infos = devIosFtpInfoMapper.findIosFtpInfo(version);
+			String user = "", pwd = "";
+			if(infos!=null && infos.size()>0){
+				user = infos.get(0).getTelnetUser();
+				pwd = infos.get(0).getTelnetPwd();
+			}
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/checkIos");
 			param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
 			param.put("port", Integer.parseInt(d.getExclusiveSwitchboardPort()));//交换机的telnet登录端口号
-			param.put("user", d.getTelnetUser()!=null ? d.getTelnetUser() : "");		//交换机的telnet登录账号
-			param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");	//交换机的telnet登录密码
+			param.put("user", /*d.getTelnetUser()!=null ? d.getTelnetUser() : ""*/user);		//交换机的telnet登录账号
+			param.put("password", /*d.getTelnetPwd()!=null ? d.getTelnetPwd() : ""*/pwd);	//交换机的telnet登录密码
 			param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
 			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
@@ -791,6 +815,16 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
 			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
 			
+			DevIosFtpInfo v = new DevIosFtpInfo();
+			v.setBrandName(task.getBrandName());
+			v.setModelName(task.getModelName());
+			List<DevIosFtpInfo> infos = devIosFtpInfoMapper.findIosFtpInfo(v);
+			String user = "", pwd = "";
+			if(infos!=null && infos.size()>0){
+				user = infos.get(0).getTelnetUser();
+				pwd = infos.get(0).getTelnetPwd();
+			}
+			
 			//根据交换机品牌型号去查出最新的ios版本
 			DevIosVersions version = new DevIosVersions();
 			version.setBrandName(task.getBrandName());
@@ -815,8 +849,8 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 					param.put("method_name", "/interchanger/v1/updateIos");
 					param.put("host", d.getExclusiveSwitchboardIp());		//交换机的telnet登录IP地址
 					param.put("port", Integer.parseInt(d.getExclusiveSwitchboardPort()));//交换机的telnet登录端口号
-					param.put("user", d.getTelnetUser()!=null ? d.getTelnetUser() : "");		//交换机的telnet登录账号
-					param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");	//交换机的telnet登录密码
+					param.put("user", /*d.getTelnetUser()!=null ? d.getTelnetUser() : ""*/user);		//交换机的telnet登录账号
+					param.put("password", /*d.getTelnetPwd()!=null ? d.getTelnetPwd() : ""*/pwd);	//交换机的telnet登录密码
 					param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
 					param.put("serverIp", serverIp);		//更新源服务器的IP 配置文件静态获得
 					param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
@@ -1414,12 +1448,22 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			dev.setExclusiveSwitchboardPort(task.getExclusiveSwitchboardPort());
 			DevExclusiveSwitchboardInfo d = deviceAutomationService.findDevExclusiveSwitchboardInfo(dev).get(0);
 			
+			DevIosFtpInfo version = new DevIosFtpInfo();
+			version.setBrandName(task.getBrandName());
+			version.setModelName(task.getModelName());
+			List<DevIosFtpInfo> infos = devIosFtpInfoMapper.findIosFtpInfo(version);
+			String user = "", pwd = "";
+			if(infos!=null && infos.size()>0){
+				user = infos.get(0).getTelnetUser();
+				pwd = infos.get(0).getTelnetPwd();
+			}
+			
 			JSONObject param = new JSONObject();
 			param.put("method_name", "/interchanger/v1/showConfig");
 			param.put("host", d.getExclusiveSwitchboardIp());
 			param.put("port", d.getExclusiveSwitchboardPort());
-			param.put("user", d.getTelnetUser()!=null ?d.getTelnetUser() : "");
-			param.put("password", d.getTelnetPwd()!=null ? d.getTelnetPwd() : "");
+			param.put("user", /*d.getTelnetUser()!=null ?d.getTelnetUser() : ""*/user);
+			param.put("password", /*d.getTelnetPwd()!=null ? d.getTelnetPwd() : ""*/pwd);
 			param.put("type", task.getModelName());
 			param.put("deviceBrand", task.getBrandName());
 			
