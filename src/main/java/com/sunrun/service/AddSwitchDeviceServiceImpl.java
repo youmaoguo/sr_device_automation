@@ -107,6 +107,10 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 				json.setRet_code(j.getRet_code());
 				json.setRet_info(j.getRet_info());
 				json.setSuccess(j.getSuccess());
+				 DevOnlineTask t = new  DevOnlineTask();
+				 t.setId(task.getId());
+				 t.setUpdate_user(userName);
+				writeProcess(t, 2, "从看板申请ip失败", false, userName, null);
 				return json;
 			}else{
 				boolean b = false;
@@ -741,7 +745,6 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		
 	}
 
-	@SuppressWarnings("finally")
 	@Override
 	public Json findDeviceIosVersion(String thirdPartUrl, String auth, DevOnlineTask task, String userName){
 		Json json = new Json();

@@ -398,7 +398,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 
 	@Override
 	public Json findKvmInfo(DevExclusiveSwitchboardInfo info, String thirdPartUrl, String auth) {
-		Json j = new Json();
+		/*Json j = new Json();
 		String s = "获取kvm接口所对应的设备型号信息成功";
 		Integer code = 200;	//200:用户查询数据成功
 		Boolean success = true;
@@ -456,7 +456,8 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 		j.setRet_info(s);
 		j.setSuccess(success);
 		j.setData(li); 
-		return j;
+		return j;*/
+		return null;
 	}
 	
 	@Override
@@ -578,7 +579,7 @@ public class DeviceAutomationServiceImpl implements DeviceAutomationService {
 								obj.put("exclusiveSwitchboardOrder", order); 
 								obj.put("brandName", StringUtils.isEmpty(bean.getBrandName())?"":bean.getBrandName());
 								obj.put("modelName", StringUtils.isEmpty(bean.getModelDescribe())?"":bean.getModelDescribe());
-								obj.put("currentIosVersion", ios.substring(0, ios.length()-1));
+								obj.put("currentIosVersion", StringUtils.isEmpty(ios)?"":ios.substring(0, ios.length()-1));
 								obj.put("showkvmDescribe", StringUtils.isEmpty(bean.getShowkvmDescribe())?"":bean.getShowkvmDescribe());
 								li.add(obj);
 							}
