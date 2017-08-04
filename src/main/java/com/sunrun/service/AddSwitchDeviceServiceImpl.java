@@ -859,7 +859,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 						param.put("desFileName", iosName);	//目的文件名 
 						param.put("sourceFileName", sourceFileName);//源文件名 
 						param.put("iosName", iosName);		//IOS名称
-					}else if(d.getExclusiveSwitchboardType().equals("4948E")){
+					}else{
 						param.put("desFileName", newVersion);	//目的文件名 						
 						param.put("sourceFileName", newVersion);//源文件名 
 						param.put("iosName", newVersion);		//IOS名称
