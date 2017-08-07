@@ -13,7 +13,7 @@
 			telnet_type AS telnetType,
 			telnet_user AS telnetUser,
 			telnet_port AS telnetPort,
-			telnet_pwd AS telnetPwd
+			telnet_pwd AS telnetPwd,
 			state
 		from dev_ios_ftp_info
 		where 1=1
