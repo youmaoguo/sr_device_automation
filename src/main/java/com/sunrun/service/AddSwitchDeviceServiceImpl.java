@@ -1,8 +1,10 @@
 package com.sunrun.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -1021,11 +1023,15 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 		Boolean success = true;
 		//每个task任务不能重复申请itil
 		String area = "";
+		List<String> areas = new ArrayList<String>();
 		for(int i=0;i<taskId.length;i++){
 			DevOnlineBatchTaskView batchView = new DevOnlineBatchTaskView();
 			batchView.setId(taskId[i]);
 			DevOnlineBatchTaskView view = deviceAutomationService.findTaskById(batchView);
-			area += view.getAreaName()+"、";
+			if(!areas.contains(view.getAreaName())){
+				area += view.getAreaName()+"、";
+				areas.add(view.getAreaName());
+			}
 			if(view!=null && !StringUtils.isEmpty(view.getItilNumber())){
 				success = false;
 				break;
@@ -1037,7 +1043,6 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			json.setSuccess(false);
 			return json;
 		}
-		
 		try{
 			boolean b = deviceAutomationService.switchDeviceITIL(thirdPartUrl, itilPlannedEnd, itilPlannedStart, userName, taskId, usercode, area.substring(0, area.length()-1));
 			if(!b){
