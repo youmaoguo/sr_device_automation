@@ -192,7 +192,7 @@ public class DeviceAutomatinoController extends BaseController{
 			Integer total = deviceAutomationService.countDevBatchTask(batchView, like, sortBy, order);
 			Map<Object, Object> collect = new HashMap<Object, Object>();
 			collect.put("total", total);
-			collect.put("pagesize", setPageSize(currentPage, pageSize, list));
+			collect.put("pagesize", setPageSize(currentPage, pageSize, total));
 			json.setCollect(collect);
 			json.setData(list);
 			

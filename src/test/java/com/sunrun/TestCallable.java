@@ -102,7 +102,7 @@ public class TestCallable {
     }
     
     public static String doSomeThing(){
-    	String s = StringUtil.read("D:\\zipText\\host.sql").substring(0,5);
+    	String s = StringUtil.getUuid();
     	try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {

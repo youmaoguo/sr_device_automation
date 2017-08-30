@@ -125,15 +125,25 @@ public class BaseController {
 		return limit;
 	}
 	
-	public Integer setPageSize(Integer currentPage, Integer pageSize, Object obj){
-		List<Object> list = (List<Object>) obj;
-		Integer a = null;
-		if(currentPage==0)
-			a = (list!=null && list.size()>0) ? list.size() : 0;
-		if(list!=null && list.size()>0 && currentPage>0)
-			a = list.size();
-		if(list==null || list.size()==0)
+	public Integer setPageSize(Integer currentPage, Integer pageSize, int total){
+		Integer a = 0;
+		if(total==0){
 			a = 0;
+		}else if(total>=pageSize){
+			if(currentPage<=1)
+				a = pageSize;
+			if(currentPage>1){
+				int size = total - pageSize*(currentPage-1);
+				if(size>0 && size>=pageSize)
+					a = pageSize;
+				else if(size>0 && size<pageSize)
+					a = size;
+				else
+					a = 0;
+			}
+		}else if(total<pageSize){
+			a = total;
+		}
 		return a;
 	}
 	
