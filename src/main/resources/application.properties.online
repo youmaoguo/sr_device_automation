@@ -1,0 +1,78 @@
+#mysql connect info start
+spring.datasource.url=jdbc:mysql://10.1.248.237:3306/portal?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true
+spring.datasource.username=portal
+spring.datasource.password=portal
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.maxActive=20
+spring.datasource.initialSize=1
+spring.datasource.minIdle=1
+spring.datasource.maxWait=60000
+spring.datasource.timeBetweenEvictionRunsMillis=60000
+spring.datasource.minEvictableIdleTimeMillis=30000
+spring.datasource.maxOpenPreparedStatements=20
+server.port=5001
+spring.datasource.database=portal
+#mysql connect info end
+
+#email info start
+mail.smtp.host=10.0.6.120
+mail.smtp.port=25
+mail.smtp.auth=false
+#email info end
+
+#logger start
+logging.path = F\:/log/sr_device_automation
+logging.level.org.springframework.web=info
+logging.level.com.sunrun=debug
+logging.level.net.sf.ehcache=debug
+logging.level.org.mybatis.caches=debug
+logging.level.com.sunrun.mapper=trace
+#logger end
+
+#sr_public param start
+sr_public.thirdPartUrl=http://127.0.0.1:5000/sr_public/v1/thirdparty
+sr_public.sendEmail=http://127.0.0.1:5000/sr_public/sendDutyLog/v1/sendDutyLogWithEmail
+#itil.url=http://99.1.76.103:13080/SM/9/rest/genrequests
+itil.url=http://10.1.248.21:13081/SM/9/rest/genrequests
+itil.user=cmb.int.net.portal
+itil.pwd=cmb.int.net.portal
+itil.wsURL=http://10.1.248.21:13081/sc62server/PWS/CMBChange
+itil.changeItils=http://10.1.248.21:13081/SM/9/rest/genchanges
+#sr_public param end
+#interface url start
+device.serverIp=192.168.1.1
+device.Authorization.username=admin
+device.Authorization.password=helloWorld
+device.switch.portCheck=http://10.1.251.162:8009/api/v1/portCheck
+device.switch.ping=http://10.1.251.162:8009/api/v1/pingFun
+device.switch.creatConverPage=http://10.1.251.162:8009/api/v1/CreatConverPage
+device.switch.creatAccessPage=http://10.1.251.162:8009/api/v1/CreatAccessPage
+device.switch.managementPort=http://10.1.251.162:8009/api/v1/managementPort
+device.switch.checkIos=http://10.1.251.162:8009/api/v1/checkIos
+device.switch.updateIos=http://10.1.251.162:8009/api/v1/updateIos
+device.switch.writeAccessConfig=http://10.1.251.162:8009/api/v1/writeAccessConfig
+device.switch.writeNewAccessConfig=http://10.1.251.162:8009/api/v1/writeNewAccessConfig
+device.switch.writeGatherConfig=http://10.1.251.162:8009/api/v1/writeGatherConfig
+device.switch.writeNewGatherConfig=http://10.1.251.162:8009/api/v1/writeNewGatherConfig
+device.switch.checkConfig=http://10.1.251.162:8009/api/v1/checkConfig
+device.switch.checkModel=http://10.1.251.162:8009/api/v1/checkModel
+device.switch.connectState=http://10.1.251.162:8009/api/v1/connectState
+device.kanban.queryIpBySubnet=http://10.1.217.43:8280/operation/netIpAddress/request
+device.kanban.requestIp=http://10.1.217.43:8280/operation/netIpAddress/assignIPs
+#device.kanban.queryIpBySubnet=http://99.1.76.195/ngap/api/operation/netIpAddress/request
+#device.kanban.requestIp=http://99.1.76.195/ngap/api/operation/netIpAddress/assignIPs
+
+#device.switch.checkNewConfig=http://10.1.251.238/neteagle3/newdevice/newDevice/newdevice.action
+device.switch.checkNewConfig=http://10.1.251.234/neteagle3/newdevice/newDevice/newdevice.action
+#interface url end 
+
+
+# \u914D\u7F6Ejsp\u6587\u4EF6\u7684\u4F4D\u7F6E\uFF0C\u9ED8\u8BA4\u4F4D\u7F6E\u4E3A\uFF1Asrc/main/webapp
+spring.mvc.view.prefix:/pages/
+# \u914D\u7F6Ejsp\u6587\u4EF6\u7684\u540E\u7F00
+spring.mvc.view.suffix:.jsp
+
+
+
+
+
