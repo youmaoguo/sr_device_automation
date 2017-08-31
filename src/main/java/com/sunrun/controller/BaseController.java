@@ -127,6 +127,8 @@ public class BaseController {
 	
 	public Integer setPageSize(Integer currentPage, Integer pageSize, int total){
 		Integer a = 0;
+		if(pageSize==0)
+			pageSize = 20;//若只是传递了页数，则默认每页20
 		if(total==0){
 			a = 0;
 		}else if(total>=pageSize){
