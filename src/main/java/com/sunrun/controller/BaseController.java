@@ -118,9 +118,9 @@ public class BaseController {
 		String limit = null;
 		if(pageSize==0)
 			pageSize = 20;//若只是传递了页数，则默认每页20
-		if(currentPage>1)
-			limit = (currentPage-1)*pageSize + ", " + pageSize;
-		if(currentPage<=1)
+		if(currentPage>=1)
+			limit = (currentPage+1-1)*pageSize + ", " + pageSize;
+		if(currentPage<=0)
 			limit = "0, " + pageSize;
 		return limit;
 	}
@@ -132,10 +132,10 @@ public class BaseController {
 		if(total==0){
 			a = 0;
 		}else if(total>=pageSize){
-			if(currentPage<=1)
+			if(currentPage<=0)
 				a = pageSize;
-			if(currentPage>1){
-				int size = total - pageSize*(currentPage-1);
+			if(currentPage>=1){
+				int size = total - pageSize*(currentPage+1-1);
 				if(size>0 && size>=pageSize)
 					a = pageSize;
 				else if(size>0 && size<pageSize)
