@@ -24,6 +24,7 @@ import com.sunrun.interfaces.GetPortVlan;
 import com.sunrun.interfaces.PortDredgeConfig;
 import com.sunrun.service.DevPortDredgeOrderService;
 import com.sunrun.task.PortDredgeExecuteInfo;
+import com.sunrun.util.Base64Util;
 import com.sunrun.util.Json;
 import com.sunrun.util.StringUtil;
 
@@ -134,6 +135,7 @@ public class DevPortDredgeOrderController extends BaseController{
 				devPortDredgeOrderService.editPortDredgeOrder(port);
 				
 				//调用 执行
+				switchboardPass = new String(Base64Util.base64Decode(switchboardPass));
 				PortDredgeExecuteInfo p = new PortDredgeExecuteInfo(devPortDredgeOrderService, id, switchboardIp, portModeVlan, switchboardUser, switchboardPass);
 				Thread t = new Thread(p);
 		        t.start();
