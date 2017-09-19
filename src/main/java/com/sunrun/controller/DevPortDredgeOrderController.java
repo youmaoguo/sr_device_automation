@@ -122,6 +122,11 @@ public class DevPortDredgeOrderController extends BaseController{
 			String id = StringUtil.getUuid();
 			json = devPortDredgeOrderService.savePortDredgeOrder(id, userId, handlerName, switchboardIp, portModeVlan);
 			if(json.getSuccess()){
+				List<Object> data = new ArrayList<Object>();
+				JSONObject o = new JSONObject();
+				o.put("taskId", id);
+				data.add(o);
+				json.setData(data);
 				//将此工单锁定，更改状态是正在执行中
 				DevPortDredgeOrder port = new DevPortDredgeOrder();
 				port.setId(id);
