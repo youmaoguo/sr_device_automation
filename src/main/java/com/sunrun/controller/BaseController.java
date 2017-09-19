@@ -77,6 +77,20 @@ public class BaseController {
 		}
 	}
 	
+	public void response2(Json json, HttpServletResponse response, HttpServletRequest request){
+		setResponse(response);
+		try {
+			String callback = request.getParameter("callback");	//参数值必须为：jsonpCallBack
+			if(callback==null || callback.equals(""))
+				response.getWriter().print(JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteDateUseDateFormat));
+			else
+				response.getWriter().print(callback + "(" + JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteDateUseDateFormat));
+			logger.info("后台响应json格式数据："+JSONObject.toJSONString(json));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * 判断是否跨域请求（和前端商定，跨域请求必须带‘callback’参数）
 	 * @param request

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunrun.mapper.DevPortDredgeOrderMapper">
+
+
+	<select id="findPortDredgeOrder" resultType="com.sunrun.entity.DevPortDredgeOrder">
+		select 
+			id AS id, 
+			handler_name AS handlerName,
+			switchboard_ip AS switchboardIp,
+			port_mode_vlan AS portModeVlan,
+			execute_state AS executeState,
+			create_time AS createTime,
+			state
+		from dev_port_dredge_order
+		where state=1
+		<if test="port!=null and port.id!=null">
+		    AND id = #{port.id}
+		</if>
+		<if test="port!=null and port.switchboardIp!=null">
+		    AND switchboardIp = #{port.switchboardIp}
+		</if>
+		<if test="port!=null and port.portModeVlan!=null">
+		    AND portModeVlan = #{port.portModeVlan}
+		</if>
+		<if test="port!=null and port.executeState!=null">
+		    AND executeState = #{port.executeState}
+		</if>
+		<if test="like!= null">
+			<include refid="likeQuery" />
+		</if>
+		<if test="sortBy!=null">
+				order by ${sortBy}
+		</if>
+		<if test="sortBy==null">
+				order by create_time
+		</if>
+		<if test="order!=null">
+				${order}
+		</if>
+		<if test="order==null">
+				desc
+		</if>
+		<if test="limit!=null">
+				limit ${limit}
+		</if>
+	</select>
+
+	<select id="countPortDredgeOrder" resultType="java.lang.Integer">
+		select  count(*) from dev_port_dredge_order where state=1
+		<if test="port!=null and port.id!=null">
+		    AND id = #{port.id}
+		</if>
+		<if test="port!=null and port.switchboardIp!=null">
+		    AND switchboard_ip = #{port.switchboardIp}
+		</if>
+		<if test="port!=null and port.portModeVlan!=null">
+		    AND port_mode_vlan = #{port.portModeVlan}
+		</if>
+		<if test="port!=null and port.executeState!=null">
+		    AND execute_state = #{port.executeState}
+		</if>
+		<if test="like!= null">
+			<include refid="likeQuery" />
+		</if>
+	</select>
+
+	<sql id="likeQuery">
+		AND (
+			     create_time like binary concat(concat('%',#{like}),'%') 
+			    or execute_state like binary concat(concat('%',#{like}),'%') 
+			    or handler_name like concat(concat('%',#{like}),'%') 
+			    or switchboard_ip like concat(concat('%',#{like}),'%') 
+			    or port_mode_vlan like concat(concat('%',#{like}),'%') 
+		    )
+	</sql>
+	
+	<insert id="savePortDredgeOrder">
+		insert into dev_port_dredge_order(
+			id,			handler_name,		switchboard_ip,			port_mode_vlan,
+			execute_state,						state,			create_time, create_user
+		) values (
+			#{port.id},	#{port.handlerName}, #{port.switchboardIp}, #{port.portModeVlan},
+			#{port.executeState},				1,				now(),		#{port.create_user}
+		)
+	</insert>
+	
+	<update id="editPortDredgeOrder">
+		update dev_port_dredge_order 
+		<trim prefix="set" suffixOverrides=",">
+			update_time = now(),
+			<if test="port!=null and port.executeState != null">execute_state=#{port.executeState},</if>
+			<if test="port!=null and port.state != null">state=#{port.state},</if>
+			<if test="port!=null and port.handlerName != null">handler_name=#{port.handlerName},</if>
+			<if test="port!=null and port.switchboardIp != null">switchboard_ip=#{port.switchboardIp},</if>
+			<if test="port!=null and port.portModeVlan != null">port_mode_vlan=#{port.portModeVlan},</if>
+		</trim>
+		where 1=1
+		<if test="port!=null and port.id != null">
+		    AND id = #{port.id}
+		</if>
+	</update>
+	
+	<select id="distinctCountPortVlan" resultType="java.lang.Integer">
+		select count(*) from dev_port_dredge_order where state=1 
+		and switchboard_ip = #{switchboardIp}
+		and (
+			port_mode_vlan like   concat(#{port}, '-%')
+			OR port_mode_vlan like concat('%-', #{vlan})  
+		)
+	</select>
+
+</mapper>

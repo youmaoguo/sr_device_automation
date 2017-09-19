@@ -279,8 +279,8 @@
 	<sql id="taskLikeQuery">
 		AND (
 			    taskView.createTime like binary concat(concat('%',#{like}),'%') 
-			    taskView.createUser like concat(concat('%',#{like}),'%') 
-			    taskView.batchName like concat(concat('%',#{like}),'%') 
+			    or taskView.createUser like concat(concat('%',#{like}),'%') 
+			    or taskView.batchName like concat(concat('%',#{like}),'%') 
 			    or taskView.batchDescribe like concat(concat('%',#{like}),'%') 
 			    or taskView.batchState like binary  concat(concat('%',#{like}),'%') 
 			    or taskView.itilNumber like concat(concat('%',#{like}),'%') 

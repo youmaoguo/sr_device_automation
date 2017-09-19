@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -13,9 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sunrun.entity.DevOnlineTask;
+import com.sunrun.entity.DevPortCommandInfo;
+import com.sunrun.entity.DevPortDredgeOrder;
+import com.sunrun.mapper.DevPortCommandInfoMapper;
+import com.sunrun.mapper.DevPortDredgeOrderMapper;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
 import com.sunrun.task.PortCheck;
+import com.sunrun.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
@@ -29,13 +35,28 @@ public class SrDeviceAutomationApplicationTests {
 	private AddSwitchDeviceService addSwitchDeviceService;
 	@Resource
 	private PortCheck portCheck;
-
+	@Resource
+	private DevPortDredgeOrderMapper devPortDredgeOrderMapper;
+	@Resource
+	private DevPortCommandInfoMapper devPortCommandInfoMapper;
+	
+	
 	@Test
 	public void contextLoads() {
-		
+		DevPortDredgeOrder port = new DevPortDredgeOrder();
+		port.setId("1");
+		port.setState(1);
+		devPortDredgeOrderMapper.editPortDredgeOrder(port);
 	}
 	
 	public static void main(String[] args) {
+		String port= "125-dd-0101;";
+		String[] p = port.split(";");
+		System.out.println(p.length);
+		for(int i=0;i<p.length;i++){
+			System.out.println("i="+i+"--"+p[i]);
+		}
+		
 		String itilPlannedEnd = "2017-07-03 19:00";
 		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
