@@ -1,7 +1,9 @@
 package com.sunrun.controller;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevPortDredgeOrder;
 import com.sunrun.interfaces.GetPortVlan;
@@ -120,8 +123,9 @@ public class DevPortDredgeOrderController extends BaseController{
 			return;
 		}
 		try{
+			switchboardPass = new String(Base64Util.base64Decode(switchboardPass));
 			String id = StringUtil.getUuid();
-			json = devPortDredgeOrderService.savePortDredgeOrder(id, userId, handlerName, switchboardIp, portModeVlan);
+			json = devPortDredgeOrderService.savePortDredgeOrder(id, userId, handlerName, switchboardIp, portModeVlan, switchboardUser, switchboardPass);
 			if(json.getSuccess()){
 				List<Object> data = new ArrayList<Object>();
 				JSONObject o = new JSONObject();
@@ -135,7 +139,6 @@ public class DevPortDredgeOrderController extends BaseController{
 				devPortDredgeOrderService.editPortDredgeOrder(port);
 				
 				//调用 执行
-				switchboardPass = new String(Base64Util.base64Decode(switchboardPass));
 				PortDredgeExecuteInfo p = new PortDredgeExecuteInfo(devPortDredgeOrderService, id, switchboardIp, portModeVlan, switchboardUser, switchboardPass);
 				Thread t = new Thread(p);
 		        t.start();
@@ -197,6 +200,8 @@ public class DevPortDredgeOrderController extends BaseController{
 								@RequestParam(value = "portModeVlan", required = false) String portModeVlan,
 								HttpServletRequest request, HttpServletResponse response){
 		Json json = new Json();
+		List<Object> data = new ArrayList<Object>();
+		JSONObject obj = new JSONObject();
 		logger.info("获取交换机配置信息入参ip："+switchboardIp+";端口"+portModeVlan);
 		if(StringUtils.isEmpty(switchboardIp) || StringUtils.isEmpty(portModeVlan)){
 			json.setRet_code(401);
@@ -207,11 +212,19 @@ public class DevPortDredgeOrderController extends BaseController{
 		}
 		try{
 			//调用Python接口获取
-			String[] s = portModeVlan.split("-");
-			String port = s[0];
-			String vlan = s.length==3?s[2]:"";
-			json = portDredgeConfig.portDredgeConfig(switchboardIp, port, vlan);
-			
+			json = portDredgeConfig.portDredgeConfig(switchboardIp, portModeVlan);
+			if(json.getSuccess()){
+				List<String> config = new ArrayList<String>();
+				JSONArray array = (JSONArray) json.getData();
+				JSONObject o = (JSONObject) array.get(0);
+				Set<String> keys = o.keySet();
+				for(Iterator<String> it = keys.iterator(); it.hasNext();){
+					String key = it.next();
+					List<String> ss = (List<String>) o.get(key);
+					config.addAll(ss);
+				}
+				obj.put("config", config);
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("获取交换机配置信息出错");

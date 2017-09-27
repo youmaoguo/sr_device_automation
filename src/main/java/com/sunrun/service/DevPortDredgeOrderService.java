@@ -9,12 +9,17 @@ import com.sunrun.util.Json;
 public interface DevPortDredgeOrderService {
 	
 	/**
-	 * 新增工单记录 
+	 * 新增工单记录
+	 * @param id
+	 * @param userId
 	 * @param handlerName
 	 * @param switchboardIp
 	 * @param portModeVlan
+	 * @param switchboardUser
+	 * @param switchboardPass
+	 * @return
 	 */
-	Json savePortDredgeOrder(String id,String userId, String handlerName, String switchboardIp, String portModeVlan);
+	Json savePortDredgeOrder(String id,String userId, String handlerName, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass);
 	
 	
 	/**

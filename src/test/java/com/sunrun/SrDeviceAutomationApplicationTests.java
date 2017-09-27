@@ -2,6 +2,7 @@ package com.sunrun;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,9 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevOnlineTask;
 import com.sunrun.entity.DevPortCommandInfo;
 import com.sunrun.entity.DevPortDredgeOrder;
@@ -21,6 +25,7 @@ import com.sunrun.mapper.DevPortDredgeOrderMapper;
 import com.sunrun.service.AddSwitchDeviceService;
 import com.sunrun.service.DeviceAutomationService;
 import com.sunrun.task.PortCheck;
+import com.sunrun.util.Json;
 import com.sunrun.util.StringUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -50,6 +55,25 @@ public class SrDeviceAutomationApplicationTests {
 	}
 	
 	public static void main(String[] args) {
+		String s = "{\"ret_code\": 200,\"ret_info\": \"成功\",\"data\": [{\"port\": [{\"name\": \"key-Eth1/11\",\"state\": 0}],\"vlan\": [\"vlan100\",\"vlan101\"]}]}";
+		Json json = JSONObject.parseObject(s, Json.class);
+		JSONArray data = (JSONArray) json.getData();
+		JSONObject obj = (JSONObject) data.get(0);
+		List<String> vlans = (List<String>) obj.get("vlan");
+		if(vlans.contains("vlan100"))
+			System.out.println(1111111111);
+		JSONArray ps = obj.getJSONArray("port");
+		List<String> ports = new ArrayList<String>();
+		for(int i=0; i<ps.size(); i++){
+			JSONObject o = (JSONObject) ps.get(i);
+			int state = o.getInteger("state");
+			if(state==0)
+				ports.add(o.getString("name"));
+		}
+		System.out.println(ports.toString());
+		
+		
+		
 		String port= "125-dd-0101;";
 		String[] p = port.split(";");
 		System.out.println(p.length);
