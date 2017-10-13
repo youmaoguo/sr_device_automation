@@ -110,7 +110,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		JSONObject obj = JSONObject.parseObject(jsonStr);
 		String userId = obj.getString("userId");
 		String handlerName = obj.getString("userName");
-		String switchboardIp = obj.getString("switchboardIp");
+		String switchboardIp = obj.getString("switchboardIP");
 		String portModeVlan = obj.getString("portModeVlan");
 		String switchboardUser = obj.getString("switchboardUser");//登陆交换机 高权账号
 		String switchboardPass = obj.getString("switchboardPass");//高权账号密码

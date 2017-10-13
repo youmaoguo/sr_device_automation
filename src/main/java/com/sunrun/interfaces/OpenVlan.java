@@ -20,7 +20,7 @@ public class OpenVlan {
 	private Logger logger = Logger.getLogger(OpenVlan.class);
 	
 	@Value("${port.openVlan}")
-	private String url;
+	private String url_properties;
 	
 	/**
 	 * 开通vlan
@@ -32,6 +32,7 @@ public class OpenVlan {
 	 */
 	public Json openVlan(String switchboardIp, String vlan, String switchboardUser, String switchboardPass){
 		Json json = new Json();
+		String url=url_properties;
 		try{
 			JSONObject param = new JSONObject();
 			param.put("switchboardUser", switchboardUser);

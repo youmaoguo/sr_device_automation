@@ -20,7 +20,7 @@ public class PortDredgeConfig {
 	private Logger logger = Logger.getLogger(PortDredgeConfig.class);
 	
 	@Value("${port.portDredgeConfig}")
-	private String url;
+	private String url_properties;
 	
 	/**
 	 * 获取交换机配置信息
@@ -30,6 +30,7 @@ public class PortDredgeConfig {
 	 */
 	public Json portDredgeConfig(String switchboardIp, String portModeVlan){
 		Json json = new Json();
+		String url=url_properties;
 		try{
 			url = url.replace("{switchboardIp}", switchboardIp);
 			url = url + "?portModeVlan="+portModeVlan;

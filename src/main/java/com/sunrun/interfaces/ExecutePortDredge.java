@@ -21,7 +21,7 @@ public class ExecutePortDredge {
 	private Logger logger = Logger.getLogger(ExecutePortDredge.class);
 	
 	@Value("${port.execute}")
-	private String url;
+	private String url_properties;
 	
 	/**
 	 * 执行指令
@@ -34,6 +34,7 @@ public class ExecutePortDredge {
 	 */
 	public Json executePortDredge(String switchboardIp, String portModeVlan, String method, String switchboardUser, String switchboardPass){
 		Json json = new Json();
+		String url=url_properties;
 		try{
 			JSONObject param = new JSONObject();
 			param.put("switchboardIp", switchboardIp);
