@@ -22,6 +22,12 @@ public class PortDredgeConfig {
 	@Value("${port.portDredgeConfig}")
 	private String url_properties;
 	
+	@Value("${device.Authorization.username}")
+	private String username;	
+	
+	@Value("${device.Authorization.password}")
+	private String pwd;
+	
 	/**
 	 * 获取交换机配置信息
 	 * @param switchboardIp
@@ -34,8 +40,8 @@ public class PortDredgeConfig {
 		try{
 			url = url.replace("{switchboardIp}", switchboardIp);
 			url = url + "?portModeVlan="+portModeVlan;
-			logger.info("调用Python接口获取交换机配置信息接口url是："+url+"，get请求 ，头部验证是:"+StringUtil.basic64Encord("", ""));
-			String sb = RestfulRequestUtil.getResponse(url, null, "get", StringUtil.basic64Encord("", ""));
+			logger.info("调用Python接口获取交换机配置信息接口url是："+url+"，get请求 ，头部验证是:"+StringUtil.basic64Encord(username, pwd));
+			String sb = RestfulRequestUtil.getResponse(url, null, "get", StringUtil.basic64Encord(username, pwd));
 			logger.info("调用Python接口获取交换机配置信息接口返回："+sb);
 			if(!StringUtils.isEmpty(sb)){
 				json = JSONObject.parseObject(sb, Json.class);

@@ -8,6 +8,7 @@ CREATE TABLE dev_port_command_info (
 	method varchar(200) COMMENT '指令对应方法名',
 	execute_state TINYINT DEFAULT 1 COMMENT '指执行的状态 1 成功 2 失败 3 未提交',
 	execute_info varchar(200) COMMENT '执行结果详情', 
+	execute_order TINYINT COMMENT '命令执行顺序', 
 	
 	create_time DATETIME COMMENT '创建时间',
 	create_user VARCHAR(32) COMMENT '创建人员id',

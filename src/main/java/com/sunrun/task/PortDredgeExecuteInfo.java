@@ -42,6 +42,7 @@ public class PortDredgeExecuteInfo implements Runnable {
 		//根据最终结果来更改整个工单的状态
 		DevPortDredgeOrder port = new DevPortDredgeOrder();
 		port.setId(id);
+		port.setState(1);
 		port.setExecuteState(json.getSuccess()==true?3:4);
 		devPortDredgeOrderService.editPortDredgeOrder(port);
 		logger.info("正在跑执行端口开通线程--------end-------执行结果："+json.getSuccess());

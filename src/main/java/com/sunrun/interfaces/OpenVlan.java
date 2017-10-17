@@ -22,6 +22,12 @@ public class OpenVlan {
 	@Value("${port.openVlan}")
 	private String url_properties;
 	
+	@Value("${device.Authorization.username}")
+	private String username;	
+	
+	@Value("${device.Authorization.password}")
+	private String pwd;
+	
 	/**
 	 * 开通vlan
 	 * @param switchboardIp
@@ -39,8 +45,8 @@ public class OpenVlan {
 			param.put("switchboardPass", switchboardPass);
 			url = url.replace("{switchboardIp}", switchboardIp);
 			url = url.replace("{vlan}", vlan);
-			logger.info("调用Python开通vlan接口url是："+url+"，post请求 ，头部验证是:"+StringUtil.basic64Encord("", ""));
-			String sb = RestfulRequestUtil.getResponse(url, param, "post", StringUtil.basic64Encord("", ""));
+			logger.info("调用Python开通vlan接口url是："+url+"，post请求 ,参数是："+param.toString()+"，头部验证是:"+StringUtil.basic64Encord(username, pwd));
+			String sb = RestfulRequestUtil.getResponse(url, param, "post", StringUtil.basic64Encord(username, pwd));
 			logger.info("调用Python开通vlan接口返回："+sb);
 			if(!StringUtils.isEmpty(sb)){
 				json = JSONObject.parseObject(sb, Json.class);
