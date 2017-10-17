@@ -89,19 +89,16 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 			for(int i=0;i<portVlans.length;i++){
 				String portVlan = portVlans[i];
 				String[] s = portVlan.split("-");
-				if(s.length==3 && !vlans.contains(s[2])){
-					//判断集合里面是否含有此vlan,没有则调用开通vlan接口
-					json = openVlan.openVlan(switchboardIp, s[2], switchboardUser, switchboardPass);
-					if(!json.getSuccess()){
-						json.setRet_code(500);
-						json.setRet_info("开通手动指定的VLAN号失败");
-						json.setSuccess(false);
-						return json;
-					}
-				}
+				
 				//根据交换机获取指令
 				json = portDredgeConfig.portDredgeConfig(switchboardIp, portVlans[i]);
 				if(!json.getSuccess()){
+					DevPortDredgeOrder p = new DevPortDredgeOrder();
+					p.setId(id);
+					p.setState(1);
+					p.setExecuteState(4);
+					editPortDredgeOrder(p);
+					
 					json.setRet_info("添加工单下的执行指令异常");
 					json.setRet_code(500);
 					json.setSuccess(false);
@@ -110,6 +107,24 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				JSONArray array = (JSONArray) json.getData();
 				JSONObject o = (JSONObject) array.get(0);
 				Set<String> keys = o.keySet();
+				
+				if(s.length==3 && !vlans.contains(s[2])){
+					//判断集合里面是否含有此vlan,没有则调用开通vlan接口
+					json = openVlan.openVlan(switchboardIp, s[2], switchboardUser, switchboardPass);
+					if(!json.getSuccess()){
+						DevPortDredgeOrder p = new DevPortDredgeOrder();
+						p.setId(id);
+						p.setState(1);
+						p.setExecuteState(4);
+						editPortDredgeOrder(p);
+						
+						json.setRet_code(500);
+						json.setRet_info("开通手动指定的VLAN号失败（"+json.getRet_info()+"）");
+						json.setSuccess(false);
+						//return json;
+					}
+				}
+				
 				for(Iterator<String> it = keys.iterator(); it.hasNext();){
 					String key = it.next();
 					List<String> ss = (List<String>) o.get(key);
@@ -118,16 +133,18 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 						d.setCommand(ss.get(j));
 						d.setExecuteOrder(j+1);
 						d.setMethod(key);
-						d.setExecuteState(3);
+						d.setExecuteState(json.getSuccess()?3:2);
 						d.setId(StringUtil.getUuid());
 						d.setHandlerName(handlerName);
 						d.setPortModeVlan(s[0]);
 						d.setSwitchboardIp(switchboardIp);
 						d.setTaskId(id);
+						d.setExecuteInfo(json.getSuccess()==true?"":json.getRet_info());
 						d.setCreate_user(userId);
 						devPortCommandInfoMapper.savePortCommandInfo(d);
 					}
 				}
+				
 			}
 			json.setRet_info("添加记录成功");
 			json.setRet_code(200);
@@ -282,7 +299,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 						}else{
 							DevPortCommandInfo f = new DevPortCommandInfo();
 							f.setExecuteInfo(json.getRet_info());
-							f.setExecuteState(3);
+							f.setExecuteState(2);
 							f.setTaskId(id);
 							f.setMethod(m.toString());
 							devPortCommandInfoMapper.editPortCommand(f);
