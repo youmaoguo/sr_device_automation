@@ -46,7 +46,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 	
 	@Transactional
 	@Override
-	public synchronized Json savePortDredgeOrder(String id,String userId ,String handlerName, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass) {
+	public synchronized Json savePortDredgeOrder(String id,String userId ,String handlerName, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass, String portDescribe, String vlanDescribe) {
 		Json json = new Json();
 		try{
 			//这个if判断是验证该ip下是否有重复的端口和VLAN
@@ -91,7 +91,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				String[] s = portVlan.split("-");
 				
 				//根据交换机获取指令
-				json = portDredgeConfig.portDredgeConfig(switchboardIp, portVlans[i]);
+				json = portDredgeConfig.portDredgeConfig(switchboardIp, portVlans[i], portDescribe);
 				if(!json.getSuccess()){
 					DevPortDredgeOrder p = new DevPortDredgeOrder();
 					p.setId(id);
@@ -110,7 +110,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				
 				if(s.length==3 && !vlans.contains(s[2])){
 					//判断集合里面是否含有此vlan,没有则调用开通vlan接口
-					json = openVlan.openVlan(switchboardIp, s[2], switchboardUser, switchboardPass);
+					json = openVlan.openVlan(switchboardIp, s[2], switchboardUser, switchboardPass, vlanDescribe);
 					if(!json.getSuccess()){
 						DevPortDredgeOrder p = new DevPortDredgeOrder();
 						p.setId(id);
@@ -195,7 +195,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 	}
 	
 	@Override
-	public Json executeCommand(String id, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass){
+	public Json executeCommand(String id, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass, String portDescribe){
 		Json json = new Json();
 		boolean tag = true;
 		try{
@@ -247,7 +247,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				List<Object> methods = new ArrayList<Object>();
 				methods.addAll(set);
 				for(Object m : methods){
-					json = executePortDredge.executePortDredge(switchboardIp, portVlans[i], m.toString(), switchboardUser, switchboardPass);
+					json = executePortDredge.executePortDredge(switchboardIp, portVlans[i], m.toString(), switchboardUser, switchboardPass, portDescribe);
 					//执行完一条命令后重新修改下该条命令的状态
 					if(json.getSuccess()){
 						DevPortCommandInfo f = new DevPortCommandInfo();

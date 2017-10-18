@@ -38,7 +38,7 @@ public class ExecutePortDredge {
 	 * @param switchboardPass
 	 * @return
 	 */
-	public Json executePortDredge(String switchboardIp, String portModeVlan, String method, String switchboardUser, String switchboardPass){
+	public Json executePortDredge(String switchboardIp, String portModeVlan, String method, String switchboardUser, String switchboardPass, String portDescribe){
 		Json json = new Json();
 		String url=url_properties;
 		try{
@@ -46,6 +46,7 @@ public class ExecutePortDredge {
 			param.put("switchboardIP", switchboardIp);
 			param.put("portModeVlan", portModeVlan);
 			param.put("methodName", method);
+			param.put("portDescribe", portDescribe);
 			param.put("switchboardUser", switchboardUser);
 			param.put("switchboardPass", switchboardPass);
 			logger.info("调用Python执行指令接口url是："+url+"，post请求 ,参数是："+param.toString()+"，头部验证是:"+StringUtil.basic64Encord(username, pwd));

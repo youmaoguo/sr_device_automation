@@ -36,13 +36,14 @@ public class OpenVlan {
 	 * @param switchboardPass
 	 * @return
 	 */
-	public Json openVlan(String switchboardIp, String vlan, String switchboardUser, String switchboardPass){
+	public Json openVlan(String switchboardIp, String vlan, String switchboardUser, String switchboardPass, String vlanDescribe){
 		Json json = new Json();
 		String url=url_properties;
 		try{
 			JSONObject param = new JSONObject();
 			param.put("switchboardUser", switchboardUser);
 			param.put("switchboardPass", switchboardPass);
+			param.put("vlanDescribe", vlanDescribe);
 			url = url.replace("{switchboardIp}", switchboardIp);
 			url = url.replace("{vlan}", vlan);
 			logger.info("调用Python开通vlan接口url是："+url+"，post请求 ,参数是："+param.toString()+"，头部验证是:"+StringUtil.basic64Encord(username, pwd));

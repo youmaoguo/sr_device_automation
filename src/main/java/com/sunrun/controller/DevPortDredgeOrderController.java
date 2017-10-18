@@ -112,6 +112,8 @@ public class DevPortDredgeOrderController extends BaseController{
 		String handlerName = obj.getString("userName");
 		String switchboardIp = obj.getString("switchboardIP");
 		String portModeVlan = obj.getString("portModeVlan");
+		String portDescribe = obj.getString("portDescribe");
+		String vlanDescribe = obj.getString("vlanDescribe");
 		portModeVlan = portModeVlan.replace("[", "");
 		portModeVlan = portModeVlan.replace("]", "");
 		portModeVlan = portModeVlan.replace("\"", "");
@@ -130,7 +132,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		try{
 			switchboardPass = new String(Base64Util.base64Decode(switchboardPass));
 			String id = StringUtil.getUuid();
-			json = devPortDredgeOrderService.savePortDredgeOrder(id, userId, handlerName, switchboardIp, portModeVlan, switchboardUser, switchboardPass);
+			json = devPortDredgeOrderService.savePortDredgeOrder(id, userId, handlerName, switchboardIp, portModeVlan, switchboardUser, switchboardPass, portDescribe, vlanDescribe);
 			if(json.getSuccess()){
 				List<Object> data = new ArrayList<Object>();
 				JSONObject o = new JSONObject();
@@ -145,7 +147,7 @@ public class DevPortDredgeOrderController extends BaseController{
 				devPortDredgeOrderService.editPortDredgeOrder(port);
 				
 				//调用 执行
-				PortDredgeExecuteInfo p = new PortDredgeExecuteInfo(devPortDredgeOrderService, id, switchboardIp, portModeVlan, switchboardUser, switchboardPass);
+				PortDredgeExecuteInfo p = new PortDredgeExecuteInfo(devPortDredgeOrderService, id, switchboardIp, portModeVlan, switchboardUser, switchboardPass, portDescribe);
 				Thread t = new Thread(p);
 		        t.start();
 			}
@@ -204,6 +206,7 @@ public class DevPortDredgeOrderController extends BaseController{
 	@RequestMapping(value = "/portManager/v1/portDredgeConfig/{switchboardIp}", method = RequestMethod.GET, produces="application/json")
 	public void portDredgeConfig(@PathVariable String switchboardIp, 
 								@RequestParam(value = "portModeVlan", required = false) String portModeVlan,
+								@RequestParam(value = "portDescribe", required = false) String portDescribe,
 								HttpServletRequest request, HttpServletResponse response){
 		Json json = new Json();
 		List<Object> data = new ArrayList<Object>();
@@ -219,7 +222,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		}
 		try{
 			//调用Python接口获取
-			Json j = portDredgeConfig.portDredgeConfig(switchboardIp, portModeVlan);
+			Json j = portDredgeConfig.portDredgeConfig(switchboardIp, portModeVlan, portDescribe);
 			if(j.getSuccess()){
 				List<String> config = new ArrayList<String>();
 				JSONArray array = (JSONArray) j.getData();
