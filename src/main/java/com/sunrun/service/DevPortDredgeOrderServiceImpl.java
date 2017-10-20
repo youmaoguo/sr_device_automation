@@ -1,16 +1,18 @@
 package com.sunrun.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -44,7 +46,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 	
 	@Transactional
 	@Override
-	public synchronized Json savePortDredgeOrder(String id,String userId ,String handlerName, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass) {
+	public synchronized Json savePortDredgeOrder(String id,String userId ,String handlerName, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass, String portDescribe, String vlanDescribe) {
 		Json json = new Json();
 		try{
 			//这个if判断是验证该ip下是否有重复的端口和VLAN
@@ -87,19 +89,16 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 			for(int i=0;i<portVlans.length;i++){
 				String portVlan = portVlans[i];
 				String[] s = portVlan.split("-");
-				if(s.length==3 && !vlans.contains(s[2])){
-					//判断集合里面是否含有此vlan,没有则调用开通vlan接口
-					json = openVlan.openVlan(switchboardIp, s[2], switchboardUser, switchboardPass);
-					if(!json.getSuccess()){
-						json.setRet_code(500);
-						json.setRet_info("开通手动指定的VLAN号失败");
-						json.setSuccess(false);
-						return json;
-					}
-				}
+				
 				//根据交换机获取指令
-				json = portDredgeConfig.portDredgeConfig(switchboardIp, portVlans[i]);
+				json = portDredgeConfig.portDredgeConfig(switchboardIp, portVlans[i], portDescribe);
 				if(!json.getSuccess()){
+					DevPortDredgeOrder p = new DevPortDredgeOrder();
+					p.setId(id);
+					p.setState(1);
+					p.setExecuteState(4);
+					editPortDredgeOrder(p);
+					
 					json.setRet_info("添加工单下的执行指令异常");
 					json.setRet_code(500);
 					json.setSuccess(false);
@@ -108,23 +107,44 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				JSONArray array = (JSONArray) json.getData();
 				JSONObject o = (JSONObject) array.get(0);
 				Set<String> keys = o.keySet();
+				
+				if(s.length==3 && !vlans.contains(s[2])){
+					//判断集合里面是否含有此vlan,没有则调用开通vlan接口
+					json = openVlan.openVlan(switchboardIp, s[2], switchboardUser, switchboardPass, vlanDescribe);
+					if(!json.getSuccess()){
+						DevPortDredgeOrder p = new DevPortDredgeOrder();
+						p.setId(id);
+						p.setState(1);
+						p.setExecuteState(4);
+						editPortDredgeOrder(p);
+						
+						json.setRet_code(500);
+						json.setRet_info("开通手动指定的VLAN号失败（"+json.getRet_info()+"）");
+						json.setSuccess(false);
+						//return json;
+					}
+				}
+				
 				for(Iterator<String> it = keys.iterator(); it.hasNext();){
 					String key = it.next();
 					List<String> ss = (List<String>) o.get(key);
-					for(String str : ss){
+					for(int j=0;j<ss.size();j++){
 						DevPortCommandInfo d = new DevPortCommandInfo();
-						d.setCommand(str);
+						d.setCommand(ss.get(j));
+						d.setExecuteOrder(j+1);
 						d.setMethod(key);
-						d.setExecuteState(1);
+						d.setExecuteState(json.getSuccess()?3:2);
 						d.setId(StringUtil.getUuid());
 						d.setHandlerName(handlerName);
 						d.setPortModeVlan(s[0]);
 						d.setSwitchboardIp(switchboardIp);
 						d.setTaskId(id);
+						d.setExecuteInfo(json.getSuccess()==true?"":json.getRet_info());
 						d.setCreate_user(userId);
 						devPortCommandInfoMapper.savePortCommandInfo(d);
 					}
 				}
+				
 			}
 			json.setRet_info("添加记录成功");
 			json.setRet_code(200);
@@ -175,7 +195,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 	}
 	
 	@Override
-	public Json executeCommand(String id, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass){
+	public Json executeCommand(String id, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass, String portDescribe){
 		Json json = new Json();
 		boolean tag = true;
 		try{
@@ -214,18 +234,77 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				o.setTaskId(id);
 				o.setSwitchboardIp(switchboardIp);
 				o.setPortModeVlan(port);
-				List<DevPortCommandInfo> li = devPortCommandInfoMapper.findPortDredgeOrder(o);
+				List<DevPortCommandInfo> li = devPortCommandInfoMapper.findPortCommandInfo(o);
 				if(li==null || li.size()==0){
 					tag = false;
 					break;
 				}
+				Set<String> set = new HashSet<String>();
 				for(DevPortCommandInfo f : li){
-					//调用python接口一条一条执行命令执行命令
-					json = executePortDredge.executePortDredge(switchboardIp, portVlans[i], f.getMethod(), switchboardUser, switchboardPass);
+					//根据方法名和外键确定需要执行几次
+					set.add(f.getMethod());
+				}
+				List<Object> methods = new ArrayList<Object>();
+				methods.addAll(set);
+				for(Object m : methods){
+					json = executePortDredge.executePortDredge(switchboardIp, portVlans[i], m.toString(), switchboardUser, switchboardPass, portDescribe);
 					//执行完一条命令后重新修改下该条命令的状态
-					f.setExecuteInfo(json.getSuccess()==true?"执行成功":json.getRet_info());
-					f.setExecuteState(json.getSuccess()==true?3:4);
-					devPortCommandInfoMapper.editPortCommand(f);
+					if(json.getSuccess()){
+						DevPortCommandInfo f = new DevPortCommandInfo();
+						f.setExecuteInfo(json.getSuccess()==true?"执行成功":json.getRet_info());
+						f.setExecuteState(json.getSuccess()==true?1:2);
+						f.setTaskId(id);
+						f.setMethod(m.toString());
+						devPortCommandInfoMapper.editPortCommand(f);
+					}else{
+						tag = false;
+						//如果执行返回错误，则拿到错误的命令，错误命令之前的命令执行结果成功，之后的未执行
+						String error = json.getRet_info();
+						if(error.contains(" fail")){
+							error = error.substring(0, error.indexOf(" fail"));
+							DevPortCommandInfo in = new DevPortCommandInfo();
+							in.setTaskId(id);
+							in.setSwitchboardIp(switchboardIp);
+							in.setPortModeVlan(port);
+							in.setMethod(m.toString());
+							in.setCommand(error);
+							List<DevPortCommandInfo> ls = devPortCommandInfoMapper.findPortCommandInfo(in);
+							if(ls!=null && ls.size()>0){
+								int order = ls.get(0).getExecuteOrder();
+								DevPortCommandInfo f = new DevPortCommandInfo();
+								f.setExecuteInfo(json.getRet_info());
+								f.setExecuteState(2);
+								f.setTaskId(id);
+								f.setMethod(m.toString());
+								f.setExecuteOrder(order);
+								devPortCommandInfoMapper.editPortCommand(f);
+								
+								DevPortCommandInfo f1 = new DevPortCommandInfo();
+								f1.setExecuteInfo("命令未执行");
+								f1.setExecuteState(3);
+								f1.setTaskId(id);
+								f1.setMethod(m.toString());
+								f1.setExecuteOrder(order);
+								devPortCommandInfoMapper.editExecuteStatusGT(f1);
+								
+								DevPortCommandInfo f2 = new DevPortCommandInfo();
+								f2.setExecuteInfo(json.getRet_info());
+								f2.setExecuteState(1);
+								f2.setTaskId(id);
+								f2.setMethod(m.toString());
+								f2.setExecuteOrder(order);
+								devPortCommandInfoMapper.editExecuteStatusLT(f2);
+							}
+							
+						}else{
+							DevPortCommandInfo f = new DevPortCommandInfo();
+							f.setExecuteInfo(json.getRet_info());
+							f.setExecuteState(2);
+							f.setTaskId(id);
+							f.setMethod(m.toString());
+							devPortCommandInfoMapper.editPortCommand(f);
+						}
+					}
 				}
 			}
 			if(tag){
@@ -234,7 +313,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				json.setSuccess(true);
 			}else{
 				json.setRet_code(500);
-				json.setRet_info("执行指令未获取全");
+				json.setRet_info("执行指令未获取全或部分指令执行异常");
 				json.setSuccess(false);
 			}
 		}catch(Exception e){

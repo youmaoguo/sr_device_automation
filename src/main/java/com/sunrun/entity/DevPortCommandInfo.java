@@ -18,14 +18,21 @@ public class DevPortCommandInfo extends BaseEntity implements Serializable{
 	private String portModeVlan ;//端口：Eth1/11,
 	private String command;//'指令',
 	private String method;//'指令对应方法名',
-	private Integer executeState;//'执行状态 1:新建；2：执行中；3：执行成功； 4：执行失败',
+	private Integer executeState;//指执行的状态 1 成功 2 失败 3 未提交
 	private String executeInfo;//'执行结果详情', 
+	private Integer executeOrder;//'执行顺序', 
 	
 	private String createTime;
 	private String createUser;
 	private String updateTime;
 	private String updateUser;
 	
+	public Integer getExecuteOrder() {
+		return executeOrder;
+	}
+	public void setExecuteOrder(Integer executeOrder) {
+		this.executeOrder = executeOrder;
+	}
 	public String getCreateTime() {
 		return createTime;
 	}
@@ -107,10 +114,17 @@ public class DevPortCommandInfo extends BaseEntity implements Serializable{
 	}
 	@Override
 	public String toString() {
-		return "DevPortCommandInfo [id=" + id + ", taskId=" + taskId + ", handlerName=" + handlerName
-				+ ", switchboardIp=" + switchboardIp + ", portModeVlan=" + portModeVlan + ", command=" + command
-				+ ", method=" + method + ", executeState=" + executeState + ", executeInfo=" + executeInfo + "]";
+		return "DevPortCommandInfo [id=" + id + ", taskId=" + taskId
+				+ ", handlerName=" + handlerName + ", switchboardIp="
+				+ switchboardIp + ", portModeVlan=" + portModeVlan
+				+ ", command=" + command + ", method=" + method
+				+ ", executeState=" + executeState + ", executeInfo="
+				+ executeInfo + ", executeOrder=" + executeOrder
+				+ ", createTime=" + createTime + ", createUser=" + createUser
+				+ ", updateTime=" + updateTime + ", updateUser=" + updateUser
+				+ "]";
 	}
+	 
 	 
 	
 }

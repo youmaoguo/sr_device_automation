@@ -112,6 +112,13 @@ public class DevPortDredgeOrderController extends BaseController{
 		String handlerName = obj.getString("userName");
 		String switchboardIp = obj.getString("switchboardIP");
 		String portModeVlan = obj.getString("portModeVlan");
+		String portDescribe = obj.getString("portDescribe");
+		String vlanDescribe = obj.getString("vlanDescribe");
+		portModeVlan = portModeVlan.replace("[", "");
+		portModeVlan = portModeVlan.replace("]", "");
+		portModeVlan = portModeVlan.replace("\"", "");
+		portModeVlan = portModeVlan.replace(",", ";");
+		
 		String switchboardUser = obj.getString("switchboardUser");//登陆交换机 高权账号
 		String switchboardPass = obj.getString("switchboardPass");//高权账号密码
 		if(StringUtils.isEmpty(handlerName) || StringUtils.isEmpty(switchboardIp) || StringUtils.isEmpty(portModeVlan)
@@ -125,7 +132,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		try{
 			switchboardPass = new String(Base64Util.base64Decode(switchboardPass));
 			String id = StringUtil.getUuid();
-			json = devPortDredgeOrderService.savePortDredgeOrder(id, userId, handlerName, switchboardIp, portModeVlan, switchboardUser, switchboardPass);
+			json = devPortDredgeOrderService.savePortDredgeOrder(id, userId, handlerName, switchboardIp, portModeVlan, switchboardUser, switchboardPass, portDescribe, vlanDescribe);
 			if(json.getSuccess()){
 				List<Object> data = new ArrayList<Object>();
 				JSONObject o = new JSONObject();
@@ -136,10 +143,11 @@ public class DevPortDredgeOrderController extends BaseController{
 				DevPortDredgeOrder port = new DevPortDredgeOrder();
 				port.setId(id);
 				port.setExecuteState(2);
+				port.setState(1);
 				devPortDredgeOrderService.editPortDredgeOrder(port);
 				
 				//调用 执行
-				PortDredgeExecuteInfo p = new PortDredgeExecuteInfo(devPortDredgeOrderService, id, switchboardIp, portModeVlan, switchboardUser, switchboardPass);
+				PortDredgeExecuteInfo p = new PortDredgeExecuteInfo(devPortDredgeOrderService, id, switchboardIp, portModeVlan, switchboardUser, switchboardPass, portDescribe);
 				Thread t = new Thread(p);
 		        t.start();
 			}
@@ -198,10 +206,12 @@ public class DevPortDredgeOrderController extends BaseController{
 	@RequestMapping(value = "/portManager/v1/portDredgeConfig/{switchboardIp}", method = RequestMethod.GET, produces="application/json")
 	public void portDredgeConfig(@PathVariable String switchboardIp, 
 								@RequestParam(value = "portModeVlan", required = false) String portModeVlan,
+								@RequestParam(value = "portDescribe", required = false) String portDescribe,
 								HttpServletRequest request, HttpServletResponse response){
 		Json json = new Json();
 		List<Object> data = new ArrayList<Object>();
 		JSONObject obj = new JSONObject();
+		switchboardIp=switchboardIp.replace("-", ".");
 		logger.info("获取交换机配置信息入参ip："+switchboardIp+";端口"+portModeVlan);
 		if(StringUtils.isEmpty(switchboardIp) || StringUtils.isEmpty(portModeVlan)){
 			json.setRet_code(401);
@@ -212,10 +222,10 @@ public class DevPortDredgeOrderController extends BaseController{
 		}
 		try{
 			//调用Python接口获取
-			json = portDredgeConfig.portDredgeConfig(switchboardIp, portModeVlan);
-			if(json.getSuccess()){
+			Json j = portDredgeConfig.portDredgeConfig(switchboardIp, portModeVlan, portDescribe);
+			if(j.getSuccess()){
 				List<String> config = new ArrayList<String>();
-				JSONArray array = (JSONArray) json.getData();
+				JSONArray array = (JSONArray) j.getData();
 				JSONObject o = (JSONObject) array.get(0);
 				Set<String> keys = o.keySet();
 				for(Iterator<String> it = keys.iterator(); it.hasNext();){
@@ -225,6 +235,10 @@ public class DevPortDredgeOrderController extends BaseController{
 				}
 				obj.put("config", config);
 			}
+			data.add(obj);
+			json.setData(data);
+			json.setRet_code(j.getRet_code());
+			json.setRet_info(j.getRet_info());
 		}catch(Exception e){
 			e.printStackTrace();
 			logger.error("获取交换机配置信息出错");

@@ -19,7 +19,7 @@ public interface DevPortDredgeOrderService {
 	 * @param switchboardPass
 	 * @return
 	 */
-	Json savePortDredgeOrder(String id,String userId, String handlerName, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass);
+	Json savePortDredgeOrder(String id,String userId, String handlerName, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass, String portDescribe, String vlanDescribe);
 	
 	
 	/**
@@ -58,7 +58,7 @@ public interface DevPortDredgeOrderService {
 	 * @param switchboardPass
 	 * @return
 	 */
-	Json executeCommand(String id, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass);
+	Json executeCommand(String id, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass, String portDescribe);
 
 	/**
 	 * 查询工单下的所有执行情况

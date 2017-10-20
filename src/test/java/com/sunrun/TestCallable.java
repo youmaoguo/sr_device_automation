@@ -10,14 +10,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.sunrun.util.StringUtil;
-
 
 public class TestCallable {
     public static void main(String[] args) {
         try {
-            List<String> l = completionServiceCount2();
-            System.out.println("the end state="+l.toString());
+            completionServiceCount2();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -68,7 +65,7 @@ public class TestCallable {
      * @throws ExecutionException 
      * @throws InterruptedException 
      */
-    public static List<String> completionServiceCount2() throws InterruptedException, ExecutionException {
+    public static void completionServiceCount2() throws InterruptedException, ExecutionException {
         ExecutorService executorService = Executors.newCachedThreadPool();
         CompletionService<String> completionService = new ExecutorCompletionService<String>(executorService);
         List<String> list = new ArrayList<String>();
@@ -80,7 +77,6 @@ public class TestCallable {
         }
         executorService.shutdown();
         System.out.println(list.toString());
-		return list;
     }
     
     public static Callable<String> getTask2(final int no) {
@@ -91,24 +87,13 @@ public class TestCallable {
             	//这里去调用交换机接口
             	//......
     			String s = rand.nextInt()+"";
-    			System.out.println("--------------s="+s);
+    			System.out.println("s="+s);
     			int time = rand.nextInt(100)*100;
-    			//Thread.sleep(time);
                 System.out.println("thead:"+no+" time is:"+time + " s:"+s);
-				return doSomeThing();
+				return s;
             }
         };
         return task;
-    }
-    
-    public static String doSomeThing(){
-    	String s = StringUtil.getUuid();
-    	try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} 
-    	return s;
     }
     
 }

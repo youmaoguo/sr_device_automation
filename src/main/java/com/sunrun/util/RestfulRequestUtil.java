@@ -89,7 +89,7 @@ public final class RestfulRequestUtil {
 		        	}
 		        }
 	        }
-	        conn.setConnectTimeout(1000);//连接超时 单位毫秒
+	        conn.setConnectTimeout(10000);//连接超时 单位毫秒
 	        conn.setReadTimeout(30000);//读取超时 单位毫秒
 	        int code = conn.getResponseCode();
 	        if(code==200){

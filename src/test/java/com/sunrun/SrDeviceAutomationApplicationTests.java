@@ -1,118 +1,37 @@
 package com.sunrun;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-
-import javax.annotation.Resource;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.sunrun.entity.DevOnlineTask;
-import com.sunrun.entity.DevPortCommandInfo;
-import com.sunrun.entity.DevPortDredgeOrder;
-import com.sunrun.mapper.DevPortCommandInfoMapper;
-import com.sunrun.mapper.DevPortDredgeOrderMapper;
-import com.sunrun.service.AddSwitchDeviceService;
-import com.sunrun.service.DeviceAutomationService;
-import com.sunrun.task.PortCheck;
-import com.sunrun.util.Json;
-import com.sunrun.util.StringUtil;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class SrDeviceAutomationApplicationTests {
 
-	private boolean flag = true;
-	
-	@Resource
-	private DeviceAutomationService deviceAutomationService;
-	@Resource
-	private AddSwitchDeviceService addSwitchDeviceService;
-	@Resource
-	private PortCheck portCheck;
-	@Resource
-	private DevPortDredgeOrderMapper devPortDredgeOrderMapper;
-	@Resource
-	private DevPortCommandInfoMapper devPortCommandInfoMapper;
-	
-	
+
 	@Test
 	public void contextLoads() {
-		DevPortDredgeOrder port = new DevPortDredgeOrder();
-		port.setId("1");
-		port.setState(1);
-		devPortDredgeOrderMapper.editPortDredgeOrder(port);
+		
 	}
 	
 	public static void main(String[] args) {
-		String s = "{\"ret_code\": 200,\"ret_info\": \"成功\",\"data\": [{\"port\": [{\"name\": \"key-Eth1/11\",\"state\": 0}],\"vlan\": [\"vlan100\",\"vlan101\"]}]}";
-		Json json = JSONObject.parseObject(s, Json.class);
-		JSONArray data = (JSONArray) json.getData();
-		JSONObject obj = (JSONObject) data.get(0);
-		List<String> vlans = (List<String>) obj.get("vlan");
-		if(vlans.contains("vlan100"))
-			System.out.println(1111111111);
-		JSONArray ps = obj.getJSONArray("port");
-		List<String> ports = new ArrayList<String>();
-		for(int i=0; i<ps.size(); i++){
-			JSONObject o = (JSONObject) ps.get(i);
-			int state = o.getInteger("state");
-			if(state==0)
-				ports.add(o.getString("name"));
-		}
-		System.out.println(ports.toString());
+		Set<Integer> set = new HashSet<Integer>();
+		set.add(1);
+		set.add(2);
+		set.add(1);
+		List<Object> methods = new ArrayList<Object>();
+		methods.addAll(set);
+		System.out.println(methods.toString());
 		
-		
-		
-		String port= "125-dd-0101;";
-		String[] p = port.split(";");
-		System.out.println(p.length);
-		for(int i=0;i<p.length;i++){
-			System.out.println("i="+i+"--"+p[i]);
-		}
-		
-		String itilPlannedEnd = "2017-07-03 19:00";
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-		Date ds;
-		try {
-			ds = f.parse(itilPlannedEnd);
-			Calendar calendar = Calendar.getInstance();
-	        calendar.setTime(ds);
-	        calendar.add(Calendar.HOUR_OF_DAY, +4);
-	        Date d = calendar.getTime();
-	        String start = fmt.format(d);
-	        System.out.println(d);
-	        System.out.println(start);
-	        
-	        System.out.println(" 1 2 3 4 ".replaceAll(" ", "").trim());
-	        
-	        String plan = "1.变更方案说明\n";
-			plan += "确定接入交换机上线机架位置及区域\n";
-			plan += "准备接入交换机和汇聚交换机配置\n";
-			plan += "写入接入交换机配置并进行跳线连接到汇聚交换机\n";
-			plan += "写入汇聚交换机配置\n";
-			plan += "技术验证设备配置是否符合要求\n\n";
-			plan += "2.变更失败后果及规避措施\n";
-			plan += "新设备上线不会影响到原有配置，若变更失败进行回退\n\n";
-			plan += "3.回退方案\n";
-			plan += "断开接入交换机与汇聚交换机连线\n";
-			plan += "删除汇聚交换机接口配置并shutdown接口\n";
-	        System.out.println(plan);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		
+		String error = "1 2 3 fail";
+		error = error.substring(0, error.indexOf(" fail"));
+		System.out.println(error);
 	}
 
 	
