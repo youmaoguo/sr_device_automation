@@ -1,8 +1,11 @@
 package com.sunrun.conf;
 
+import com.alibaba.druid.filter.Filter;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
+import com.alibaba.druid.wall.WallConfig;
+import com.alibaba.druid.wall.WallFilter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -12,6 +15,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 数据源配置
@@ -60,6 +65,7 @@ public class DataSources{
     @Primary //默认数据源
     @Bean(name = "dataSource",destroyMethod = "close")
     public DruidDataSource Construction() throws SQLException {
+    	List<Filter> filterList=new ArrayList<>();
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setUrl(url);
         dataSource.setUsername(username);
@@ -86,15 +92,35 @@ public class DataSources{
         dataSource.setPoolPreparedStatements(true);
         dataSource.setMaxOpenPreparedStatements(maxOpenPreparedStatements);
         //配置sql监控的filter
-        dataSource.setFilters("stat,wall,log4j");
+       // dataSource.setFilters("stat,wall,log4j");
         try {
-            dataSource.init();
-        } catch (SQLException e) {
+        	filterList.add(wallFilter());
+            dataSource.setProxyFilters(filterList);
+            //dataSource.init();
+        } catch (Exception e) {
             throw new RuntimeException("druid datasource init fail");
         }
+        
+        
+        
+        
         return dataSource;
     }
-
+    
+    @Bean
+    public WallFilter wallFilter(){
+        WallFilter wallFilter=new WallFilter();
+        wallFilter.setConfig(wallConfig());
+        return  wallFilter;
+    }
+    
+    @Bean
+    public WallConfig wallConfig(){
+        WallConfig config =new WallConfig();
+        config.setMultiStatementAllow(true);//允许一次执行多条语句
+        config.setNoneBaseStatementAllow(true);//允许非基本语句的其他语句
+        return config;
+    }
     /**
      * druid监控
      * @return
