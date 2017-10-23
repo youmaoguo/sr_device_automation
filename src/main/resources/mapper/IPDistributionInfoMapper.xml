@@ -53,6 +53,7 @@
 		SELECT
 		id,
 		concat(ip_segment,'/',subnet_mask) AS ipSegment,
+		ip_segment as ip,
 		subnet_mask
 		AS subnetMask,
 		address,
@@ -86,6 +87,10 @@
 		<if test="para.useType!=null">
 			and use_type = #{para.useType}
 		</if>
+		<if test="para.ipSegment!=null">
+			and ip_segment = #{para.ipSegment}
+		</if>
+		
 		<if test="para.devType!=null">
 			and dev_type = #{para.devType}
 		</if>
@@ -122,6 +127,9 @@
 
         <if test="para.id!=null">
 			and id = #{para.id}
+		</if>
+		<if test="para.ipSegment!=null">
+			and ip_segment = #{para.ipSegment}
 		</if>
 		<if test="para.networkType!=null">
 			and network_type = #{para.networkType}
@@ -220,6 +228,9 @@ WHERE
       <if test="para.id!=null">
 			and id = #{para.id}
 		</if>
+		<if test="para.ipSegment!=null">
+			and ip_segment = #{para.ipSegment}
+		</if>
 		<if test="para.networkType!=null">
 			and network_type = #{para.networkType}
 		</if>
@@ -262,6 +273,9 @@ WHERE
 
        <if test="para.id!=null">
 			and id = #{para.id}
+		</if>
+		<if test="para.ipSegment!=null">
+			and ip_segment = #{para.ipSegment}
 		</if>
 		<if test="para.networkType!=null">
 			and network_type = #{para.networkType}
@@ -433,11 +447,9 @@ WHERE
 	</update>
 
 
-	<delete id="deleteIpSegmentDistribution">
-
-		delete from dev_ip_segment_distribution where id= #{para.id};
-		delete from dev_ip_distribution where ip_Segment= #{para.ipSegment};
-
+	<delete id="deleteIpSegmentDistribution">  
+	    delete from dev_ip_distribution where ip_Segment= #{para.ipSegment}; 
+		delete from dev_ip_segment_distribution where id= #{para.id}; 
 	</delete>
 
 

@@ -546,8 +546,30 @@ public class IPDistributionInfoController extends BaseController {
 		List<DevIpDistributionBean> devIpDistributionBeanList = new ArrayList<DevIpDistributionBean>();
 
 		try {
+			
+			
+			
 
 			for (Iterator iterator = dataJSONArray.iterator(); iterator.hasNext();) {
+				JSONObject job = (JSONObject) iterator.next();
+				String ipSegment = job.getString("ip");
+				String subnetMask = job.getString("subnetMask");
+				
+				
+				// 根据 IP网段去查， 是否有记录，如果有记录，则不进行插入操作。
+				DevIpSegmentDistributionBean devIpSegmentDistributionBean_select = new DevIpSegmentDistributionBean();
+				devIpSegmentDistributionBean_select.setIpSegment(ipSegment);
+				List<DevIpSegmentDistributionBean> list = iPDistributionInfoService.findDevIpSegmentDistribution(devIpSegmentDistributionBean_select,null, null, null, null,null);
+				if(list!=null && list.size()>0){
+					json.setCollect(null);
+					json.setData(null);
+					json.setRet_info("网段:"+ipSegment+",已录入过，请核实。");
+					json.setRet_code(500);
+					json.setSuccess(false);
+					response(json, response, request);
+					return ;
+				}
+				
 
 				String id = StringUtil.getUuid();
 				DevIpSegmentDistributionBean devIpSegmentDistributionBean = new DevIpSegmentDistributionBean();
@@ -558,9 +580,7 @@ public class IPDistributionInfoController extends BaseController {
 				devIpSegmentDistributionBean.setDevType(devType);
 				devIpSegmentDistributionBean.setRemark(remark);
 
-				JSONObject job = (JSONObject) iterator.next();
-				String ipSegment = job.getString("ip");
-				String subnetMask = job.getString("subnetMask");
+				
 				devIpSegmentDistributionBean.setIpSegment(ipSegment);
 				devIpSegmentDistributionBean.setSubnetMask(subnetMask);
 
@@ -832,10 +852,10 @@ public class IPDistributionInfoController extends BaseController {
 					.findDevIpSegmentDistribution(devIpSegmentDistributionBean, null, null, null, null, null);
 
 			if (list != null && list.size() == 1) {
-				devIpSegmentDistributionBean.setIpSegment(list.get(0).getIpSegment());
+				devIpSegmentDistributionBean.setIpSegment(list.get(0).getIp());
 
 			}
-
+  
 			iPDistributionInfoService.deleteIpSegmentDistribution(devIpSegmentDistributionBean);
 			json.setRet_info("成功");
 			json.setRet_code(201);
