@@ -84,9 +84,9 @@ public class IPDistributionInfoServiceImpl implements IPDistributionInfoService 
 	}
 
 	@Override
-	public void editIpDistribution(List<DevIpDistributionBean> devIpDistributionBean) {
+	public void editIpDistribution(List<DevIpDistributionBean> devIpDistributionBean,DevIpDistributionBean devIpDistributionBean_one) {
 		 
-		  iPDistributionInfoMapper.editIpDistribution(devIpDistributionBean);
+		  iPDistributionInfoMapper.editIpDistribution(devIpDistributionBean,  devIpDistributionBean_one);
 	}
 
 	@Override

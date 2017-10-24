@@ -41,7 +41,7 @@ public interface IPDistributionInfoMapper {
 	 * 
 	 * @param port
 	 */
-	void editIpDistribution(@Param("para") List<DevIpDistributionBean> devIpDistributionBean);
+	void editIpDistribution(@Param("para") List<DevIpDistributionBean> devIpDistributionBean, @Param("devIpDistributionBean_one") DevIpDistributionBean devIpDistributionBean_one);
 
 	/**
 	 * 删除 IP 网段记录

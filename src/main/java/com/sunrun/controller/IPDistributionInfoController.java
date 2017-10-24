@@ -228,7 +228,7 @@ public class IPDistributionInfoController extends BaseController {
 			obj.put("pages",
 					((total % pageSize) > 0 ? (Math.floor(total / pageSize) + 1) : (Math.floor(total / pageSize))));
 			array.add(obj);
-			json.setData(array); 
+			json.setData(array);
 			json.setRet_info("查询成功");
 			json.setRet_code(200);
 			json.setSuccess(true);
@@ -546,30 +546,26 @@ public class IPDistributionInfoController extends BaseController {
 		List<DevIpDistributionBean> devIpDistributionBeanList = new ArrayList<DevIpDistributionBean>();
 
 		try {
-			
-			
-			
 
 			for (Iterator iterator = dataJSONArray.iterator(); iterator.hasNext();) {
 				JSONObject job = (JSONObject) iterator.next();
 				String ipSegment = job.getString("ip");
 				String subnetMask = job.getString("subnetMask");
-				
-				
+
 				// 根据 IP网段去查， 是否有记录，如果有记录，则不进行插入操作。
 				DevIpSegmentDistributionBean devIpSegmentDistributionBean_select = new DevIpSegmentDistributionBean();
 				devIpSegmentDistributionBean_select.setIpSegment(ipSegment);
-				List<DevIpSegmentDistributionBean> list = iPDistributionInfoService.findDevIpSegmentDistribution(devIpSegmentDistributionBean_select,null, null, null, null,null);
-				if(list!=null && list.size()>0){
+				List<DevIpSegmentDistributionBean> list = iPDistributionInfoService.findDevIpSegmentDistribution(
+						devIpSegmentDistributionBean_select, null, null, null, null, null);
+				if (list != null && list.size() > 0) {
 					json.setCollect(null);
 					json.setData(null);
-					json.setRet_info("网段:"+ipSegment+",已录入过，请核实。");
+					json.setRet_info("网段:" + ipSegment + ",已录入过，请核实。");
 					json.setRet_code(500);
 					json.setSuccess(false);
 					response(json, response, request);
-					return ;
+					return;
 				}
-				
 
 				String id = StringUtil.getUuid();
 				DevIpSegmentDistributionBean devIpSegmentDistributionBean = new DevIpSegmentDistributionBean();
@@ -580,7 +576,6 @@ public class IPDistributionInfoController extends BaseController {
 				devIpSegmentDistributionBean.setDevType(devType);
 				devIpSegmentDistributionBean.setRemark(remark);
 
-				
 				devIpSegmentDistributionBean.setIpSegment(ipSegment);
 				devIpSegmentDistributionBean.setSubnetMask(subnetMask);
 
@@ -699,7 +694,7 @@ public class IPDistributionInfoController extends BaseController {
 				}
 				devIpSegmentDistributionBean.setRemark(remark);
 				devIpSegmentDistributionBean.setUpdate_user(userId);
-				devIpSegmentDistributionBean.setUpdateUserInfo(usercode+"/"+userName);
+				devIpSegmentDistributionBean.setUpdateUserInfo(usercode + "/" + userName);
 				devIpSegmentDistributionBeanList.add(devIpSegmentDistributionBean);
 
 			}
@@ -735,14 +730,17 @@ public class IPDistributionInfoController extends BaseController {
 		logger.info("/deviceAutomation/ip_distribution/v1/dataUpdate 入参是：" + jsonStr);
 		JSONObject obj = JSONObject.parseObject(jsonStr);
 		JSONArray dataJSONArray = obj.getJSONArray("data");
+		String idOrIPDataType = "";
 
 		List<DevIpDistributionBean> devIpDistributionBeanList = new ArrayList<DevIpDistributionBean>();
+		DevIpDistributionBean devIpDistributionBean_one = new DevIpDistributionBean();
 
 		try {
 			String userId = obj.getString("userId");
 			String remark = obj.getString("remark");
 			String tabName = obj.getString("tabName");
 			String allocationUser = obj.getString("allocationUser");
+			String responsible = obj.getString("responsible");
 			String subnetMask = obj.getString("subnetMask");
 
 			String gateway = obj.getString("gateway");
@@ -755,68 +753,143 @@ public class IPDistributionInfoController extends BaseController {
 			String ipAddressType = obj.getString("ipAddressType");
 			String devModel = obj.getString("devModel");
 			String userPlan = obj.getString("userPlan");
+			String userName = obj.getString("userName");
+			String usercode = obj.getString("usercode");
 
-			JSONArray idJSONArray = obj.getJSONArray("id");
+			JSONArray idOrIPDataJSONArray = new JSONArray(); // ip 或 id 参数 数组。
+			if (obj.containsKey("id")) {
+				idOrIPDataJSONArray = obj.getJSONArray("id");
+				idOrIPDataType = "id";
+			}
+			if (obj.containsKey("ip")) {
+				idOrIPDataJSONArray = obj.getJSONArray("ip");
+				idOrIPDataType = "ip";
+			}
+			
+			
+			 
 
-			for (Iterator iterator = idJSONArray.iterator(); iterator.hasNext();) {
+			for (Iterator iterator = idOrIPDataJSONArray.iterator(); iterator.hasNext();) {
+				
 				DevIpDistributionBean devIpDistributionBean = new DevIpDistributionBean();
+
+				String idOrIPData = (String) iterator.next();
+				if (idOrIPDataType.equals("ip")) {
+					devIpDistributionBean.setIp(idOrIPData);
+					devIpDistributionBean_one.setIp(idOrIPData);
+
+				} else {
+					devIpDistributionBean.setId(idOrIPData);
+					devIpDistributionBean_one.setId(idOrIPData);
+				}
 				
+				// 根据ID 去查询记录，  
+				List<DevIpDistributionBean> list = iPDistributionInfoService
+						.findDevIpDistribution(devIpDistributionBean, null, null, null, null, null);
 				
+				String responsible_db="";
+				DevIpDistributionBean responsibleDevIpDistributionBean=null;
+				//判断是否有记录
+				if (list.size() > 0) {
+					  responsibleDevIpDistributionBean = list.get(0);
+					  responsible_db = responsibleDevIpDistributionBean.getResponsible() == null ? ""
+							: responsibleDevIpDistributionBean.getResponsible();
+				}else{
+					json.setCollect(null);
+					json.setData(null);
+					json.setRet_info("没有找到相关记录："+idOrIPDataType);
+					json.setRet_code(500);
+					json.setSuccess(false);
+					response(json, response, request);
+					return;
+				}
 				
-				String id = (String) iterator.next();
-				devIpDistributionBean.setId(id);
-				
-				//当负责人有值时 
-				if(allocationUser!=null  &&  allocationUser.length()>0  ){
-				 //根据ID 去查询记录， 并比对这两次的记录的 负责人是否一样。 
-					List<DevIpDistributionBean> list = iPDistributionInfoService.findDevIpDistribution(devIpDistributionBean, null, null, null, null, null);
-					if(list.size()>0){
-						DevIpDistributionBean allocationUserDevIpDistributionBean=list.get(0);
-						if(!(allocationUserDevIpDistributionBean.getAllocationUser()==null?"":allocationUserDevIpDistributionBean.getAllocationUser()).equals(allocationUser.trim())){
-							//如果不一样， 需要校验操作人员是否有权限去操作。
-							if(iPDistributionInfoService.findUserRole("网络室管理员", userId)<1){
-								//没有权限
+
+				// 当参数 传过来的负责人有值时
+				if (responsible != null && responsible.length() > 0) {
+					 	
+
+						//  如果原记录的负责人为空，则需要去校验是否有权限，才能去修改。
+						if (responsible_db == null || responsible_db.equals("")) {
+							// 如果不一样， 需要校验操作人员是否有权限去操作。
+							if (iPDistributionInfoService.findUserRole("网络室操作员", userId) < 1) {
+								// 没有权限
 								json.setCollect(null);
 								json.setData(null);
 								json.setRet_info("此用户没有修改负责人权限");
 								json.setRet_code(500);
 								json.setSuccess(false);
 								response(json, response, request);
-							   return  ;
-							}else{
+								return;
+							}  
 
-								devIpDistributionBean.setIsUseInteger(1);
+						}else{
+							
+							// 如果 原记录的负责人已有值，则不可以进行修改。如果登陆账号就是负责人除外
+							if (   !responsible_db.equals(responsible.trim()) && !responsible_db.contains(usercode)) { 
+									// 没有权限
+									json.setCollect(null);
+									json.setData(null);
+									json.setRet_info("此记录已有相关负责人，不能进行修改。");
+									json.setRet_code(500);
+									json.setSuccess(false);
+									response(json, response, request);
+									return;
+
+								 
 							}
 						}
-					}
-					
-					
-					
+						
+						devIpDistributionBean.setIsUseInteger(1);
+						devIpDistributionBean_one.setIsUseInteger(1);
+						devIpDistributionBean_one.setIpSegment(responsibleDevIpDistributionBean.getIpSegment());
+						
+						
 				}
+						
+
+						devIpDistributionBean.setUpdate_user(userId);
+						devIpDistributionBean.setUpdateUserInfo(
+								(usercode == null ? "" : usercode) + "/" + (userName == null ? "" : userName));
+						devIpDistributionBean.setRemark(remark);
+						devIpDistributionBean.setAllocationUser(allocationUser);
+						devIpDistributionBean.setArea(area);
+						devIpDistributionBean.setStartNode(startNode);
+						devIpDistributionBean.setEndNode(endNode);
+						devIpDistributionBean.setStartPort(startPort);
+						devIpDistributionBean.setEndPort(endPort);
+						devIpDistributionBean.setCategory(category);
+						devIpDistributionBean.setIpAddressType(ipAddressType);
+						devIpDistributionBean.setDevModel(devModel);
+						devIpDistributionBean.setUserPlan(userPlan);
+
+						
+						devIpDistributionBean_one.setResponsible(responsible);
+						devIpDistributionBean_one.setUpdate_user(userId);
+						devIpDistributionBean_one.setUpdateUserInfo(
+								(usercode == null ? "" : usercode) + "/" + (userName == null ? "" : userName));
+						devIpDistributionBean_one.setRemark(remark);
+						devIpDistributionBean_one.setAllocationUser(allocationUser);
+						devIpDistributionBean_one.setArea(area);
+						devIpDistributionBean_one.setStartNode(startNode);
+						devIpDistributionBean_one.setEndNode(endNode);
+						devIpDistributionBean_one.setStartPort(startPort);
+						devIpDistributionBean_one.setEndPort(endPort);
+						devIpDistributionBean_one.setCategory(category);
+						devIpDistributionBean_one.setIpAddressType(ipAddressType);
+						devIpDistributionBean_one.setDevModel(devModel);
+						devIpDistributionBean_one.setUserPlan(userPlan); 
+						devIpDistributionBeanList.add(devIpDistributionBean); 
+					 
 				
-				devIpDistributionBean.setRemark(remark);
-
-				devIpDistributionBean.setAllocationUser(allocationUser);
-				devIpDistributionBean.setArea(area);
-				devIpDistributionBean.setStartNode(startNode);
-				devIpDistributionBean.setEndNode(endNode);
-
-				devIpDistributionBean.setStartPort(startPort);
-				devIpDistributionBean.setEndPort(endPort);
-				devIpDistributionBean.setCategory(category);
-				devIpDistributionBean.setIpAddressType(ipAddressType);
-
-				devIpDistributionBean.setDevModel(devModel);
-				devIpDistributionBean.setUserPlan(userPlan);
-
-				devIpDistributionBeanList.add(devIpDistributionBean);
-
+				
 			}
-			iPDistributionInfoService.editIpDistribution(devIpDistributionBeanList);
+			
+			iPDistributionInfoService.editIpDistribution(devIpDistributionBeanList, devIpDistributionBean_one);
 
 			json.setRet_info("成功");
 			json.setRet_code(201);
-
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("修改 错误");
@@ -855,7 +928,7 @@ public class IPDistributionInfoController extends BaseController {
 				devIpSegmentDistributionBean.setIpSegment(list.get(0).getIp());
 
 			}
-  
+
 			iPDistributionInfoService.deleteIpSegmentDistribution(devIpSegmentDistributionBean);
 			json.setRet_info("成功");
 			json.setRet_code(201);
