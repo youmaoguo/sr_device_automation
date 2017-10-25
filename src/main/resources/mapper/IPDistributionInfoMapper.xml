@@ -4,9 +4,11 @@
 <mapper namespace="com.sunrun.mapper.IPDistributionInfoMapper">
 	<sql id="IpSegmentLikeQuery">
 		AND (
+
 		remark like concat(concat('%',#{like}),'%')
 		or
-		ip_segment like concat(concat('%',#{like}),'%')
+		ip_segment like
+		concat(concat('%',#{like}),'%')
 		or address like
 		concat(concat('%',#{like}),'%')
 		)
@@ -25,7 +27,8 @@
 		AND (
 		remark like concat(concat('%',#{like}),'%')
 		or
-		ip_segment like concat(concat('%',#{like}),'%')
+		ip like
+		concat(concat('%',#{like}),'%')
 		or address like
 		concat(concat('%',#{like}),'%')
 		)
@@ -34,7 +37,7 @@
 	<sql id="IpExactQuery">
 		AND (
 		remark = #{exact}
-		or ip_segment = #{exact}
+		or ip = #{exact}
 		or address =
 		#{exact}
 		)
@@ -53,6 +56,8 @@
 		SELECT
 		id,
 		concat(ip_segment,'/',subnet_mask) AS ipSegment,
+		ip_segment as
+		ip,
 		subnet_mask
 		AS subnetMask,
 		address,
@@ -60,13 +65,15 @@
 		use_type AS useType,
 		dev_type AS devType,
 		used_ip AS usedIp,
-		leisure_ip AS leisureIp,
+		leisure_ip
+		AS leisureIp,
 		remark,
 		responsible,
 		update_user_info AS updateUserInfo,
 		create_time AS createTime,
 		create_user AS createUser,
-		update_time AS updateTime,
+		update_time AS
+		updateTime,
 		update_user AS
 		updateUser,
 		state
@@ -86,6 +93,10 @@
 		<if test="para.useType!=null">
 			and use_type = #{para.useType}
 		</if>
+		<if test="para.ipSegment!=null">
+			and ip_segment = #{para.ipSegment}
+		</if>
+
 		<if test="para.devType!=null">
 			and dev_type = #{para.devType}
 		</if>
@@ -120,8 +131,11 @@
 	<select id="countDevIpSegmentDistribution" resultType="java.lang.Integer">
 		select count(*) from dev_ip_segment_distribution where state=1
 
-        <if test="para.id!=null">
+		<if test="para.id!=null">
 			and id = #{para.id}
+		</if>
+		<if test="para.ipSegment!=null">
+			and ip_segment = #{para.ipSegment}
 		</if>
 		<if test="para.networkType!=null">
 			and network_type = #{para.networkType}
@@ -159,7 +173,7 @@
 		WHERE
 		state = 1
 
-        <if test="para.id!=null">
+		<if test="para.id!=null">
 			and id = #{para.id}
 		</if>
 		<if test="para.networkType!=null">
@@ -179,46 +193,59 @@
 
 
 	<select id="findDevIpDistribution" resultType="com.sunrun.entity.DevIpDistributionBean">
-		 SELECT 
-    id,
-    address AS address,
-    ip AS ip,
-    ip_segment AS ipSegment,
-    network_type AS networkType,
-    use_type AS useType,
-    dev_type AS devType,
-    category AS category,
-    ip_address_type AS ipAddressType,
-    dev_name AS devName,
-    dev_model AS devModel,
-    user_plan AS userPlan,
-    vlan AS vlan,
-    subnet_mask AS subnetMask,
-    gateway AS gateway,
-    area AS area,
-    start_node AS startNode,
-    end_node AS endNode,
-    start_port AS startPort,
-    end_port AS endPort,
-    remark AS remark,
-    responsible AS responsible,
-    allocation_user AS allocationUser,
-    allocation_time AS allocationTime,
-    update_user_info AS updateUserInfo,
-    CASE is_Use
-        WHEN 1 THEN '使用'
-        WHEN 0 THEN '未使用'
-    END AS isUse,
-    create_time AS createTime,
-    create_user AS createUser,
-    update_time AS updateTime,
-    update_user AS updateUser
-FROM
-    dev_ip_distribution
-WHERE
-    state = 1
-      <if test="para.id!=null">
+		SELECT
+		id,
+		address AS address,
+		ip AS ip,
+		ip_segment AS ipSegment,
+		network_type AS networkType,
+		use_type AS useType,
+		dev_type AS devType,
+		category AS category,
+		ip_address_type AS ipAddressType,
+		dev_name AS
+		devName,
+		dev_model AS devModel,
+		user_plan AS userPlan,
+		vlan AS vlan,
+		subnet_mask AS subnetMask,
+		gateway AS gateway,
+		area AS area,
+		start_node
+		AS startNode,
+		end_node AS endNode,
+		start_port AS startPort,
+		end_port AS
+		endPort,
+		remark AS remark,
+		responsible AS responsible,
+		allocation_user AS
+		allocationUser,
+		allocation_time AS allocationTime,
+		update_user_info AS
+		updateUserInfo,
+		CASE is_Use
+		WHEN 1 THEN '使用'
+		WHEN 0 THEN '未使用'
+		END AS
+		isUse,
+		create_time AS createTime,
+		create_user AS createUser,
+		update_time
+		AS updateTime,
+		update_user AS updateUser
+		FROM
+		dev_ip_distribution
+		WHERE
+		state = 1
+		<if test="para.id!=null">
 			and id = #{para.id}
+		</if>
+		<if test="para.ip!=null">
+			and ip = #{para.ip}
+		</if>
+		<if test="para.ipSegment!=null">
+			and ip_segment = #{para.ipSegment}
 		</if>
 		<if test="para.networkType!=null">
 			and network_type = #{para.networkType}
@@ -260,8 +287,11 @@ WHERE
 	<select id="countDevIpDistribution" resultType="java.lang.Integer">
 		select count(*) from dev_ip_distribution where state=1
 
-       <if test="para.id!=null">
+		<if test="para.id!=null">
 			and id = #{para.id}
+		</if>
+		<if test="para.ipSegment!=null">
+			and ip_segment = #{para.ipSegment}
 		</if>
 		<if test="para.networkType!=null">
 			and network_type = #{para.networkType}
@@ -421,30 +451,141 @@ WHERE
 
 	<update id="editIpDistribution">
 
-		update dev_ip_distribution
-		set
-		remark=#{para.remark},update_user=#{para.update_user},update_time=now(),is_use=#{para.isUseInteger}
-		where id in
-		<foreach collection="para" item="para" index="index" open="("
-			close=")" separator=",">
-			#{para.id}
-		</foreach>
 
+
+		<if test='devIpDistributionBean_one.id!=null '>
+			update dev_ip_distribution
+			set
+			remark=#{devIpDistributionBean_one.remark},update_user=#{devIpDistributionBean_one.userId},update_time=now(),is_use=#{devIpDistributionBean_one.isUseInteger}
+
+			 
+			<if test="devIpDistributionBean_one.devName!=null">
+				,dev_Name=#{devIpDistributionBean_one.devName}
+			</if>
+			<if test="devIpDistributionBean_one.subnetMask!=null">
+				,subnet_mask=#{devIpDistributionBean_one.subnetMask}
+			</if>
+			<if test="devIpDistributionBean_one.gateway!=null">
+				,gateway=#{devIpDistributionBean_one.gateway}
+			</if>
+			<if test="devIpDistributionBean_one.startNode!=null">
+				,start_node=#{devIpDistributionBean_one.startNode}
+			</if>
+			<if test="devIpDistributionBean_one.endNode!=null">
+				,end_node=#{devIpDistributionBean_one.endNode}
+			</if>
+			<if test="devIpDistributionBean_one.startPort!=null">
+				,start_port=#{devIpDistributionBean_one.startPort}
+			</if>
+			<if test="devIpDistributionBean_one.endPort!=null">
+				,end_port=#{devIpDistributionBean_one.endPort}
+			</if>
+			<if test="devIpDistributionBean_one.ipAddressType!=null">
+				,ip_address_type=#{devIpDistributionBean_one.ipAddressType}
+			</if>
+			<if test="devIpDistributionBean_one.category!=null">
+				,category=#{devIpDistributionBean_one.category}
+			</if>
+			<if test="devIpDistributionBean_one.devModel!=null">
+				,dev_model=#{devIpDistributionBean_one.devModel}
+			</if>
+			<if test="devIpDistributionBean_one.userPlan!=null">
+				,user_plan=#{devIpDistributionBean_one.userPlan}
+			</if>
+			<if test="devIpDistributionBean_one.vlan!=null">
+				,vlan=#{devIpDistributionBean_one.vlan}
+			</if>
+			<if test="devIpDistributionBean_one.responsible!=null">
+				,responsible=#{devIpDistributionBean_one.responsible}
+			</if>
+			<if test="devIpDistributionBean_one.updateUserInfo!=null">
+				,update_user_info=#{devIpDistributionBean_one.updateUserInfo}
+			</if>
+
+			where id in
+			<foreach collection="para" item="para" index="index" open="("
+				close=")" separator=",">
+				#{para.id}
+			</foreach>
+			;
+		</if>
+
+		<if test='devIpDistributionBean_one.ip!=null'>
+			update dev_ip_distribution
+			set
+			remark=#{devIpDistributionBean_one.remark},update_user=#{devIpDistributionBean_one.update_user},update_time=now(),is_use=#{devIpDistributionBean_one.isUseInteger}
+
+			 
+			<if test="devIpDistributionBean_one.devName!=null">
+				, dev_Name=#{devIpDistributionBean_one.devName}
+			</if>
+			<if test="devIpDistributionBean_one.subnetMask!=null">
+				, subnet_mask=#{devIpDistributionBean_one.subnetMask}
+			</if>
+			<if test="devIpDistributionBean_one.gateway!=null">
+				,gateway=#{devIpDistributionBean_one.gateway}
+			</if>
+			<if test="devIpDistributionBean_one.startNode!=null">
+				,start_node=#{devIpDistributionBean_one.startNode}
+			</if>
+			<if test="devIpDistributionBean_one.endNode!=null">
+				,end_node=#{devIpDistributionBean_one.endNode}
+			</if>
+			<if test="devIpDistributionBean_one.startPort!=null">
+				,start_port=#{devIpDistributionBean_one.startPort}
+			</if>
+			<if test="devIpDistributionBean_one.endPort!=null">
+				,end_port=#{devIpDistributionBean_one.endPort}
+			</if>
+			<if test="devIpDistributionBean_one.ipAddressType!=null">
+				,ip_address_type=#{devIpDistributionBean_one.ipAddressType}
+			</if>
+			<if test="devIpDistributionBean_one.category!=null">
+				,category=#{devIpDistributionBean_one.category}
+			</if>
+			<if test="devIpDistributionBean_one.devModel!=null">
+				,dev_model=#{devIpDistributionBean_one.devModel}
+			</if>
+			<if test="devIpDistributionBean_one.userPlan!=null">
+				,user_plan=#{devIpDistributionBean_one.userPlan}
+			</if>
+			<if test="devIpDistributionBean_one.vlan!=null">
+				,vlan=#{devIpDistributionBean_one.vlan}
+			</if>
+			<if test="devIpDistributionBean_one.responsible!=null">
+				,responsible=#{devIpDistributionBean_one.responsible}
+			</if>
+			<if test="devIpDistributionBean_one.updateUserInfo!=null">
+				,update_user_info=#{devIpDistributionBean_one.updateUserInfo}
+			</if>
+			where ip in
+			<foreach collection="para" item="para" index="index" open="("
+				close=")" separator=",">
+				#{para.ip}
+			</foreach> ;
+		</if>
+
+<if test="devIpDistributionBean_one.ipSegment!=null"> 
+       update dev_ip_segment_distribution
+          set  used_ip= (select  count(*) from dev_ip_distribution where is_use=1 and ip_segment=#{devIpDistributionBean_one.ipSegment})
+         where  ip_Segment=#{devIpDistributionBean_one.ipSegment} ;
+	</if>
 	</update>
 
 
 	<delete id="deleteIpSegmentDistribution">
-
-		delete from dev_ip_segment_distribution where id= #{para.id};
-		delete from dev_ip_distribution where ip_Segment= #{para.ipSegment};
-
+		delete from dev_ip_distribution where ip_Segment=
+		#{para.ipSegment};
+		delete from dev_ip_segment_distribution where id=
+		#{para.id};
 	</delete>
 
 
 	<select id="findUserRole" resultType="Integer">
-		SELECT count(*) FROM sys_role
-		 WHERE
-		 state=1 and name =#{name} 
+		SELECT count(*) FROM
+		sys_role
+		WHERE
+		state=1 and name =#{name}
 		and id IN (SELECT DISTINCT
 		role_id
 		FROM
@@ -455,7 +596,8 @@ WHERE
 		FROM
 		sys_user
 		WHERE
-		id = #{userId})) 
+		id =
+		#{userId}))
 	</select>
 
 

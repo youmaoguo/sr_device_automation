@@ -33,7 +33,7 @@ public interface IPDistributionInfoService {
 	 * 
 	 * @param port
 	 */
-	void editIpDistribution(List<DevIpDistributionBean> devIpDistributionBean);
+	void editIpDistribution(List<DevIpDistributionBean> devIpDistributionBean, DevIpDistributionBean devIpDistributionBean_one);
 
 	/**
 	 * 删除 IP 网段记录

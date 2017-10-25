@@ -10,6 +10,7 @@ import java.util.Date;
  */
 public class DevIpSegmentDistributionBean extends BaseEntity implements Serializable { 
 	private String 	ipSegment                  	;
+	private String 	ip                	;
 	private String 	subnetMask                 	;
 	private String 	address                    	;
 	private String 	networkType                	;
@@ -25,6 +26,12 @@ public class DevIpSegmentDistributionBean extends BaseEntity implements Serializ
 	
 	
 	
+	public String getIp() {
+		return ip;
+	}
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
 	public Integer getUsedIp() {
 		return usedIp;
 	}

@@ -34,8 +34,17 @@ public class DevIpDistributionBean extends BaseEntity {
 	private String 	updateUserInfo	;//	'修改人，格式为：0101311/张三',
 	private String isUse	;//	  是否使用  0 代表已未使用，1代表使用',
 	private Integer isUseInteger	;//	  是否使用  0 代表已未使用，1代表使用',
+	private String userId;
 	
 	
+	
+	
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 	public Integer getIsUseInteger() {
 		return isUseInteger;
 	}
