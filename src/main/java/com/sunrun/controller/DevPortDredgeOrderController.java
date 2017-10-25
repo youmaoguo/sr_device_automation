@@ -209,7 +209,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		Json json = new Json();
 		List<Object> data = new ArrayList<Object>();
 		JSONObject obj = new JSONObject();
-		//switchboardIp=switchboardIp.replace("-", ".");
+		//switchboardIp=switchboardIp.replace("-", "."); 
 		logger.info("获取交换机配置信息入参 ："+jsonStr);
 		JSONObject param = JSONObject.parseObject(jsonStr);
 		String switchboardIp = param.getString("switchboardIp");
