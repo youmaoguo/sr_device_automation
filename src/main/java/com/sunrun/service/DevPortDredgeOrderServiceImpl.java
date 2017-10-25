@@ -91,7 +91,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				String[] s = portVlan.split("-");
 				
 				//根据交换机获取指令
-				json = portDredgeConfig.portDredgeConfig(switchboardIp, portVlans[i], portDescribe);
+				json = portDredgeConfig.portDredgeConfig(switchboardIp, portVlans[i], portDescribe, vlanDescribe);
 				if(!json.getSuccess()){
 					DevPortDredgeOrder p = new DevPortDredgeOrder();
 					p.setId(id);
