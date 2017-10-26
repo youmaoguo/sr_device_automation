@@ -112,8 +112,8 @@ public class DevPortDredgeOrderController extends BaseController{
 		String handlerName = obj.getString("userName");
 		String switchboardIp = obj.getString("switchboardIP");
 		String portModeVlan = obj.getString("portModeVlan");
-		String portDescribe = obj.getString("portDescribe");
-		String vlanDescribe = obj.getString("vlanDescribe");
+		String[] portDescribe = (String[]) obj.getJSONArray("portDescribe").toArray();
+		String[] vlanDescribe = (String[])obj.getJSONArray("vlanDescribe").toArray();
 		portModeVlan = portModeVlan.replace("[", "");
 		portModeVlan = portModeVlan.replace("]", "");
 		portModeVlan = portModeVlan.replace("\"", "");
@@ -203,16 +203,19 @@ public class DevPortDredgeOrderController extends BaseController{
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value = "/portManager/v1/portDredgeConfig/{switchboardIp}", method = RequestMethod.GET, produces="application/json")
-	public void portDredgeConfig(@PathVariable String switchboardIp, 
-								@RequestParam(value = "portModeVlan", required = false) String portModeVlan,
-								@RequestParam(value = "portDescribe", required = false) String portDescribe,
+	@RequestMapping(value = "/portManager/v1/portDredgeConfig", method = RequestMethod.POST, produces="application/json")
+	public void portDredgeConfig(@RequestBody String jsonStr,@RequestHeader("Authorization") String auth,
 								HttpServletRequest request, HttpServletResponse response){
 		Json json = new Json();
 		List<Object> data = new ArrayList<Object>();
 		JSONObject obj = new JSONObject();
-		switchboardIp=switchboardIp.replace("-", ".");
-		logger.info("获取交换机配置信息入参ip："+switchboardIp+";端口"+portModeVlan);
+		//switchboardIp=switchboardIp.replace("-", "."); 
+		logger.info("获取交换机配置信息入参 ："+jsonStr);
+		JSONObject param = JSONObject.parseObject(jsonStr);
+		String switchboardIp = param.getString("switchboardIp");
+		String portModeVlan = param.getString("portModeVlan");
+		String portDescribe = param.getString("portDescribe");
+		//String vlanDescribe = param.getString("vlanDescribe");
 		if(StringUtils.isEmpty(switchboardIp) || StringUtils.isEmpty(portModeVlan)){
 			json.setRet_code(401);
 			json.setRet_info("缺少请求参数");

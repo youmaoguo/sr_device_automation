@@ -21,6 +21,18 @@ public class SrDeviceAutomationApplicationTests {
 	}
 	
 	public static void main(String[] args) {
+		String portModeVlan = "[\"\",\"llo\",\"\"]";
+		portModeVlan = portModeVlan.replace("[", "");
+		portModeVlan = portModeVlan.replace("]", "");
+		portModeVlan = portModeVlan.replace("\"", "");
+		portModeVlan = portModeVlan.replace(",", ";");
+		System.out.println(portModeVlan);
+		String s[] = portModeVlan.split(";");
+		System.out.println("s.length="+s.length);
+		for(int i=0;i<s.length;i++){
+			System.out.println("s["+(1+i)+"]="+s[i]);
+		}
+		
 		Set<Integer> set = new HashSet<Integer>();
 		set.add(1);
 		set.add(2);
