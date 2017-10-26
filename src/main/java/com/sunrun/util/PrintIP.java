@@ -28,6 +28,20 @@ public class PrintIP {
 		b[3] = (byte) ((i >> 0) & 0x000000ff);
 		return InetAddress.getByAddress(b);
 	}
+	
+
+	/**
+	 * 根据 ip 地址，获取24位掩码地址时的网段地址，如： 192.168.1.100 的结果为 192.168.1.0
+	 * @param ip
+	 * @return
+	 * @throws UnknownHostException
+	 */
+	 public static String IpSegment(String ip) throws UnknownHostException {
+		 String[] ipArray=ip.split("\\.");
+			return ipArray[0]+"."+ipArray[1]+"."+ipArray[2]+".0";
+		}
+	
+	 
 
 	public static void main(String[] args) throws UnknownHostException {
 		long ip1 = getIP(InetAddress.getByName("192.168.1.0"));

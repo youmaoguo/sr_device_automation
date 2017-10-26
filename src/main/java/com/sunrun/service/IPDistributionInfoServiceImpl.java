@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevIpDistributionBean;
 import com.sunrun.entity.DevIpSegmentConfigBean;
 import com.sunrun.entity.DevIpSegmentDistributionBean;
+import com.sunrun.entity.MenuBean;
 import com.sunrun.mapper.IPDistributionInfoMapper;
 import com.sunrun.util.Json;
 
@@ -98,6 +99,12 @@ public class IPDistributionInfoServiceImpl implements IPDistributionInfoService 
 	public Integer findUserRole(String name, String userId) {
 		// TODO Auto-generated method stub
 		return iPDistributionInfoMapper.findUserRole(name, userId);
+	}
+
+	@Override
+	public List<MenuBean> findMenu(MenuBean menuBean) {
+		// TODO Auto-generated method stub
+		return iPDistributionInfoMapper.findMenu(menuBean);
 	}
 		
  

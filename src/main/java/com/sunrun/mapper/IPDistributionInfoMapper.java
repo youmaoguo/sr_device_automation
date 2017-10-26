@@ -8,6 +8,7 @@ import com.sunrun.entity.DevIpDistributionBean;
 import com.sunrun.entity.DevIpSegmentConfigBean;
 import com.sunrun.entity.DevIpSegmentDistributionBean;
 import com.sunrun.entity.DevPortDredgeOrder;
+import com.sunrun.entity.MenuBean;
 import com.sunrun.util.Json;
 
 /**
@@ -138,4 +139,12 @@ public interface IPDistributionInfoMapper {
 	 * @return
 	 */
 	Integer findUserRole(@Param("name") String name, @Param("userId") String userId );
+	
+	/**
+	 * 查看菜单信息
+	 * @param menuBean
+	 * @return
+	 */
+	List<MenuBean> findMenu(@Param("para") MenuBean menuBean );
+
 }

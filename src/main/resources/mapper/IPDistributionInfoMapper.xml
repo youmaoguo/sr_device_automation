@@ -96,7 +96,9 @@
 		<if test="para.ipSegment!=null">
 			and ip_segment = #{para.ipSegment}
 		</if>
-
+		<if test="para.subnetMask!=null">
+			and subnet_mask = #{para.subnetMask}
+		</if>
 		<if test="para.devType!=null">
 			and dev_type = #{para.devType}
 		</if>
@@ -113,13 +115,13 @@
 			order by ${sortBy}
 		</if>
 		<if test="sortBy==null">
-			order by ip_segment
+			ORDER BY inet_aton(ip_segment)
 		</if>
 		<if test="order!=null">
 			${order}
 		</if>
 		<if test="order==null">
-			desc
+			asc
 		</if>
 		<if test="limit!=null">
 			limit ${limit}
@@ -137,10 +139,12 @@
 		<if test="para.ipSegment!=null">
 			and ip_segment = #{para.ipSegment}
 		</if>
+		<if test="para.subnetMask!=null">
+			and subnet_mask = #{para.subnetMask}
+		</if>
 		<if test="para.networkType!=null">
 			and network_type = #{para.networkType}
 		</if>
-
 		<if test="para.useType!=null">
 			and use_type = #{para.useType}
 		</if>
@@ -244,6 +248,12 @@
 		<if test="para.ip!=null">
 			and ip = #{para.ip}
 		</if>
+		<if test="para.isUseInteger!=null">
+			and is_use = ${para.isUseInteger}
+		</if>
+		<if test="para.isUse!=null">
+			and is_use = ${para.isUse}
+		</if>
 		<if test="para.ipSegment!=null">
 			and ip_segment = #{para.ipSegment}
 		</if>
@@ -270,13 +280,14 @@
 			order by ${sortBy}
 		</if>
 		<if test="sortBy==null">
-			order by ip
+			ORDER BY inet_aton(ip_segment) asc, is_Use desc ,
+			inet_aton(ip )
 		</if>
 		<if test="order!=null">
 			${order}
 		</if>
 		<if test="order==null">
-			desc
+			asc
 		</if>
 		<if test="limit!=null">
 			limit ${limit}
@@ -289,6 +300,15 @@
 
 		<if test="para.id!=null">
 			and id = #{para.id}
+		</if>
+		<if test="para.ip!=null">
+			and ip = #{para.ip}
+		</if>
+		<if test="para.isUseInteger!=null">
+			and is_use = ${para.isUseInteger}
+		</if>
+		<if test="para.isUse!=null">
+			and is_use = ${para.isUse}
 		</if>
 		<if test="para.ipSegment!=null">
 			and ip_segment = #{para.ipSegment}
@@ -435,16 +455,49 @@
 	<update id="editIpSegmentDistribution">
 
 		<foreach collection="para" item="para" index="index">
+		
+		update dev_ip_distribution
+			set
+			remark=#{para.remark},update_user=#{para.update_user},update_time=now()
+			<if test="para.networkType!=null">
+				,network_type=#{para.networkType}
+			</if>
+			<if test="para.useType!=null">
+				,use_type=#{para.useType}
+			</if>
+			<if test="para.devType!=null">
+				,dev_type=#{para.devType}
+			</if>
+			<if test="para.responsible!=null">
+				,responsible=#{para.responsible}
+			</if>
+			<if test="para.isUseInteger!=null">
+			 ,is_use=#{para.isUseInteger}
+			</if>
+			 
+			where ip_segment= #{para.ipSegment};
+			
 			update
 			dev_ip_segment_distribution
 			set
-			remark=#{para.remark},update_user=#{para.update_user},update_time=now()
+			remark=#{para.remark},update_user=#{para.update_user},update_time=now(),
+			used_ip=(select count(*) from dev_ip_distribution  where is_use=1 and  ip_segment= #{para.ipSegment} ) 
+			<if test="para.networkType!=null">
+				,network_type=#{para.networkType}
+			</if>
+			<if test="para.useType!=null">
+				,use_type=#{para.useType}
+			</if>
+			<if test="para.devType!=null">
+				,dev_type=#{para.devType}
+			</if>
+			<if test="para.responsible!=null">
+				,responsible=#{para.responsible}
+			</if>
+
 			where id= #{para.id};
 
-			update dev_ip_distribution
-			set
-			remark=#{para.remark},update_user=#{para.update_user},update_time=now()
-			where ip_segment= #{para.ipSegment};
+			
 		</foreach>
 
 	</update>
@@ -458,7 +511,7 @@
 			set
 			remark=#{devIpDistributionBean_one.remark},update_user=#{devIpDistributionBean_one.userId},update_time=now(),is_use=#{devIpDistributionBean_one.isUseInteger}
 
-			 
+
 			<if test="devIpDistributionBean_one.devName!=null">
 				,dev_Name=#{devIpDistributionBean_one.devName}
 			</if>
@@ -513,9 +566,12 @@
 		<if test='devIpDistributionBean_one.ip!=null'>
 			update dev_ip_distribution
 			set
-			remark=#{devIpDistributionBean_one.remark},update_user=#{devIpDistributionBean_one.update_user},update_time=now(),is_use=#{devIpDistributionBean_one.isUseInteger}
+			remark=#{devIpDistributionBean_one.remark},update_user=#{devIpDistributionBean_one.update_user},update_time=now()
+			
 
-			 
+<if test="devIpDistributionBean_one.isUseInteger!=null">
+				 is_use=#{devIpDistributionBean_one.isUseInteger}
+			</if>
 			<if test="devIpDistributionBean_one.devName!=null">
 				, dev_Name=#{devIpDistributionBean_one.devName}
 			</if>
@@ -562,14 +618,19 @@
 			<foreach collection="para" item="para" index="index" open="("
 				close=")" separator=",">
 				#{para.ip}
-			</foreach> ;
+			</foreach>
+			;
 		</if>
 
-<if test="devIpDistributionBean_one.ipSegment!=null"> 
-       update dev_ip_segment_distribution
-          set  used_ip= (select  count(*) from dev_ip_distribution where is_use=1 and ip_segment=#{devIpDistributionBean_one.ipSegment})
-         where  ip_Segment=#{devIpDistributionBean_one.ipSegment} ;
-	</if>
+		<if test="devIpDistributionBean_one.ipSegment!=null">
+			update dev_ip_segment_distribution
+			set used_ip= (select
+			count(*) from dev_ip_distribution where is_use=1
+			and
+			ip_segment=#{devIpDistributionBean_one.ipSegment})
+			where
+			ip_Segment=#{devIpDistributionBean_one.ipSegment} ;
+		</if>
 	</update>
 
 
@@ -599,6 +660,25 @@
 		id =
 		#{userId}))
 	</select>
+
+	<select id="findMenu" resultType="com.sunrun.entity.MenuBean">
+
+		SELECT
+		m.id as functionsId,
+		m.module_id as modeId,
+		m.url as
+		functionsModeNumber,
+		m.name as title,
+		m.url_param_1 as
+		functionsTableName
+		FROM sys_menu m
+		where state=1
+		<if test="para.functionsModeNumber!=null">
+			and m.url=#{para.functionsModeNumber}
+		</if>
+
+	</select>
+
 
 
 </mapper>

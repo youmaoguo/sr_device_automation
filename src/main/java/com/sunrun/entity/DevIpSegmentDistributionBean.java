@@ -24,8 +24,16 @@ public class DevIpSegmentDistributionBean extends BaseEntity implements Serializ
 	/**修改时间*/
 	private Date updateTime;
 	
+	private Integer isUseInteger;// ip 是否使用
 	
 	
+	
+	public Integer getIsUseInteger() {
+		return isUseInteger;
+	}
+	public void setIsUseInteger(Integer isUseInteger) {
+		this.isUseInteger = isUseInteger;
+	}
 	public String getIp() {
 		return ip;
 	}
