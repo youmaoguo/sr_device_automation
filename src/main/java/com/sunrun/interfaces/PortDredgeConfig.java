@@ -34,14 +34,13 @@ public class PortDredgeConfig {
 	 * @param portModeVlan
 	 * @return
 	 */
-	public Json portDredgeConfig(String switchboardIp, String portModeVlan, String portDescribe, String vlanDescribe){
+	public Json portDredgeConfig(String switchboardIp, String portModeVlan, String portDescribe){
 		Json json = new Json();
 		String url=url_properties;
 		try{
 			JSONObject param = new JSONObject();
 			param.put("portModeVlan", portModeVlan);
 			param.put("portDescribe", portDescribe);
-			param.put("vlanDescribe", vlanDescribe);
 			param.put("switchboardIp", switchboardIp);
 			logger.info("调用Python接口获取交换机配置信息接口url是："+url+"，post请求 ，参数是："+param.toString()+", 头部验证是:"+StringUtil.basic64Encord(username, pwd));
 			String sb = RestfulRequestUtil.getResponse(url, param, "post", StringUtil.basic64Encord(username, pwd));

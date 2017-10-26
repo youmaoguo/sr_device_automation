@@ -215,7 +215,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		String switchboardIp = param.getString("switchboardIp");
 		String portModeVlan = param.getString("portModeVlan");
 		String portDescribe = param.getString("portDescribe");
-		String vlanDescribe = param.getString("vlanDescribe");
+		//String vlanDescribe = param.getString("vlanDescribe");
 		if(StringUtils.isEmpty(switchboardIp) || StringUtils.isEmpty(portModeVlan)){
 			json.setRet_code(401);
 			json.setRet_info("缺少请求参数");
@@ -225,7 +225,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		}
 		try{
 			//调用Python接口获取
-			Json j = portDredgeConfig.portDredgeConfig(switchboardIp, portModeVlan, portDescribe, vlanDescribe);
+			Json j = portDredgeConfig.portDredgeConfig(switchboardIp, portModeVlan, portDescribe);
 			if(j.getSuccess()){
 				List<String> config = new ArrayList<String>();
 				JSONArray array = (JSONArray) j.getData();
