@@ -22,12 +22,12 @@ public class PortDredgeExecuteInfo implements Runnable {
 	private String portModeVlan;
 	private String switchboardUser;
 	private String switchboardPass;
-	private String portDescribe;
+	private String[] portDescribe;
 	
 	public PortDredgeExecuteInfo(){
 		super();
 	}
-	public PortDredgeExecuteInfo(DevPortDredgeOrderService devPortDredgeOrderService,String id, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass, String portDescribe){
+	public PortDredgeExecuteInfo(DevPortDredgeOrderService devPortDredgeOrderService,String id, String switchboardIp, String portModeVlan,String switchboardUser,String switchboardPass, String[] portDescribe){
 		this.devPortDredgeOrderService = devPortDredgeOrderService;
 		this.id = id;
 		this.switchboardIp = switchboardIp;

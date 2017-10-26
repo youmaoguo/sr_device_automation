@@ -112,8 +112,8 @@ public class DevPortDredgeOrderController extends BaseController{
 		String handlerName = obj.getString("userName");
 		String switchboardIp = obj.getString("switchboardIP");
 		String portModeVlan = obj.getString("portModeVlan");
-		String portDescribe = obj.getString("portDescribe");
-		String vlanDescribe = obj.getString("vlanDescribe");
+		String[] portDescribe = (String[]) obj.getJSONArray("portDescribe").toArray();
+		String[] vlanDescribe = (String[])obj.getJSONArray("vlanDescribe").toArray();
 		portModeVlan = portModeVlan.replace("[", "");
 		portModeVlan = portModeVlan.replace("]", "");
 		portModeVlan = portModeVlan.replace("\"", "");
