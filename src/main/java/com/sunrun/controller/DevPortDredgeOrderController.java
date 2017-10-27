@@ -112,12 +112,25 @@ public class DevPortDredgeOrderController extends BaseController{
 		String handlerName = obj.getString("userName");
 		String switchboardIp = obj.getString("switchboardIP");
 		String portModeVlan = obj.getString("portModeVlan");
-		String[] portDescribe = (String[]) obj.getJSONArray("portDescribe").toArray();
-		String[] vlanDescribe = (String[])obj.getJSONArray("vlanDescribe").toArray();
 		portModeVlan = portModeVlan.replace("[", "");
 		portModeVlan = portModeVlan.replace("]", "");
 		portModeVlan = portModeVlan.replace("\"", "");
 		portModeVlan = portModeVlan.replace(",", ";");
+		
+		JSONArray vs = obj.getJSONArray("vlanDescribe");
+		String[] vlanDescribe = new String[vs.size()];
+		for(int i=0;i<vs.size();i++){
+			vlanDescribe[i] = vs.get(i).toString();
+		}
+		JSONArray ports = obj.getJSONArray("portDescribe");
+		String[] portDescribe = new String[ports.size()];
+		for(int i=0;i<ports.size();i++){
+			portDescribe[i] = ports.get(i).toString();
+		}
+		
+		//String[] portDescribe = (String[]) obj.getJSONArray("portDescribe").toArray();
+		//String[] vlanDescribe = (String[])obj.getJSONArray("vlanDescribe").toArray();
+		
 		
 		String switchboardUser = obj.getString("switchboardUser");//登陆交换机 高权账号
 		String switchboardPass = obj.getString("switchboardPass");//高权账号密码
@@ -212,7 +225,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		//switchboardIp=switchboardIp.replace("-", "."); 
 		logger.info("获取交换机配置信息入参 ："+jsonStr);
 		JSONObject param = JSONObject.parseObject(jsonStr);
-		String switchboardIp = param.getString("switchboardIp");
+		String switchboardIp = param.getString("switchboardIP");
 		String portModeVlan = param.getString("portModeVlan");
 		String portDescribe = param.getString("portDescribe");
 		//String vlanDescribe = param.getString("vlanDescribe");

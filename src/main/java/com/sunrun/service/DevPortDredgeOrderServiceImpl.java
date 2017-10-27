@@ -222,13 +222,15 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 					json.setRet_code(500);
 					json.setRet_info("端口验证不通过");
 					json.setSuccess(false);
-					return json;
+					continue;
+					//return json;
 				}
 				if(pv.length==3 && !vlans.contains(pv[2])){
 					json.setRet_code(500);
 					json.setRet_info("vlan验证不通过");
 					json.setSuccess(false);
-					return json;
+					continue;
+					//return json;
 				}
 				DevPortCommandInfo o = new DevPortCommandInfo();
 				o.setTaskId(id);
@@ -255,6 +257,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 						f.setExecuteState(json.getSuccess()==true?1:2);
 						f.setTaskId(id);
 						f.setMethod(m.toString());
+						f.setPortModeVlan(port);
 						devPortCommandInfoMapper.editPortCommand(f);
 					}else{
 						tag = false;
@@ -277,6 +280,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 								f.setTaskId(id);
 								f.setMethod(m.toString());
 								f.setExecuteOrder(order);
+								f.setPortModeVlan(port);
 								devPortCommandInfoMapper.editPortCommand(f);
 								
 								DevPortCommandInfo f1 = new DevPortCommandInfo();
@@ -285,6 +289,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 								f1.setTaskId(id);
 								f1.setMethod(m.toString());
 								f1.setExecuteOrder(order);
+								f.setPortModeVlan(port);
 								devPortCommandInfoMapper.editExecuteStatusGT(f1);
 								
 								DevPortCommandInfo f2 = new DevPortCommandInfo();
@@ -293,6 +298,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 								f2.setTaskId(id);
 								f2.setMethod(m.toString());
 								f2.setExecuteOrder(order);
+								f.setPortModeVlan(port);
 								devPortCommandInfoMapper.editExecuteStatusLT(f2);
 							}
 							
@@ -302,6 +308,7 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 							f.setExecuteState(2);
 							f.setTaskId(id);
 							f.setMethod(m.toString());
+							f.setPortModeVlan(port);
 							devPortCommandInfoMapper.editPortCommand(f);
 						}
 					}
@@ -359,6 +366,11 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 			json.setSuccess(false);
 		}
 		return json;
+	}
+
+	@Override
+	public List<DevPortCommandInfo> findCommandInfo(String taskId) {
+		return devPortCommandInfoMapper.findIpAndPortByTaskId(taskId);
 	}
 
 	

@@ -2,7 +2,7 @@ package com.sunrun.service;
 
 import java.util.List;
 
-
+import com.sunrun.entity.DevPortCommandInfo;
 import com.sunrun.entity.DevPortDredgeOrder;
 import com.sunrun.util.Json;
 
@@ -66,5 +66,12 @@ public interface DevPortDredgeOrderService {
 	 * @return
 	 */
 	Json findExecuteDetail(String taskId);
+	
+	/**
+	 * 查询工单下的所有执行情况
+	 * @param taskId
+	 * @return
+	 */
+	List<DevPortCommandInfo> findCommandInfo(String taskId);
 	
 }

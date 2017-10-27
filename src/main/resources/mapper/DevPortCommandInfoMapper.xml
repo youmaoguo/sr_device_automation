@@ -153,6 +153,8 @@
 	
 	<select id="findIpAndPortByTaskId" resultType="com.sunrun.entity.DevPortCommandInfo">
 		select DISTINCT  
+			execute_state AS executeState,
+			execute_info AS executeInfo,
 			task_id AS taskId,	 
 			switchboard_ip AS switchboardIp,
 			port_mode_vlan AS portModeVlan

@@ -1,6 +1,8 @@
 package com.sunrun.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 设备端口开通工单实体
@@ -15,9 +17,9 @@ public class DevPortDredgeOrder extends BaseEntity implements Serializable{
 	private String portModeVlan;//'端口-模式-vlan 信息，格式为：Eth1/11-trunk-vlan190;Eth1/12-trunk-vlan192;',
 	private Integer executeState;//'执行状态 1:新建；2：执行中；3：执行成功； 4：执行失败'
 	
-	private String createTime;
+	private Date createTime;
 	private String createUser;
-	private String updateTime;
+	private Date updateTime;
 	private String updateUser;
 	
 	@Override
@@ -50,9 +52,14 @@ public class DevPortDredgeOrder extends BaseEntity implements Serializable{
 		this.executeState = executeState;
 	}
 	public String getCreateTime() {
-		return createTime;
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = "";
+		if(createTime!=null){
+			s = fmt.format(createTime);
+		}
+		return s;
 	}
-	public void setCreateTime(String createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 	public String getCreateUser() {
@@ -62,9 +69,14 @@ public class DevPortDredgeOrder extends BaseEntity implements Serializable{
 		this.createUser = createUser;
 	}
 	public String getUpdateTime() {
-		return updateTime;
+		SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = "";
+		if(updateTime!=null){
+			s = fmt.format(updateTime);
+		}
+		return s;
 	}
-	public void setUpdateTime(String updateTime) {
+	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
 	public String getUpdateUser() {
