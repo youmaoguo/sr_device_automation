@@ -133,7 +133,8 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 						d.setCommand(ss.get(j));
 						d.setExecuteOrder(j+1);
 						d.setMethod(key);
-						d.setExecuteState(json.getSuccess()?3:2);
+						//d.setExecuteState(json.getSuccess()?3:2);
+						d.setExecuteState(json.getSuccess()?1:4);
 						d.setId(StringUtil.getUuid());
 						d.setHandlerName(handlerName);
 						d.setPortModeVlan(s[0]);
@@ -249,12 +250,21 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 				List<Object> methods = new ArrayList<Object>();
 				methods.addAll(set);
 				for(Object m : methods){
+					DevPortCommandInfo ff = new DevPortCommandInfo();
+					ff.setExecuteInfo("执行中...");
+					ff.setExecuteState(2);
+					//ff.setExecuteState(json.getSuccess()==true?1:2);
+					ff.setTaskId(id);
+					ff.setMethod(m.toString());
+					ff.setPortModeVlan(port);
+					devPortCommandInfoMapper.editPortCommand(ff);
 					json = executePortDredge.executePortDredge(switchboardIp, portVlans[i], m.toString(), switchboardUser, switchboardPass, portDescribe[i]);
 					//执行完一条命令后重新修改下该条命令的状态
 					if(json.getSuccess()){
 						DevPortCommandInfo f = new DevPortCommandInfo();
 						f.setExecuteInfo(json.getSuccess()==true?"执行成功":json.getRet_info());
-						f.setExecuteState(json.getSuccess()==true?1:2);
+						f.setExecuteState(json.getSuccess()==true?3:4);
+						//f.setExecuteState(json.getSuccess()==true?1:2);
 						f.setTaskId(id);
 						f.setMethod(m.toString());
 						f.setPortModeVlan(port);
@@ -276,7 +286,8 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 								int order = ls.get(0).getExecuteOrder();
 								DevPortCommandInfo f = new DevPortCommandInfo();
 								f.setExecuteInfo(json.getRet_info());
-								f.setExecuteState(2);
+								f.setExecuteState(4);
+								//f.setExecuteState(2);
 								f.setTaskId(id);
 								f.setMethod(m.toString());
 								f.setExecuteOrder(order);
@@ -285,7 +296,8 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 								
 								DevPortCommandInfo f1 = new DevPortCommandInfo();
 								f1.setExecuteInfo("命令未执行");
-								f1.setExecuteState(3);
+								f1.setExecuteState(1);
+								//f1.setExecuteState(3);
 								f1.setTaskId(id);
 								f1.setMethod(m.toString());
 								f1.setExecuteOrder(order);
@@ -294,7 +306,8 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 								
 								DevPortCommandInfo f2 = new DevPortCommandInfo();
 								f2.setExecuteInfo(json.getRet_info());
-								f2.setExecuteState(1);
+								f2.setExecuteState(3);
+								//f2.setExecuteState(1);
 								f2.setTaskId(id);
 								f2.setMethod(m.toString());
 								f2.setExecuteOrder(order);
@@ -305,7 +318,8 @@ public class DevPortDredgeOrderServiceImpl implements DevPortDredgeOrderService 
 						}else{
 							DevPortCommandInfo f = new DevPortCommandInfo();
 							f.setExecuteInfo(json.getRet_info());
-							f.setExecuteState(2);
+							//f.setExecuteState(2);
+							f.setExecuteState(4);
 							f.setTaskId(id);
 							f.setMethod(m.toString());
 							f.setPortModeVlan(port);
