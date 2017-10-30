@@ -73,7 +73,7 @@ public class DevPortDredgeOrderController extends BaseController{
 		try{
 			List<DevPortDredgeOrder> list = devPortDredgeOrderService.findPortDredgeOrder(null, like, sortBy, order, page(currentPage, pageSize));
 			Integer total = devPortDredgeOrderService.countPortDredgeOrder(null, like, sortBy, order);
-			obj.put("pageSize", setPageSize(currentPage, pageSize, total));
+			obj.put("pageSize", (pageSize==null || pageSize==0)?20:pageSize);
 			obj.put("total", total);
 			obj.put("currentPage", currentPage);
 			obj.put("data", list);
