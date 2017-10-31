@@ -97,7 +97,7 @@ public class IPDistributionInfoController extends BaseController {
 			List<DevIpSegmentDistributionBean> list = iPDistributionInfoService.findDevIpSegmentDistribution(bean,
 					exact, like, sortBy, order, page(currentPage, pageSize));
 			Integer total = iPDistributionInfoService.countDevIpSegmentDistribution(bean, exact, like);
-			obj.put("pageSize", setPageSize(currentPage, pageSize, total));
+			obj.put("pageSize",  pageSize );
 			obj.put("total", total);
 			obj.put("currentPage", currentPage);
 			obj.put("data", list);
