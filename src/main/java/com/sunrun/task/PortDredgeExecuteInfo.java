@@ -48,7 +48,7 @@ public class PortDredgeExecuteInfo implements Runnable {
 		List<DevPortCommandInfo> l = devPortDredgeOrderService.findCommandInfo(id);
 		boolean b = false;
 		for(DevPortCommandInfo f : l){
-			if(f.getExecuteState()!=1){
+			if(f.getExecuteState()!=3){
 				b = true;
 				break;
 			}
