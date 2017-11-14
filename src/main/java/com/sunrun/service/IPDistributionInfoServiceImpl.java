@@ -106,13 +106,13 @@ public class IPDistributionInfoServiceImpl implements IPDistributionInfoService 
 		// TODO Auto-generated method stub
 		return iPDistributionInfoMapper.findMenu(menuBean);
 	}
-		
- 
 
-	 
- 
-	 
 
-	
+
+
+
+
+
+
 
 }

@@ -1,11 +1,13 @@
 package com.sunrun.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -120,6 +122,93 @@ public class BaseController {
 	 */
 	public String returnJson(Json json){
 		return JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
+	}
+
+
+	/**
+	 *返回信息给调用者--json 格式  用于：查询记录条数
+	 * @param pageSize
+	 * @param total
+	 * @param currentPage
+	 * @return
+	 */
+	public void response(Integer pageSize,Integer total,Integer currentPage,String info,HttpServletRequest request, HttpServletResponse response){
+		JSONObject obj = new JSONObject();
+		Json json = new Json();
+		JSONArray array = new JSONArray();
+
+		obj.put("pageSize", pageSize);
+		obj.put("total", total);
+		obj.put("currentPage", currentPage);
+		obj.put("pages",
+				((total % pageSize) > 0 ? (Math.floor(total / pageSize) + 1) : (Math.floor(total / pageSize))));
+		array.add(obj);
+		json.setData(array);
+		json.setRet_info(info);
+		json.setRet_code(200);
+		json.setSuccess(true);
+
+		response2(json,response,request);
+	}
+
+
+	/**
+	 *返回信息给调用者--json 格式  用于：查询记录用
+	 * @param list
+	 * @param pageSize
+	 * @param total
+	 * @param currentPage
+	 * @return
+	 */
+	public void response(List list,Integer pageSize,Integer total,Integer currentPage,String info,HttpServletRequest request, HttpServletResponse response){
+		JSONObject obj = new JSONObject();
+		List<Object> data = new ArrayList<Object>();
+		Json json = new Json();
+
+		obj.put("pageSize", pageSize);
+		obj.put("total", total);
+		obj.put("currentPage", currentPage);
+		obj.put("data", list);
+		data.add(obj);
+		json.setData(data);
+		json.setRet_info(info);
+		json.setRet_code(200);
+		json.setSuccess(true);
+		response2(json,response,request);
+	}
+
+	/**
+	 *返回信息给调用者--json 格式  用于：一般数据返回
+	 * @param list
+	 * @param info
+	 * @return
+	 */
+	public void response(List list,String info, HttpServletRequest request, HttpServletResponse response){
+		Json json = new Json();
+		json.setData(list);
+		json.setRet_info(info);
+		json.setRet_code(200);
+		json.setSuccess(true);
+		response2(json,response,request);
+	}
+
+	/**
+	 * 返回信息给调用者--json 格式  用于：出错时调用
+	 * @param e
+	 * @param errinfo
+	 * @return
+	 */
+	public void  response(Exception e,String errinfo,HttpServletRequest request, HttpServletResponse response){
+		Json json = new Json();
+		e.printStackTrace();
+		logger.error(errinfo);
+		json.setCollect(null);
+		json.setData(null);
+		json.setRet_info(errinfo);
+		json.setRet_code(500);
+		json.setSuccess(false);
+
+		response2(json,response,request);
 	}
 	
 	/**

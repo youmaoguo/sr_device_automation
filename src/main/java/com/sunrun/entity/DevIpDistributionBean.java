@@ -7,7 +7,8 @@ import java.util.Date;
  * @author jl
  *
  */
-public class DevIpDistributionBean extends BaseEntity { 
+public class DevIpDistributionBean extends BaseEntity {
+	private String 	newId	;
 	private String 	address	;//	'地点',
 	private String 	ip	;//	'ip地址：10.1.1.1',
 	private String 	ipSegment	;//	'网段名称
@@ -35,10 +36,17 @@ public class DevIpDistributionBean extends BaseEntity {
 	private String isUse	;//	  是否使用  0 代表已未使用，1代表使用',
 	private Integer isUseInteger	;//	  是否使用  0 代表已未使用，1代表使用',
 	private String userId;
-	
-	
-	
-	
+
+
+
+	public String getNewId() {
+		return newId;
+	}
+
+	public void setNewId(String newId) {
+		this.newId = newId;
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -53,8 +61,8 @@ public class DevIpDistributionBean extends BaseEntity {
 	}
 	/**修改时间*/
 	private Date updateTime;
-	
-	
+
+
 	public Date getUpdateTime() {
 		return updateTime;
 	}
@@ -211,7 +219,7 @@ public class DevIpDistributionBean extends BaseEntity {
 	public void setIsUse(String isUse) {
 		this.isUse = isUse;
 	}
-	
-	
- 	
+
+
+
 }

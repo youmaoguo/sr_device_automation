@@ -25,21 +25,22 @@ public interface IPDistributionInfoService {
 	/**
 	 * 修改 IP 网段记录
 	 * 
-	 * @param port
+	 *
 	 */
 	void editIpSegmentDistribution(List<DevIpSegmentDistributionBean> devIpSegmentDistributionBeanList);
 
 	/**
 	 * 修改 IP 记录
 	 * 
-	 * @param port
+	 *
 	 */
 	void editIpDistribution(List<DevIpDistributionBean> devIpDistributionBean, DevIpDistributionBean devIpDistributionBean_one);
+
 
 	/**
 	 * 删除 IP 网段记录
 	 * 
-	 * @param port
+	 *
 	 */
 	void deleteIpSegmentDistribution( DevIpSegmentDistributionBean  devIpSegmentDistributionBean );
 
@@ -48,7 +49,7 @@ public interface IPDistributionInfoService {
 	/**
 	 * 查询 IP 网段记录
 	 * 
-	 * @param port
+	 *
 	 * @param like
 	 *            模糊查询值/搜索值
 	 * @param sortBy
@@ -66,7 +67,7 @@ public interface IPDistributionInfoService {
 	/**
 	 * 查询 IP 记录
 	 * 
-	 * @param port
+	 *
 	 * @param like
 	 *            模糊查询值/搜索值
 	 * @param sortBy

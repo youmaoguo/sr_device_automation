@@ -32,22 +32,19 @@ public interface IPDistributionInfoMapper {
 
 	/**
 	 * 修改 IP 网段记录
-	 * 
-	 * @param port
+	 * @param devIpSegmentDistributionBeanList
 	 */
 	void editIpSegmentDistribution(@Param("para") List<DevIpSegmentDistributionBean> devIpSegmentDistributionBeanList);
 
 	/**
 	 * 修改 IP 记录
-	 * 
-	 * @param port
+	 *
 	 */
 	void editIpDistribution(@Param("para") List<DevIpDistributionBean> devIpDistributionBean, @Param("devIpDistributionBean_one") DevIpDistributionBean devIpDistributionBean_one);
 
 	/**
 	 * 删除 IP 网段记录
-	 * 
-	 * @param port
+	 *
 	 */
 	void deleteIpSegmentDistribution(
 			@Param("para")   DevIpSegmentDistributionBean  devIpSegmentDistributionBean );
@@ -56,8 +53,7 @@ public interface IPDistributionInfoMapper {
 
 	/**
 	 * 查询
-	 * 
-	 * @param port
+	 *
 	 * @param like
 	 *            模糊查询值/搜索值
 	 * @param sortBy
@@ -74,8 +70,7 @@ public interface IPDistributionInfoMapper {
 
 	/**
 	 * 查询 IP 记录
-	 * 
-	 * @param port
+	 *
 	 * @param like
 	 *            模糊查询值/搜索值
 	 * @param sortBy
@@ -92,16 +87,9 @@ public interface IPDistributionInfoMapper {
 
 	/**
 	 * 统计
-	 * 
-	 * @param port
+	 *
 	 * @param like
 	 *            模糊查询值/搜索值
-	 * @param sortBy
-	 *            排序值（根据哪个属性排序）
-	 * @param order
-	 *            排序方式（desc,asc）
-	 * @param limit
-	 *            分页条件
 	 */
 	Integer countDevIpSegmentDistribution(@Param("para") DevIpSegmentDistributionBean para,
 			@Param("exact") String exact, @Param("like") String like);

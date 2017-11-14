@@ -140,7 +140,7 @@ public class IPPoolUtil {
         for (int i =0;i<4;i++) {
             rets[i]=255-(Integer.parseInt(temp1[i])^Integer.parseInt(temp2[i]));
         }
-        return rets[0]+"."+rets[1]+"."+rets[2]+"."+(rets[3]-1);
+        return rets[0]+"."+rets[1]+"."+rets[2]+"."+(rets[3]);
     }
     /**
      * 计算子网大小
