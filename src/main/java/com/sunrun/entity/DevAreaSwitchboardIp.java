@@ -13,6 +13,8 @@ public class DevAreaSwitchboardIp extends BaseEntity implements Serializable{
 	private String areaDescribe;//区域描述',
 	private String mainSwitchboardIp;//'主汇聚交换机ip',
 	private String backupSwitchboardIp;//'备汇聚交换机ip',
+	private Integer isNeedNewConfig;//是否需要新增指令[1:要 ；0：不要]  （注：思科品牌有的C49和5K型号部署在不同的区有的需要多加几条指令，有的则不要）
+	
 	
 	private String subnet;//网段
 	private String devName;//主设备名
@@ -34,6 +36,12 @@ public class DevAreaSwitchboardIp extends BaseEntity implements Serializable{
 	private String backupDevHardwareType;//备硬件类型
 	private String backupDevManagers;//备负责人
 	
+	public Integer getIsNeedNewConfig() {
+		return isNeedNewConfig;
+	}
+	public void setIsNeedNewConfig(Integer isNeedNewConfig) {
+		this.isNeedNewConfig = isNeedNewConfig;
+	}
 	public String getTelnetPort() {
 		return telnetPort;
 	}

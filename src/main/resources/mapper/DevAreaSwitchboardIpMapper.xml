@@ -11,6 +11,7 @@
 			area_describe AS areaDescribe,
 			main_switchboard_ip AS mainSwitchboardIp,
 			backup_switchboard_ip AS backupSwitchboardIp,
+			is_need_new_config AS isNeedNewConfig,
 			
 			subnet AS subnet,
 			dev_name AS devName,

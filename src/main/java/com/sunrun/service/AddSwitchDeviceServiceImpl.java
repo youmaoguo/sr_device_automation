@@ -786,7 +786,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("port", Integer.parseInt(d.getExclusiveSwitchboardPort()));//交换机的telnet登录端口号
 			param.put("user", /*d.getTelnetUser()!=null ? d.getTelnetUser() : ""*/user);		//交换机的telnet登录账号
 			param.put("password", /*d.getTelnetPwd()!=null ? d.getTelnetPwd() : ""*/pwd);	//交换机的telnet登录密码
-			param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
+			param.put("type", /*d.getExclusiveSwitchboardType()*/task.getModelName());		//交换机的类型，分别为4948E和5548
 			param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			json = (Json) JSONObject.parseObject(sb, Json.class);
@@ -853,7 +853,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 					param.put("port", Integer.parseInt(d.getExclusiveSwitchboardPort()));//交换机的telnet登录端口号
 					param.put("user", /*d.getTelnetUser()!=null ? d.getTelnetUser() : ""*/user);		//交换机的telnet登录账号
 					param.put("password", /*d.getTelnetPwd()!=null ? d.getTelnetPwd() : ""*/pwd);	//交换机的telnet登录密码
-					param.put("type", d.getExclusiveSwitchboardType());		//交换机的类型，分别为4948E和5548
+					param.put("type", /*d.getExclusiveSwitchboardType()*/task.getModelName());		//交换机的类型，分别为4948E和5548
 					param.put("serverIp", serverIp);		//更新源服务器的IP 配置文件静态获得
 					param.put("deviceBrand", task.getBrandName());//上线设备品牌，分别为cisco、h3c
 					
@@ -1325,7 +1325,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("deviceBrand", task.getBrandName());	//品牌型号，列如cisco,huawei,h3c等
 			param.put("host", d.getExclusiveSwitchboardIp());	//交换机的telnet登录IP地址
 			param.put("port", d.getExclusiveSwitchboardPort());//交换机的telnet登录port
-			param.put("type", d.getExclusiveSwitchboardType());	//交换机的类型，分别为4948E和5548
+			param.put("type", /*d.getExclusiveSwitchboardType()*/task.getModelName());	//交换机的类型，分别为4948E和5548
 			param.put("ipPortName1", task.getMainSwitchboardIp());//主ip 
 			param.put("ipPortName2", task.getBackupSwitchboardIp());//备ip 
 			param.put("mainSwitchboardPort", task.getMainSwitchboardPort());//主端口 
@@ -1336,6 +1336,7 @@ public class AddSwitchDeviceServiceImpl implements AddSwitchDeviceService {
 			param.put("vlanNu", task.getVlan());//接入设备的管理Vlan号
 			param.put("description", "");//接入设备的描述配置信息
 			param.put("newIp", task.getManagerIp());//在看板系统上申请的IP地址
+			param.put("isNeedNewConfig", li.get(0).getIsNeedNewConfig());
 			String sb = RestfulRequestUtil.getResponse(thirdPartUrl, param, "POST", auth);
 			Json j = (Json) JSONObject.parseObject(sb, Json.class);
 			if(j.getRet_code()!=200){

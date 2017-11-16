@@ -134,6 +134,7 @@ public class AddSwitchDevice implements Runnable {
 				task.setSwitchState(3);
 				task.setTaskState(5);
 				deviceAutomationService.updateTask2(task, null, null, userName);
+				return;
 			}
 		}
 		
@@ -243,6 +244,7 @@ public class AddSwitchDevice implements Runnable {
 					task.setSwitchState(3);
 					task.setTaskState(5);
 					deviceAutomationService.updateTask2(task, null, null, userName);
+					return;
 				}
 			}
 			if(code==200){
