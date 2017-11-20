@@ -63,6 +63,7 @@
         use_type AS useType,
         dev_type AS devType,
         used_ip AS usedIp,
+        is_lock AS isLock,
         leisure_ip
         AS leisureIp,
         remark,
@@ -349,6 +350,7 @@
         used_ip ,
         leisure_ip ,
         remark ,
+        is_lock , 
         responsible ,
         update_user_info ,
         create_time ,
@@ -370,6 +372,7 @@
             #{para.usedIp},
             #{para.leisureIp},
             #{para.remark},
+            #{para.isLock},
             #{para.responsible},
             #{para.updateUserInfo},
             now(),

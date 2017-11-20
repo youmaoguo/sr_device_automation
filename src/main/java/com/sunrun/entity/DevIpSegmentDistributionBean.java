@@ -21,6 +21,15 @@ public class DevIpSegmentDistributionBean extends BaseEntity implements Serializ
 	private String 	remark                     	;
 	private String 	responsible                	;
 	private String 	updateUserInfo             	;
+	private Integer 	isLock                     	;
+	
+	
+	public Integer getIsLock() {
+		return isLock;
+	}
+	public void setIsLock(Integer isLock) {
+		this.isLock = isLock;
+	}
 	/**修改时间*/
 	private Date updateTime;
 	

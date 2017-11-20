@@ -443,6 +443,8 @@ public class IPDistributionInfoController extends BaseController {
         String responsible = obj.getString("responsible");
         String userName = obj.getString("userName");
         String usercode = obj.getString("usercode");
+        Integer isLock = obj.getInteger("isLock")==null?0:obj.getInteger("isLock");
+        	
         JSONArray dataJSONArray = obj.getJSONArray("data");
 
 
@@ -563,6 +565,7 @@ public class IPDistributionInfoController extends BaseController {
                     devIpSegmentDistributionBean.setIpSegment(ipSegmentMap.get(ipSegmentKey));
                     devIpSegmentDistributionBean.setUpdateUserInfo(usercode + "/" + userName);
                     devIpSegmentDistributionBean.setUpdate_user(userId);
+                    devIpSegmentDistributionBean.setIsLock(isLock);
                     // 根据与招行许博约定，如录入的小于24的掩码，则拆分成多个 24的掩码
                     devIpSegmentDistributionBean.setSubnetMask("24");
 
@@ -678,6 +681,12 @@ public class IPDistributionInfoController extends BaseController {
                     ipAndsubnetMaskArray.add(ipAndsubnetMaskObj);
 
                     devIpSegmentDistributionBean.setIpSegment(list.get(0).getIp());
+                    
+                 
+                  // 校验 当networkType、useType、devType 发生变化时， 是否有权限进行修改
+                    if (!checkRole(obj, list.get(0), request, response)) {
+                        return;
+                    }
 
                 }else{
                     json.setCollect(null);
@@ -938,6 +947,12 @@ public class IPDistributionInfoController extends BaseController {
                     .findDevIpSegmentDistribution(devIpSegmentDistributionBean, null, null, null, null, null);
 
             if (list != null && list.size() == 1) {
+            	
+            	   // 校验 删除权限
+            	if(!checkDelete(obj,request,response)){
+            		return ;
+            	}
+            	
                 devIpSegmentDistributionBean.setIpSegment(list.get(0).getIp());
                 devIpSegmentDistributionBean.setUpdateUserInfo(usercode + "/" + userName);
                 devIpSegmentDistributionBean.setUpdate_user(userId);
@@ -1105,5 +1120,96 @@ public class IPDistributionInfoController extends BaseController {
         returnValue = true;
         return returnValue;
     }
+    
+    /**
+     * 校验 当networkType、useType、devType 发生变化时， 是否有权限进行修改
+     * @param obj
+     * @param db_devIpSegmentDistributionBean
+     * @param request
+     * @param response
+     * @return
+     */
+    public boolean checkRole(JSONObject obj ,DevIpSegmentDistributionBean db_devIpSegmentDistributionBean, HttpServletRequest request, HttpServletResponse response) {
+
+        boolean returnValue = false;
+           Json json = new Json();
+           
+           String userId = obj.getString("userId");
+           String address = obj.getString("address");
+           String networkType = obj.getString("networkType");
+           String useType = obj.getString("useType");
+           String devType = obj.getString("devType");
+           String remark = obj.getString("remark");
+           String responsible = obj.getString("responsible");
+           String userName = obj.getString("userName");
+           String usercode = obj.getString("usercode");  
+           
+           Integer islock=db_devIpSegmentDistributionBean.getIsLock()==null?0:db_devIpSegmentDistributionBean.getIsLock(); 
+                // 判断是否是超级管理员
+                if (iPDistributionInfoService.findUserRole("超级管理员", userId) < 1) {
+                	// 不是超级管理员的情况下
+                    // 判断 networkType useType devType 的值是否发生了变化
+                	if( ( !networkType.equals(db_devIpSegmentDistributionBean.getNetworkType())
+                		|| !useType.equals(db_devIpSegmentDistributionBean.getUseType())
+                		|| !devType.equals(db_devIpSegmentDistributionBean.getDevType() )
+                		)  && islock==1
+                			){
+                		 json.setCollect(null);
+                         json.setData(null);
+                         json.setRet_info("此用户没有修改权限");
+                         json.setRet_code(500);
+                         json.setSuccess(false);
+                         response(json, response, request);
+                         return returnValue;
+                		
+                	}
+                	
+                   
+                }
+
+           
+
+
+        
+        returnValue = true;
+        return returnValue;
+    }
+    
+    /**
+     * 删除时，进行权限校验 ，只有 超级管理员 才能删除。
+     * @param obj
+     * @param db_devIpSegmentDistributionBean
+     * @param request
+     * @param response
+     * @return
+     */
+    public boolean checkDelete(JSONObject obj ,  HttpServletRequest request, HttpServletResponse response) {
+
+        boolean returnValue = false;
+           Json json = new Json();
+           
+           String userId = obj.getString("userId");  
+           
+         
+                // 判断是否是超级管理员
+                if (iPDistributionInfoService.findUserRole("超级管理员", userId) < 1) {
+                	// 不是超级管理员的情况下
+               
+                		 json.setCollect(null);
+                         json.setData(null);
+                         json.setRet_info("此用户没有修改权限");
+                         json.setRet_code(500);
+                         json.setSuccess(false);
+                         response(json, response, request);
+                         return returnValue; 
+                   
+                } 
+
+
+        
+        returnValue = true;
+        return returnValue;
+    }
+
 
 }

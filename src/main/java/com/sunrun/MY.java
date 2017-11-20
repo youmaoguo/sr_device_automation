@@ -27,17 +27,11 @@ import com.sunrun.util.StringUtil;
 public class MY {
 
 	public static void main(String[] args)   {
-		JSONObject obj = new JSONObject();
-		JSONArray array = new JSONArray();
-		Json json = new Json();
-		 
-			obj.put("pageSize", 12);
-			obj.put("total", 14);
-			obj.put("currentPage", 13);
-			array.add(obj);
-			json.setData(array);
-		
-		 System.out.println(JSONObject.toJSONString(json));
+		String requestMethod="Get";
+		if(requestMethod.equalsIgnoreCase("get")){
+			System.out.println("dafdsafds");
+		}
+
 }
 	
 }
