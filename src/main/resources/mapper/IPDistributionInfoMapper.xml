@@ -7,10 +7,13 @@
 
 		remark like concat(concat('%',#{like}),'%')
 		or
-		ip_segment like
-		concat(concat('%',#{like}),'%')
-		or address like
-		concat(concat('%',#{like}),'%')
+		ip_segment like concat(concat('%',#{like}),'%')
+		or address like concat(concat('%',#{like}),'%')
+		or network_type like concat(concat('%',#{like}),'%')
+		or use_type like concat(concat('%',#{like}),'%')
+		or vlan like concat(concat('%',#{like}),'%')
+		or gateway like concat(concat('%',#{like}),'%')
+
 		)
 	</sql>
 
@@ -18,8 +21,11 @@
 		AND (
 		remark = #{exact}
 		or ip_segment = #{exact}
-		or address =
-		#{exact}
+		or address = #{exact}
+		or network_type = #{exact}
+		or use_type = #{exact}
+		or vlan = #{exact}
+		or gateway = #{exact}
 		)
 	</sql>
 
@@ -31,6 +37,8 @@
 		concat(concat('%',#{like}),'%')
 		or address like
 		concat(concat('%',#{like}),'%')
+		or use_type like concat(concat('%',#{like}),'%')
+		or system_name like concat(concat('%',#{like}),'%')
 		)
 	</sql>
 
@@ -38,8 +46,9 @@
 		AND (
 		remark = #{exact}
 		or ip = #{exact}
-		or address =
-		#{exact}
+		or address = #{exact}
+		or use_type = #{exact}
+		or system_name = #{exact}
 		)
 	</sql>
 
@@ -54,18 +63,16 @@
         SELECT
         id,
         concat(ip_segment,'/',subnet_mask) AS ipSegment,
-        ip_segment as
-        ip,
+        ip_segment as ip,
         subnet_mask
         AS subnetMask,
         address,
         network_type AS networkType,
         use_type AS useType,
-        dev_type AS devType,
         used_ip AS usedIp,
-        is_lock AS isLock,
-        leisure_ip
-        AS leisureIp,
+        all_ip
+        AS allIp,
+        vlan,gateway,
         remark,
         responsible,
         update_user_info AS updateUserInfo,
@@ -85,22 +92,6 @@
             and id = #{para.id}
         </if>
 
-        <if test="para.networkType!=null">
-            and network_type = #{para.networkType}
-        </if>
-
-        <if test="para.useType!=null">
-            and use_type = #{para.useType}
-        </if>
-        <if test="para.ipSegment!=null">
-            and ip_segment = #{para.ipSegment}
-        </if>
-        <if test="para.subnetMask!=null">
-            and subnet_mask = #{para.subnetMask}
-        </if>
-        <if test="para.devType!=null">
-            and dev_type = #{para.devType}
-        </if>
 
         <if test="like!= null">
             <include refid="IpSegmentLikeQuery"/>
@@ -135,21 +126,11 @@
         <if test="para.id!=null">
             and id = #{para.id}
         </if>
+
         <if test="para.ipSegment!=null">
             and ip_segment = #{para.ipSegment}
         </if>
-        <if test="para.subnetMask!=null">
-            and subnet_mask = #{para.subnetMask}
-        </if>
-        <if test="para.networkType!=null">
-            and network_type = #{para.networkType}
-        </if>
-        <if test="para.useType!=null">
-            and use_type = #{para.useType}
-        </if>
-        <if test="para.devType!=null">
-            and dev_type = #{para.devType}
-        </if>
+
 
         <if test="like!= null">
             <include refid="IpSegmentLikeQuery"/>
@@ -202,28 +183,11 @@
         ip_segment AS ipSegment,
         network_type AS networkType,
         use_type AS useType,
-        dev_type AS devType,
-        category AS category,
-        ip_address_type AS ipAddressType,
-        dev_name AS
-        devName,
-        dev_model AS devModel,
-        user_plan AS userPlan,
         vlan AS vlan,
         subnet_mask AS subnetMask,
         gateway AS gateway,
-        area AS area,
-        start_node
-        AS startNode,
-        end_node AS endNode,
-        start_port AS startPort,
-        end_port AS
-        endPort,
         remark AS remark,
         responsible AS responsible,
-        allocation_user AS
-        allocationUser,
-        allocation_time AS allocationTime,
         update_user_info AS
         updateUserInfo,
         CASE is_Use
@@ -233,9 +197,9 @@
         isUse,
         create_time AS createTime,
         create_user AS createUser,
-        update_time
-        AS updateTime,
-        update_user AS updateUser
+        update_time AS updateTime,
+        update_user AS updateUser,
+        system_name as systemName
         FROM
         dev_ip_distribution
         WHERE
@@ -246,25 +210,10 @@
         <if test="para.ip!=null">
             and ip = #{para.ip}
         </if>
-        <if test="para.isUseInteger!=null">
-            and is_use = ${para.isUseInteger}
-        </if>
-        <if test="para.isUse!=null">
-            and is_use = ${para.isUse}
-        </if>
-        <if test="para.ipSegment!=null">
-            and ip_segment = #{para.ipSegment}
-        </if>
         <if test="para.networkType!=null">
             and network_type = #{para.networkType}
         </if>
 
-        <if test="para.useType!=null">
-            and use_type = #{para.useType}
-        </if>
-        <if test="para.devType!=null">
-            and dev_type = #{para.devType}
-        </if>
 
         <if test="like!= null">
             <include refid="IpLikeQuery"/>
@@ -278,7 +227,7 @@
             order by ${sortBy}
         </if>
         <if test="sortBy==null">
-              ORDER BY update_time desc, inet_aton(ip_segment) asc, is_Use desc ,
+            ORDER BY update_time desc, inet_aton(ip_segment) asc, is_Use desc ,
             inet_aton(ip )
         </if>
         <if test="order!=null">
@@ -302,24 +251,15 @@
         <if test="para.ip!=null">
             and ip = #{para.ip}
         </if>
-        <if test="para.isUseInteger!=null">
-            and is_use = ${para.isUseInteger}
-        </if>
-        <if test="para.isUse!=null">
-            and is_use = ${para.isUse}
-        </if>
         <if test="para.ipSegment!=null">
             and ip_segment = #{para.ipSegment}
         </if>
-        <if test="para.networkType!=null">
-            and network_type = #{para.networkType}
+        <if test="para.isUseInteger!=null">
+            and is_use = ${para.isUseInteger}
         </if>
 
-        <if test="para.useType!=null">
-            and use_type = #{para.useType}
-        </if>
-        <if test="para.devType!=null">
-            and dev_type = #{para.devType}
+        <if test="para.networkType!=null">
+            and network_type = #{para.networkType}
         </if>
 
         <if test="like!= null">
@@ -335,9 +275,9 @@
 
     <insert id="saveIpSegmentDistribution">
 
-        UPDATE  dev_ip_segment_distribution
+        UPDATE dev_ip_segment_distribution
         set state=0
-        where  ip_segment=#{para.ipSegment};
+        where ip_segment=#{para.ipSegment};
 
         insert into dev_ip_segment_distribution(
         id ,
@@ -346,11 +286,10 @@
         address ,
         network_type ,
         use_type ,
-        dev_type ,
         used_ip ,
-        leisure_ip ,
+        all_ip ,
+        vlan,gateway,camp_on,operation_type,
         remark ,
-        is_lock , 
         responsible ,
         update_user_info ,
         create_time ,
@@ -368,11 +307,10 @@
             #{para.address},
             #{para.networkType},
             #{para.useType},
-            #{para.devType},
             #{para.usedIp},
-            #{para.leisureIp},
+            #{para.allIp},
+            #{para.vlan},#{para.gateway},#{para.campOn},#{para.operationType},
             #{para.remark},
-            #{para.isLock},
             #{para.responsible},
             #{para.updateUserInfo},
             now(),
@@ -386,34 +324,22 @@
 
     <insert id="saveDevIpDistribution">
 
-  insert into dev_ip_distribution(
+        insert into dev_ip_distribution(
         id ,
         address ,
         ip ,
         ip_segment ,
         network_type ,
         use_type ,
-        dev_type ,
-        category ,
-        ip_address_type ,
-        dev_name
-        ,
-        dev_model ,
-        user_plan ,
         vlan ,
         subnet_mask ,
         gateway ,
-        area ,
-        start_node ,
-        end_node ,
-        start_port ,
-        end_port ,
         remark ,
         responsible ,
-        allocation_user ,
-        allocation_time ,
         update_user_info ,
         is_use ,
+        operation_type,
+        system_name,
         create_time ,
         create_user ,
         update_time ,
@@ -424,7 +350,7 @@
                  separator=",">
             (
             <if test='para.newId!=null '>
-            #{para.newId},
+                #{para.newId},
             </if>
             <if test="para.newId==null">
                 #{para.id},
@@ -434,26 +360,18 @@
             #{para.ipSegment},
             #{para.networkType},
             #{para.useType},
-            #{para.devType},
-            #{para.category},
-            #{para.ipAddressType},
-            #{para.devName},
-            #{para.devModel},
-            #{para.userPlan},
+
             #{para.vlan},
             #{para.subnetMask},
             #{para.gateway},
-            #{para.area},
-            #{para.startNode},
-            #{para.endNode},
-            #{para.startPort},
-            #{para.endPort},
+
             #{para.remark},
             #{para.responsible},
-            #{para.allocationUser},
-            #{para.allocationTime},
+
             #{para.updateUserInfo},
             #{para.isUseInteger},
+            #{para.operationTypeInteger},
+            #{para.systemName},
             now(),
             #{para.create_user},
             now(),
@@ -482,11 +400,10 @@
     </update>
 
     <update id="editIpDistribution">
-
-
         <if test='devIpDistributionBean_one.id!=null '>
             update dev_ip_distribution
-            set  state=0, update_user=#{devIpDistributionBean_one.userId},update_time=now(),is_use=#{devIpDistributionBean_one.isUseInteger}
+            set state=0,
+            update_user=#{devIpDistributionBean_one.userId},update_time=now(),is_use=#{devIpDistributionBean_one.isUseInteger}
 
             where id in
             <foreach collection="para" item="para" index="index" open="("
@@ -499,7 +416,7 @@
         <if test='devIpDistributionBean_one.ip!=null'>
             update dev_ip_distribution
             set
-             state=0,update_user=#{devIpDistributionBean_one.update_user},update_time=now()
+            state=0,update_user=#{devIpDistributionBean_one.update_user},update_time=now()
             where ip in
             <foreach collection="para" item="para" index="index" open="("
                      close=")" separator=",">
@@ -507,8 +424,6 @@
             </foreach>
             ;
         </if>
-
-
 
 
         <if test="devIpDistributionBean_one.ipSegment!=null">
@@ -520,12 +435,13 @@
             where
             ip_Segment=#{devIpDistributionBean_one.ipSegment} ;
         </if>
+
     </update>
 
 
     <delete id="deleteIpSegmentDistribution">
-		update dev_ip_distribution  set state=0 ,update_user_info=#{para.updateUserInfo} ,update_user=#{para.update_user},update_time=now() where ip_Segment= #{para.ipSegment};
-		update dev_ip_segment_distribution set state=0 ,update_user_info=#{para.updateUserInfo},update_user= #{para.update_user},update_time=now()  where id=
+		update dev_ip_distribution  set operation_type=3,state=0 ,update_user_info=#{para.updateUserInfo} ,update_user=#{para.update_user},update_time=now() where ip_Segment= #{para.ipSegment};
+		update dev_ip_segment_distribution set  operation_type=3, state=0 ,update_user_info=#{para.updateUserInfo},update_user= #{para.update_user},update_time=now()  where id=
 		#{para.id};
 	</delete>
 
@@ -564,6 +480,97 @@
         <if test="para.functionsModeNumber!=null">
             and m.url=#{para.functionsModeNumber}
         </if>
+
+    </select>
+
+
+    <select id="find_ipSegment_distribution_historyDataInfo"
+            resultType="com.sunrun.entity.DevIpSegmentDistributionBean">
+        SELECT
+        id,
+        concat(ip_segment,'/',subnet_mask) AS ipSegment,
+        ip_segment as ip,
+        subnet_mask
+        AS subnetMask,
+        address,
+        network_type AS networkType,
+        use_type AS useType,
+        used_ip AS usedIp,
+        all_ip
+        AS allIp,
+        remark,
+        responsible,
+        update_user_info AS updateUserInfo,
+        create_time AS createTime,
+        create_user AS createUser,
+        update_time AS
+        updateTime,
+        update_user AS
+        updateUser,
+        CASE operation_type
+        WHEN 1 THEN '新增'
+        WHEN 2 THEN '修改'
+        WHEN 3 THEN '删除'
+        else   '未知操作'
+        END AS
+        operationType,
+        state
+        FROM
+        dev_ip_segment_distribution
+        WHERE
+        state = 0
+        <if test='para.ipSegment!=null '>
+            and  ip_segment=#{para.ipSegment}
+        </if>
+
+            ORDER BY update_time desc
+
+
+    </select>
+
+
+    <select id="find_ip_distribution_historyDataInfo" resultType="com.sunrun.entity.DevIpDistributionBean">
+        SELECT
+        id,
+        address AS address,
+        ip AS ip,
+        ip_segment AS ipSegment,
+        network_type AS networkType,
+        use_type AS useType,
+        vlan AS vlan,
+        subnet_mask AS subnetMask,
+        gateway AS gateway,
+        remark AS remark,
+        responsible AS responsible,
+         CASE operation_type
+        WHEN 1 THEN '新增'
+        WHEN 2 THEN '修改'
+        WHEN 3 THEN '删除'
+        else   '未知操作'
+        END AS
+        operationType,
+        system_name as  systemName ,
+        update_user_info AS
+        updateUserInfo,
+        CASE is_Use
+        WHEN 1 THEN '使用'
+        WHEN 0 THEN '未使用'
+        END AS
+        isUse,
+        create_time AS createTime,
+        create_user AS createUser,
+        update_time
+        AS updateTime,
+        update_user AS updateUser
+        FROM
+        dev_ip_distribution
+        WHERE
+        state = 0
+        <if test='para.ip!=null '>
+            and  ip=#{para.ip}
+        </if>
+
+        ORDER BY update_time desc
 
     </select>
 

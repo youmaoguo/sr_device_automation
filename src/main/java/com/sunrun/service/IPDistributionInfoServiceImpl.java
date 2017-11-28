@@ -1,31 +1,25 @@
 package com.sunrun.service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import javax.annotation.Resource;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.sunrun.entity.DevIpDistributionBean;
 import com.sunrun.entity.DevIpSegmentConfigBean;
 import com.sunrun.entity.DevIpSegmentDistributionBean;
 import com.sunrun.entity.MenuBean;
 import com.sunrun.mapper.IPDistributionInfoMapper;
-import com.sunrun.util.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+
+import javax.annotation.Resource;
+import java.util.List;
+
 
 @Service("iPDistributionInfoService")
 public class IPDistributionInfoServiceImpl implements IPDistributionInfoService {
 	private static final Logger logger = LoggerFactory.getLogger(IPDistributionInfoServiceImpl.class);
 	@Resource
-	private IPDistributionInfoMapper iPDistributionInfoMapper; 
+	private IPDistributionInfoMapper iPDistributionInfoMapper;
 
 	@Override
 	public List<DevIpSegmentDistributionBean> findDevIpSegmentDistribution(
@@ -64,6 +58,16 @@ public class IPDistributionInfoServiceImpl implements IPDistributionInfoService 
 			String like, String sortBy, String order, String limit) {
  
 		return iPDistributionInfoMapper.findDevIpDistribution(devIpDistributionBean, exact, like, sortBy, order, limit);
+	}
+
+	@Override
+	public List<DevIpSegmentDistributionBean> ipSegment_distribution_historyDataInfo(DevIpSegmentDistributionBean devIpSegmentDistributionBean)  {
+		return iPDistributionInfoMapper.find_ipSegment_distribution_historyDataInfo(devIpSegmentDistributionBean);
+	}
+
+	@Override
+	public List<DevIpDistributionBean> ip_distribution_historyDataInfo(DevIpDistributionBean devIpDistributionBean ) {
+		return iPDistributionInfoMapper.find_ip_distribution_historyDataInfo(devIpDistributionBean);
 	}
 
 	@Override

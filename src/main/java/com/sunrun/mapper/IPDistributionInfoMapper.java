@@ -135,4 +135,20 @@ public interface IPDistributionInfoMapper {
 	 */
 	List<MenuBean> findMenu(@Param("para") MenuBean menuBean );
 
+
+	/**
+	 *查询IP网段操作历史记录
+	 * @param devIpSegmentDistributionBean
+	 * @return
+	 */
+	List<DevIpSegmentDistributionBean> find_ipSegment_distribution_historyDataInfo(@Param("para")  DevIpSegmentDistributionBean devIpSegmentDistributionBean  );
+
+	/**
+	 * 查询IP操作历史记录信息
+	 * @param devIpDistributionBean
+	 * @return
+	 */
+	List<DevIpDistributionBean> find_ip_distribution_historyDataInfo(@Param("para") DevIpDistributionBean devIpDistributionBean );
+
+
 }

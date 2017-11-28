@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 
 import com.alibaba.druid.util.StringUtils;
@@ -406,5 +407,42 @@ public final class StringUtil {
 			 sb.append("<th class='xl65' width='238' style='border:1px solid #ededed;width:179pt'>带外交换机信息</th></tr>");
 			return sb.toString();
 		 }
+
+
+	/**
+	 *  把get请求后面的参数，转换成JSONObject对像。
+	 *  例如： http://127.0.0.1:8098/sr_sys/v1/thirdparty/kvmInfo?&model=cisco&brandName=4948E
+	 *   转换为 {"model":"cisco",
+	 *           "brandName":"4948E"
+	 *          }
+	 *
+	 * @param str
+	 * @return
+	 */
+	public static JSONObject getParaTOJsonString(String str) {
+		JSONObject returnJSONObject=new JSONObject() ;
+		if(isNotBlank(str)){
+			String[] a=str.split("&");
+			if(a.length>0){
+				for(int i=0;i<a.length;i++){
+					String[] b=a[i].split("=");
+					if(b.length>1){
+						returnJSONObject.put(b[0].trim(), b[1].trim());
+
+					}
+				}
+			}
+		}
+		return returnJSONObject;
+	}
+
+	/**
+	 * 判断字符串是否不为空字符串(null, "", "任意数量空格")
+	 * @param str
+	 * @return
+	 */
+	public static boolean isNotBlank(String str) {
+		return str != null && str.trim().length() > 0;
+	}
 	
 }

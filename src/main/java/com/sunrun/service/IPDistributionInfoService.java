@@ -81,6 +81,23 @@ public interface IPDistributionInfoService {
 	List<DevIpDistributionBean> findDevIpDistribution(DevIpDistributionBean devIpDistributionBean, String exact,
 			String like, String sortBy, String order, String limit);
 
+
+	/**
+	 *查询IP网段操作历史记录
+	 * @param devIpSegmentDistributionBean
+	 * @return
+	 */
+	List<DevIpSegmentDistributionBean> ipSegment_distribution_historyDataInfo( DevIpSegmentDistributionBean devIpSegmentDistributionBean  );
+
+	/**
+	 * 查询IP操作历史记录信息
+	 * @param devIpDistributionBean
+	 * @return
+	 */
+	List<DevIpDistributionBean> ip_distribution_historyDataInfo( DevIpDistributionBean devIpDistributionBean );
+
+
+
 	/**
 	 * 统计 IP 网段记录
 	 * 
