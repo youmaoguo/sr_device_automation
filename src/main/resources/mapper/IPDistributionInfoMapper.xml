@@ -75,6 +75,7 @@
         vlan,gateway,
         remark,
         responsible,
+        camp_On as campOn,
         update_user_info AS updateUserInfo,
         create_time AS createTime,
         create_user AS createUser,
@@ -144,14 +145,7 @@
 
     <select id="findDevIpSegmentConfigBean" resultType="com.sunrun.entity.DevIpSegmentConfigBean">
         SELECT
-        network_type as networkType,
-        use_type as useType,
-        dev_type as
-        devType,
-        ip_address_type as ipAddressType,
-        user_plan as userPlan,
-        category
-
+        network_type as networkType
         FROM
         dev_ip_segment_config
         WHERE
@@ -164,12 +158,7 @@
             and network_type = #{para.networkType}
         </if>
 
-        <if test="para.useType!=null">
-            and use_type = #{para.useType}
-        </if>
-        <if test="para.devType!=null">
-            and dev_type = #{para.devType}
-        </if>
+
 
 
     </select>
@@ -193,6 +182,7 @@
         CASE is_Use
         WHEN 1 THEN '使用'
         WHEN 0 THEN '未使用'
+        else '未知'
         END AS
         isUse,
         create_time AS createTime,
@@ -254,6 +244,9 @@
         <if test="para.ipSegment!=null">
             and ip_segment = #{para.ipSegment}
         </if>
+        <if test="para.operationType!=null and ( para.operationType=='delete'.toString() or para.operationType=='update'.toString() ) ">
+            and responsible!=null
+        </if>
         <if test="para.isUseInteger!=null">
             and is_use = ${para.isUseInteger}
         </if>
@@ -309,7 +302,7 @@
             #{para.useType},
             #{para.usedIp},
             #{para.allIp},
-            #{para.vlan},#{para.gateway},#{para.campOn},#{para.operationType},
+            #{para.vlan},#{para.gateway},#{para.campOn},#{para.operationTypeInteger},
             #{para.remark},
             #{para.responsible},
             #{para.updateUserInfo},
@@ -387,12 +380,12 @@
 
             update dev_ip_distribution
             set state=0
-            where ip_segment= #{para.ipSegment};
+            where state=1 and ip_segment= #{para.ipSegment};
 
             update
             dev_ip_segment_distribution
             set state=0
-            where id= #{para.id};
+            where state=1 and  id= #{para.id};
 
 
         </foreach>
@@ -402,10 +395,8 @@
     <update id="editIpDistribution">
         <if test='devIpDistributionBean_one.id!=null '>
             update dev_ip_distribution
-            set state=0,
-            update_user=#{devIpDistributionBean_one.userId},update_time=now(),is_use=#{devIpDistributionBean_one.isUseInteger}
-
-            where id in
+            set state=0
+            where state=1 and id in
             <foreach collection="para" item="para" index="index" open="("
                      close=")" separator=",">
                 #{para.id}
@@ -416,8 +407,8 @@
         <if test='devIpDistributionBean_one.ip!=null'>
             update dev_ip_distribution
             set
-            state=0,update_user=#{devIpDistributionBean_one.update_user},update_time=now()
-            where ip in
+            state=0
+            where  state=1 and ip in
             <foreach collection="para" item="para" index="index" open="("
                      close=")" separator=",">
                 #{para.ip}
@@ -429,10 +420,11 @@
         <if test="devIpDistributionBean_one.ipSegment!=null">
             update dev_ip_segment_distribution
             set used_ip= (select
-            count(*) from dev_ip_distribution where is_use=1
+            count(*) from dev_ip_distribution where state=1 and is_use=1
             and
             ip_segment=#{devIpDistributionBean_one.ipSegment})
             where
+            state=1  and
             ip_Segment=#{devIpDistributionBean_one.ipSegment} ;
         </if>
 
@@ -440,8 +432,8 @@
 
 
     <delete id="deleteIpSegmentDistribution">
-		update dev_ip_distribution  set operation_type=3,state=0 ,update_user_info=#{para.updateUserInfo} ,update_user=#{para.update_user},update_time=now() where ip_Segment= #{para.ipSegment};
-		update dev_ip_segment_distribution set  operation_type=3, state=0 ,update_user_info=#{para.updateUserInfo},update_user= #{para.update_user},update_time=now()  where id=
+		update dev_ip_distribution  set operation_type=3,state=0 ,update_user_info=#{para.updateUserInfo} ,update_user=#{para.update_user},update_time=now() where state=1 and ip_Segment= #{para.ipSegment};
+		update dev_ip_segment_distribution set  operation_type=3, state=0 ,update_user_info=#{para.updateUserInfo},update_user= #{para.update_user},update_time=now()  where state=1 and  id=
 		#{para.id};
 	</delete>
 
@@ -498,6 +490,7 @@
         used_ip AS usedIp,
         all_ip
         AS allIp,
+        vlan,gateway,
         remark,
         responsible,
         update_user_info AS updateUserInfo,
@@ -517,10 +510,9 @@
         state
         FROM
         dev_ip_segment_distribution
-        WHERE
-        state = 0
+
         <if test='para.ipSegment!=null '>
-            and  ip_segment=#{para.ipSegment}
+            WHERE      ip_segment=#{para.ipSegment}
         </if>
 
             ORDER BY update_time desc
@@ -564,10 +556,9 @@
         update_user AS updateUser
         FROM
         dev_ip_distribution
-        WHERE
-        state = 0
+
         <if test='para.ip!=null '>
-            and  ip=#{para.ip}
+            WHERE      ip=#{para.ip}
         </if>
 
         ORDER BY update_time desc
