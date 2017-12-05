@@ -1,6 +1,9 @@
 package com.sunrun.mapper;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -40,7 +43,7 @@ public interface IPDistributionInfoMapper {
 	 * 修改 IP 记录
 	 *
 	 */
-	void editIpDistribution(@Param("para") List<DevIpDistributionBean> devIpDistributionBean, @Param("devIpDistributionBean_one") DevIpDistributionBean devIpDistributionBean_one);
+	void editIpDistribution(@Param("set") Set<String> idValues_db);
 
 	/**
 	 * 删除 IP 网段记录
@@ -149,6 +152,13 @@ public interface IPDistributionInfoMapper {
 	 * @return
 	 */
 	List<DevIpDistributionBean> find_ip_distribution_historyDataInfo(@Param("para") DevIpDistributionBean devIpDistributionBean );
+
+
+	/**
+	 * 更新 IpSegmentDistribution 中IP使用数量
+	 * @param ipSegment
+	 */
+	void  updateIpSegmentDistribution(@Param("ipSegment")String ipSegment);
 
 
 }

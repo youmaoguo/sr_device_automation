@@ -30,8 +30,25 @@ public class DevIpDistributionBean extends BaseEntity {
 	private  String 	operationType;
 	private  Integer 	operationTypeInteger;
 	private String systemName;
-
+	private  Integer 	ipType;
 	private Date updateTime;
+	private  Integer 	campOn;
+
+	public Integer getCampOn() {
+		return campOn;
+	}
+
+	public void setCampOn(Integer campOn) {
+		this.campOn = campOn;
+	}
+
+	public Integer getIpType() {
+		return ipType;
+	}
+
+	public void setIpType(Integer ipType) {
+		this.ipType = ipType;
+	}
 
 	public Date getUpdateTime() {
 		return updateTime;

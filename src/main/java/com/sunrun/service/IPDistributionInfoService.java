@@ -1,6 +1,8 @@
 package com.sunrun.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -29,12 +31,8 @@ public interface IPDistributionInfoService {
 	 */
 	void editIpSegmentDistribution(List<DevIpSegmentDistributionBean> devIpSegmentDistributionBeanList);
 
-	/**
-	 * 修改 IP 记录
-	 * 
-	 *
-	 */
-	void editIpDistribution(List<DevIpDistributionBean> devIpDistributionBean, DevIpDistributionBean devIpDistributionBean_one);
+
+	void editIpDistribution(Set<String> idValues_db);
 
 
 	/**
@@ -144,5 +142,12 @@ public interface IPDistributionInfoService {
 	 * @return
 	 */
 	List<MenuBean> findMenu(MenuBean menuBean );
+
+
+	/**
+	 * 更新 IpSegmentDistribution 中IP使用数量
+	 * @param ipSegment
+	 */
+	void  updateIpSegmentDistribution(String ipSegment);
 
 }

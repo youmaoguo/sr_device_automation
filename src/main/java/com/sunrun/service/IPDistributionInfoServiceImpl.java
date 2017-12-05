@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 
 @Service("iPDistributionInfoService")
@@ -89,9 +91,9 @@ public class IPDistributionInfoServiceImpl implements IPDistributionInfoService 
 	}
 
 	@Override
-	public void editIpDistribution(List<DevIpDistributionBean> devIpDistributionBean,DevIpDistributionBean devIpDistributionBean_one) {
+	public void editIpDistribution( Set<String> idValues_db) {
 		 
-		  iPDistributionInfoMapper.editIpDistribution(devIpDistributionBean,  devIpDistributionBean_one);
+		  iPDistributionInfoMapper.editIpDistribution(idValues_db);
 	}
 
 	@Override
@@ -109,6 +111,11 @@ public class IPDistributionInfoServiceImpl implements IPDistributionInfoService 
 	public List<MenuBean> findMenu(MenuBean menuBean) {
 		// TODO Auto-generated method stub
 		return iPDistributionInfoMapper.findMenu(menuBean);
+	}
+
+	@Override
+	public void updateIpSegmentDistribution( String ipSegment) {
+		iPDistributionInfoMapper.updateIpSegmentDistribution(ipSegment);
 	}
 
 

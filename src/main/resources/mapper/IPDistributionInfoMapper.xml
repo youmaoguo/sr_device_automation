@@ -189,6 +189,7 @@
         create_user AS createUser,
         update_time AS updateTime,
         update_user AS updateUser,
+        ip_Type AS ipType,
         system_name as systemName
         FROM
         dev_ip_distribution
@@ -268,10 +269,6 @@
 
     <insert id="saveIpSegmentDistribution">
 
-        UPDATE dev_ip_segment_distribution
-        set state=0
-        where ip_segment=#{para.ipSegment};
-
         insert into dev_ip_segment_distribution(
         id ,
         ip_segment ,
@@ -337,7 +334,7 @@
         create_user ,
         update_time ,
         update_user ,
-        state
+        state,ip_type
         ) values
         <foreach collection="para" item="para" index="index"
                  separator=",">
@@ -369,7 +366,7 @@
             #{para.create_user},
             now(),
             #{para.update_user},
-            1
+            1,#{para.ipType}
             )
         </foreach>
     </insert>
@@ -385,7 +382,7 @@
             update
             dev_ip_segment_distribution
             set state=0
-            where state=1 and  id= #{para.id};
+            where state=1 and  ip_segment= #{para.ipSegment};
 
 
         </foreach>
@@ -393,41 +390,26 @@
     </update>
 
     <update id="editIpDistribution">
-        <if test='devIpDistributionBean_one.id!=null '>
             update dev_ip_distribution
             set state=0
             where state=1 and id in
-            <foreach collection="para" item="para" index="index" open="("
+            <foreach collection="set" item="para" index="index" open="("
                      close=")" separator=",">
-                #{para.id}
+                #{para}
             </foreach>
             ;
-        </if>
 
-        <if test='devIpDistributionBean_one.ip!=null'>
-            update dev_ip_distribution
-            set
-            state=0
-            where  state=1 and ip in
-            <foreach collection="para" item="para" index="index" open="("
-                     close=")" separator=",">
-                #{para.ip}
-            </foreach>
-            ;
-        </if>
+    </update>
 
-
-        <if test="devIpDistributionBean_one.ipSegment!=null">
+    <update id="updateIpSegmentDistribution">
             update dev_ip_segment_distribution
             set used_ip= (select
             count(*) from dev_ip_distribution where state=1 and is_use=1
             and
-            ip_segment=#{devIpDistributionBean_one.ipSegment})
+            ip_segment=#{ipSegment})
             where
             state=1  and
-            ip_Segment=#{devIpDistributionBean_one.ipSegment} ;
-        </if>
-
+            ip_Segment=#{ipSegment} ;
     </update>
 
 
