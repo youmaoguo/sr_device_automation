@@ -3,54 +3,142 @@
 
 <mapper namespace="com.sunrun.mapper.IPDistributionInfoMapper">
     <sql id="IpSegmentLikeQuery">
-		AND (
 
-		remark like concat(concat('%',#{like}),'%')
-		or
-		ip_segment like concat(concat('%',#{like}),'%')
-		or address like concat(concat('%',#{like}),'%')
-		or network_type like concat(concat('%',#{like}),'%')
-		or use_type like concat(concat('%',#{like}),'%')
-		or vlan like concat(concat('%',#{like}),'%')
-		or gateway like concat(concat('%',#{like}),'%')
+        <if test=" para.remark!=null or para.ipSegment!=null   or  para.address!=null or para.networkType!=null or para.useType!=null or para.vlan!=null or  para.gateway!=null">
 
-		)
-	</sql>
+            <trim prefix="AND (" prefixOverrides="and|or" suffix=" )">
+
+                <if test="para.remark!=null">
+                    or remark like concat(concat('%',#{like}),'%')
+                </if>
+
+                <if test="para.ipSegment!=null">
+                    or ip_segment like concat(concat('%',#{like}),'%')
+                </if>
+
+                <if test="para.address!=null">
+                    or address like concat(concat('%',#{like}),'%')
+                </if>
+
+                <if test="para.networkType!=null">
+                    or network_type like concat(concat('%',#{like}),'%')
+                </if>
+                <if test="para.useType!=null">
+                    or use_type like concat(concat('%',#{like}),'%')
+                </if>
+                <if test="para.vlan!=null">
+                    or vlan like concat(concat('%',#{like}),'%')
+                </if>
+                <if test="para.gateway!=null">
+                    or gateway like concat(concat('%',#{like}),'%')
+                </if>
+
+            </trim>
+
+        </if>
+
+
+    </sql>
 
     <sql id="IpSegmentExactQuery">
-		AND (
-		remark = #{exact}
-		or ip_segment = #{exact}
-		or address = #{exact}
-		or network_type = #{exact}
-		or use_type = #{exact}
-		or vlan = #{exact}
-		or gateway = #{exact}
-		)
-	</sql>
+
+        <if test=" para.remark!=null or para.ipSegment!=null   or  para.address!=null or para.networkType!=null or para.useType!=null or para.vlan!=null or  para.gateway!=null">
+            <trim prefix="AND (" prefixOverrides="and|or" suffix=" )">
+
+                <if test="para.remark!=null">
+                    or remark = #{exact}
+                </if>
+
+                <if test="para.ipSegment!=null">
+                    or ip_segment = #{exact}
+                </if>
+
+                <if test="para.address!=null">
+                    or address = #{exact}
+                </if>
+
+                <if test="para.networkType!=null">
+                    or network_type = #{exact}
+                </if>
+                <if test="para.useType!=null">
+                    or use_type = #{exact}
+                </if>
+                <if test="para.vlan!=null">
+                    or vlan = #{exact}
+                </if>
+                <if test="para.gateway!=null">
+                    or gateway = #{exact}
+                </if>
+
+            </trim>
+        </if>
+    </sql>
 
     <sql id="IpLikeQuery">
-		AND (
-		remark like concat(concat('%',#{like}),'%')
-		or
-		ip like
-		concat(concat('%',#{like}),'%')
-		or address like
-		concat(concat('%',#{like}),'%')
-		or use_type like concat(concat('%',#{like}),'%')
-		or system_name like concat(concat('%',#{like}),'%')
-		)
-	</sql>
+        <if test=" para.remark!=null or para.ip!=null   or  para.address!=null or para.networkType!=null or para.useType!=null or para.systemName!=null or  para.responsible!=null">
+
+            <trim prefix="AND (" prefixOverrides="and|or" suffix=" )">
+
+                <if test="para.remark!=null">
+                    or remark like concat(concat('%',#{like}),'%')
+                </if>
+
+                <if test="para.ip!=null">
+                    or ip like concat(concat('%',#{like}),'%')
+                </if>
+
+                <if test="para.address!=null">
+                    or address like concat(concat('%',#{like}),'%')
+                </if>
+
+                <if test="para.networkType!=null">
+                    or network_type like concat(concat('%',#{like}),'%')
+                </if>
+                <if test="para.useType!=null">
+                    or use_type like concat(concat('%',#{like}),'%')
+                </if>
+                <if test="para.systemName!=null">
+                    or system_name like concat(concat('%',#{like}),'%')
+                </if>
+                <if test="para.responsible!=null">
+                    or responsible like concat(concat('%',#{like}),'%')
+                </if>
+            </trim>
+        </if>
+    </sql>
 
     <sql id="IpExactQuery">
-		AND (
-		remark = #{exact}
-		or ip = #{exact}
-		or address = #{exact}
-		or use_type = #{exact}
-		or system_name = #{exact}
-		)
-	</sql>
+        <if test=" para.remark!=null or para.ip!=null   or  para.address!=null or para.networkType!=null or para.useType!=null or para.systemName!=null or  para.responsible!=null">
+
+            <trim prefix="AND (" prefixOverrides="and|or" suffix=" )">
+
+                <if test="para.remark!=null">
+                    or remark = #{exact}
+                </if>
+
+                <if test="para.ip!=null">
+                    or ip = #{exact}
+                </if>
+
+                <if test="para.address!=null">
+                    or address = #{exact}
+                </if>
+
+                <if test="para.networkType!=null">
+                    or network_type = #{exact}
+                </if>
+                <if test="para.useType!=null">
+                    or use_type = #{exact}
+                </if>
+                <if test="para.systemName!=null">
+                    or system_name = #{exact}
+                </if>
+                <if test="para.gateway!=null">
+                    or responsible = #{exact}
+                </if>
+            </trim>
+        </if>
+    </sql>
 
 
     <select id="findAllocationUser" resultType="String">
@@ -128,7 +216,8 @@
             and id = #{para.id}
         </if>
 
-        <if test="para.ipSegment!=null">
+
+        <if test="para.ipSegment!=null  and (like== null and  exact==null )">
             and ip_segment = #{para.ipSegment}
         </if>
 
@@ -159,8 +248,6 @@
         </if>
 
 
-
-
     </select>
 
 
@@ -185,6 +272,7 @@
         else '未知'
         END AS
         isUse,
+        is_Use as isUseInteger,
         create_time AS createTime,
         create_user AS createUser,
         update_time AS updateTime,
@@ -198,10 +286,10 @@
         <if test="para.id!=null">
             and id = #{para.id}
         </if>
-        <if test="para.ip!=null">
+        <if test="para.ip!=null  and (like== null and  exact==null )">
             and ip = #{para.ip}
         </if>
-        <if test="para.networkType!=null">
+        <if test="para.networkType!=null  and (like== null and  exact==null )">
             and network_type = #{para.networkType}
         </if>
 
@@ -239,14 +327,14 @@
         <if test="para.id!=null">
             and id = #{para.id}
         </if>
-        <if test="para.ip!=null">
+        <if test="para.ip!=null  and (like== null and  exact==null )">
             and ip = #{para.ip}
         </if>
-        <if test="para.ipSegment!=null">
+        <if test="para.ipSegment!=null  and (like== null and  exact==null )">
             and ip_segment = #{para.ipSegment}
         </if>
         <if test="para.operationType!=null and ( para.operationType=='delete'.toString() or para.operationType=='update'.toString() ) ">
-            and responsible!=null
+            and responsible is not null
         </if>
         <if test="para.isUseInteger!=null">
             and is_use = ${para.isUseInteger}
@@ -382,7 +470,7 @@
             update
             dev_ip_segment_distribution
             set state=0
-            where state=1 and  ip_segment= #{para.ipSegment};
+            where state=1 and ip_segment= #{para.ipSegment};
 
 
         </foreach>
@@ -390,14 +478,14 @@
     </update>
 
     <update id="editIpDistribution">
-            update dev_ip_distribution
-            set state=0
-            where state=1 and id in
-            <foreach collection="set" item="para" index="index" open="("
-                     close=")" separator=",">
-                #{para}
-            </foreach>
-            ;
+        update dev_ip_distribution
+        set state=0
+        where state=1 and id in
+        <foreach collection="set" item="para" index="index" open="("
+                 close=")" separator=",">
+            #{para}
+        </foreach>
+        ;
 
     </update>
 
@@ -486,7 +574,7 @@
         WHEN 1 THEN '新增'
         WHEN 2 THEN '修改'
         WHEN 3 THEN '删除'
-        else   '未知操作'
+        else '未知操作'
         END AS
         operationType,
         state
@@ -494,10 +582,10 @@
         dev_ip_segment_distribution
 
         <if test='para.ipSegment!=null '>
-            WHERE      ip_segment=#{para.ipSegment}
+            WHERE ip_segment=#{para.ipSegment}
         </if>
 
-            ORDER BY update_time desc
+        ORDER BY update_time desc
 
 
     </select>
@@ -516,14 +604,14 @@
         gateway AS gateway,
         remark AS remark,
         responsible AS responsible,
-         CASE operation_type
+        CASE operation_type
         WHEN 1 THEN '新增'
         WHEN 2 THEN '修改'
         WHEN 3 THEN '删除'
-        else   '未知操作'
+        else '未知操作'
         END AS
         operationType,
-        system_name as  systemName ,
+        system_name as systemName ,
         update_user_info AS
         updateUserInfo,
         CASE is_Use
@@ -540,7 +628,7 @@
         dev_ip_distribution
 
         <if test='para.ip!=null '>
-            WHERE      ip=#{para.ip}
+            WHERE ip=#{para.ip}
         </if>
 
         ORDER BY update_time desc

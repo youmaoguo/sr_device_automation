@@ -69,9 +69,9 @@ public class IPDistributionInfoController extends BaseController {
         try {
             String value = "";
             if (exact != null && "".equals(exact)) {
-                value = exact;
+                value = exact.trim();
             } else {
-                value = like;
+                value = like!=null?like.trim():"";
             }
             DevIpSegmentDistributionBean bean = parDevIpSegmentDistributionBean(selectColumnName, value);
 
@@ -116,9 +116,9 @@ public class IPDistributionInfoController extends BaseController {
         try {
             String value = "";
             if (exact != null && "".equals(exact)) {
-                value = exact;
+                value = exact.trim();
             } else {
-                value = like;
+                value = like!=null?like.trim():"";
             }
 
 
@@ -161,9 +161,9 @@ public class IPDistributionInfoController extends BaseController {
         try {
             String value = "";
             if (exact != null && "".equals(exact)) {
-                value = exact;
+                value = exact.trim();
             } else {
-                value = like;
+                value = like!=null?like.trim():"";
             }
             DevIpSegmentDistributionBean bean = parDevIpSegmentDistributionBean(selectColumnName, value);
 
@@ -209,9 +209,9 @@ public class IPDistributionInfoController extends BaseController {
 
             String value = "";
             if (exact != null && "".equals(exact)) {
-                value = exact;
+                value = exact.trim();
             } else {
-                value = like;
+                value = like!=null?like.trim():"";
             }
 
 
@@ -491,6 +491,7 @@ public class IPDistributionInfoController extends BaseController {
 
 
 
+
             // 数据库中这条记录的 负责人
             String responsible_db = "";
 
@@ -530,7 +531,7 @@ public class IPDistributionInfoController extends BaseController {
                 // 如果这个网段下面的 IP ，有被使用了， 也不可以去更新。
                 DevIpDistributionBean bean2 = new DevIpDistributionBean();
                 bean2.setIsUseInteger(1);
-                bean2.setIpSegment(devIpSegmentDistributionBean.getIpSegment());
+                bean2.setIpSegment(devIpSegmentDistributionBean.getIp());
                 bean2.setOperationType("update");
                 Integer total2 = iPDistributionInfoService.countDevIpDistribution(bean2, null, null);
 
@@ -692,16 +693,17 @@ public class IPDistributionInfoController extends BaseController {
                 }
 
                 // 判断是否有 责任人， 如果有，则IP为实占。
-                if (!StringUtils.isEmpty(responsible) || "使用".equals(responsibleDevIpDistributionBean.getIsUse())) {
+                if (!StringUtils.isEmpty(responsible) ||  responsibleDevIpDistributionBean.getIsUseInteger()==1) {
                     devIpDistributionBean.setIsUseInteger(1);
                     devIpDistributionBean.setResponsible(responsible);
                 } else {
+                    //默认情况下为 未使用
+                    devIpDistributionBean.setIsUseInteger(0);
+                    devIpDistributionBean.setResponsible(null);
 
                     // 2网关地址；3广播地址；4预留地址
                     if (ipType != null && (ipType == 2 || ipType == 3 || ipType == 4)) {
                         devIpDistributionBean.setIsUseInteger(1);
-                    }else{
-                        devIpDistributionBean.setIsUseInteger(0);
                     }
                 }
 
@@ -901,7 +903,7 @@ public class IPDistributionInfoController extends BaseController {
             json.setCollect(null);
             json.setData(null);
             json.setRet_info("网段:" + ipSegment + "/" + subnetMask + ",已录入过，请核实。");
-            json.setRet_code(500);
+            json.setRet_code(200);
             json.setSuccess(false);
             response(json, response, request);
             returnValue = true;
@@ -926,18 +928,26 @@ public class IPDistributionInfoController extends BaseController {
 
         boolean returnValue = false;
         Json json = new Json();
+
+        // 超级管理员 有所有可修改的权限。
+        if (iPDistributionInfoService.findUserRole("超级管理员", userId) > 0) {
+            returnValue = true;
+            return returnValue;
+        }
+
+        // 如果 原记录的负责人已有值，则不可以进行修改。如果登陆账号就是负责人除外
+        if (responsible_db!=null && responsible_db.contains(usercode)) {
+            returnValue = true;
+            return returnValue;
+
+        }
+
         // 当参数 传过来的负责人有值时
         if (responsible != null && responsible.length() > 0) {
 
-            //  如果原记录的负责人为空，则需要去校验是否有权限，才能去修改。
+            //  如果数据库中 原记录的负责人没有值，则需要去校验是否有权限，才能去修改。
             if (responsible_db == null || responsible_db.equals("")) {
                 // 如果不一样， 需要校验操作人员是否有权限去操作。
-
-                if (iPDistributionInfoService.findUserRole("超级管理员", userId) > 0) {
-                    returnValue = true;
-                    return returnValue;
-                }
-
                 if (iPDistributionInfoService.findUserRole("网络室操作员", userId) < 1) {
                     // 没有权限
                     json.setCollect(null);
@@ -951,8 +961,8 @@ public class IPDistributionInfoController extends BaseController {
 
             } else {
 
-                // 如果 原记录的负责人已有值，则不可以进行修改。如果登陆账号就是负责人除外
-                if (!responsible_db.equals(responsible.trim()) && !responsible_db.contains(usercode)) {
+                // 如果数据库中  原记录的负责人已有值，则不可以进行修改。如果登陆账号就是负责人除外
+                if (!responsible_db.contains(usercode)) {
                     // 没有权限
                     json.setCollect(null);
                     json.setData(null);
@@ -966,15 +976,16 @@ public class IPDistributionInfoController extends BaseController {
             }
 
         } else {
-            // 当目前的状态为 使用 ，只有超级管理员才能权限去修改。
 
             if (isUse != null && "使用".equals(isUse)) {
-                if (iPDistributionInfoService.findUserRole("超级管理员", userId) > 0) {
-                    returnValue = true;
-
-                } else {
+                    // 没有权限
+                    json.setCollect(null);
+                    json.setData(null);
+                    json.setRet_info("此用户没有修改权限");
+                    json.setRet_code(500);
+                    json.setSuccess(false);
+                    response(json, response, request);
                     returnValue = false;
-                }
 
             } else {
                 returnValue = true;
@@ -1070,8 +1081,12 @@ public class IPDistributionInfoController extends BaseController {
     public DevIpSegmentDistributionBean parDevIpSegmentDistributionBean(String selectColumnName, String value) {
         DevIpSegmentDistributionBean per = new DevIpSegmentDistributionBean();
         try {
-            if (selectColumnName == null) {
+            if(selectColumnName == null && (value==null || "".equals(value.trim())  )){
                 return per;
+            }
+
+            if (selectColumnName == null) {
+                selectColumnName="remark,ip_Segment,address,network_Type,use_Type,vlan,gateway";
             }
 
             String[] selectColumnNameString = selectColumnName.split(",");
@@ -1128,8 +1143,12 @@ public class IPDistributionInfoController extends BaseController {
     public DevIpDistributionBean parDevIpDistributionBean(String selectColumnName, String value) {
         DevIpDistributionBean per = new DevIpDistributionBean();
         try {
-            if (selectColumnName == null) {
+            if(selectColumnName == null && (value==null || "".equals(value.trim())  )){
                 return per;
+            }
+
+            if (selectColumnName == null) {
+                selectColumnName ="remark,ip,address,netwk_Type,use_Type,system_Name,responsible";
             }
 
             String[] selectColumnNameString = selectColumnName.split(",");
@@ -1368,10 +1387,12 @@ public class IPDistributionInfoController extends BaseController {
 
                     // 判断是否有为预占
                     if (campOn != null && "1".equals(campOn)) {
-                        bean.setIsUseInteger(1);
+
                         bean.setCampOn(1);
+                        if(responsible==null || responsible.trim().length()<1){
+                            bean.setIsUseInteger(1);
+                        }
                     } else {
-                        bean.setIsUseInteger(0);
                         bean.setCampOn(0);
                     }
 

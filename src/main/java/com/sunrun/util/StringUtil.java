@@ -109,7 +109,7 @@ public final class StringUtil {
 	public static String filedConvertProperty(String filed){
 		String property = "";
 		if(!StringUtils.isEmpty(filed)){
-			if(filed.toLowerCase().indexOf("_")!=-1){
+			if(filed.indexOf("_")!=-1){
 				 String[] ss = filed.toLowerCase().split("_");
 	        	   String s = "";
 	        	   for(int j=0;j<ss.length;j++){
