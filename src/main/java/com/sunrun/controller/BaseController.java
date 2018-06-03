@@ -21,14 +21,6 @@ public class BaseController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(BaseController.class);
 	
-	public String getUserName(HttpServletRequest request){
-		//String userName = (String)request.getSession().getAttribute("userName");		//从会话中获取
-		String userName = (String)request.getServletContext().getAttribute("userName");	//从context上下文中获取
-		if(!StringUtils.isEmpty(userName))
-			return userName;
-		else
-			return null;
-	}
 	
 	/**
 	 * 设置跨域请求.由于spring mvc4.2 默认支持跨域
@@ -44,42 +36,8 @@ public class BaseController {
 		response.setCharacterEncoding("UTF-8");
 	}
 	
-	/**
-	 * 后台响应回客户端，单纯返回json格式
-	 * @param json
-	 * @param response
-	 */
-	public void response(Json json, HttpServletResponse response){
-		setResponse(response);
-		try {
-			response.getWriter().print(JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty));
-			logger.info("后台响应json格式数据："+JSONObject.toJSONString(json));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * 后台响应回客户端，返回有区分json和jsonP两种格式
-	 * @param json
-	 * @param response
-	 * 
-	 */
+	 
 	public void response(Json json, HttpServletResponse response, HttpServletRequest request){
-		setResponse(response);
-		try {
-			String callback = request.getParameter("callback");	//参数值必须为：jsonpCallBack
-			if(callback==null || callback.equals(""))
-				response.getWriter().print(JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty));
-			else
-				response.getWriter().print(callback + "(" + JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty));
-			logger.info("后台响应json格式数据："+JSONObject.toJSONString(json));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void response2(Json json, HttpServletResponse response, HttpServletRequest request){
 		setResponse(response);
 		try {
 			String callback = request.getParameter("callback");	//参数值必须为：jsonpCallBack
@@ -112,7 +70,7 @@ public class BaseController {
 	 * @return
 	 */
 	public String returnJsonP(Json json){
-		return "jsonpCallBack("+JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty)+")";
+		return "jsonpCallBack("+JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteDateUseDateFormat)+")";
 	}
 	
 	/**
@@ -121,95 +79,10 @@ public class BaseController {
 	 * @return
 	 */
 	public String returnJson(Json json){
-		return JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty);
+		return JSONObject.toJSONString(json, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteDateUseDateFormat);
 	}
 
 
-	/**
-	 *返回信息给调用者--json 格式  用于：查询记录条数
-	 * @param pageSize
-	 * @param total
-	 * @param currentPage
-	 * @return
-	 */
-	public void response(Integer pageSize,Integer total,Integer currentPage,String info,HttpServletRequest request, HttpServletResponse response){
-		JSONObject obj = new JSONObject();
-		Json json = new Json();
-		JSONArray array = new JSONArray();
-
-		obj.put("pageSize", pageSize);
-		obj.put("total", total);
-		obj.put("currentPage", currentPage);
-		obj.put("pages",
-				((total % pageSize) > 0 ? (Math.floor(total / pageSize) + 1) : (Math.floor(total / pageSize))));
-		array.add(obj);
-		json.setData(array);
-		json.setRet_info(info);
-		json.setRet_code(200);
-		json.setSuccess(true);
-
-		response2(json,response,request);
-	}
-
-
-	/**
-	 *返回信息给调用者--json 格式  用于：查询记录用
-	 * @param list
-	 * @param pageSize
-	 * @param total
-	 * @param currentPage
-	 * @return
-	 */
-	public void response(List list,Integer pageSize,Integer total,Integer currentPage,String info,HttpServletRequest request, HttpServletResponse response){
-		JSONObject obj = new JSONObject();
-		List<Object> data = new ArrayList<Object>();
-		Json json = new Json();
-
-		obj.put("pageSize", pageSize);
-		obj.put("total", total);
-		obj.put("currentPage", currentPage);
-		obj.put("data", list);
-		data.add(obj);
-		json.setData(data);
-		json.setRet_info(info);
-		json.setRet_code(200);
-		json.setSuccess(true);
-		response2(json,response,request);
-	}
-
-	/**
-	 *返回信息给调用者--json 格式  用于：一般数据返回
-	 * @param list
-	 * @param info
-	 * @return
-	 */
-	public void response(List list,String info, HttpServletRequest request, HttpServletResponse response){
-		Json json = new Json();
-		json.setData(list);
-		json.setRet_info(info);
-		json.setRet_code(200);
-		json.setSuccess(true);
-		response2(json,response,request);
-	}
-
-	/**
-	 * 返回信息给调用者--json 格式  用于：出错时调用
-	 * @param e
-	 * @param errinfo
-	 * @return
-	 */
-	public void  response(Exception e,String errinfo,HttpServletRequest request, HttpServletResponse response){
-		Json json = new Json();
-		e.printStackTrace();
-		logger.error(errinfo);
-		json.setCollect(null);
-		json.setData(null);
-		json.setRet_info(errinfo);
-		json.setRet_code(500);
-		json.setSuccess(false);
-
-		response2(json,response,request);
-	}
 	
 	/**
 	 * 分页条件
@@ -252,15 +125,5 @@ public class BaseController {
 		return a;
 	}
 	
-	/**
-	 * 返回base64加密后的用户名字和密码
-	 * @param username
-	 * @param pwd
-	 * @return
-	 */
-	public String Basic64Encord(String username, String pwd){
-		byte[] b = (username + ":" + pwd).getBytes();
-		return "Basic " + Base64Util.base64Encode(b);
-	}
-	
+	 
 }

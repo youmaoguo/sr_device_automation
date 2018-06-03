@@ -3,22 +3,16 @@ package com.sunrun.task;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import com.alibaba.fastjson.JSONObject;
-import com.sunrun.entity.DevExclusiveSwitchboardInfo;
-import com.sunrun.entity.DevIosFtpInfo;
 import com.sunrun.util.RestfulRequestUtil;
 
 @Component
@@ -35,17 +29,14 @@ public class KvmInfo {
 	     * @throws ExecutionException 
 	     * @throws InterruptedException 
 	     */
-	    public static List<String> completionServiceCount(List<String> ports, DevExclusiveSwitchboardInfo d, String models, String url, String method, String auth, String brandName, DevIosFtpInfo version) throws InterruptedException, ExecutionException {
+	    public static List<String> completionServiceCount(List<String> ports, String models, String url, String method, String auth, String brandName) throws InterruptedException, ExecutionException {
 	        ExecutorService executorService = Executors.newCachedThreadPool();
 	        CompletionService<String> completionService = new ExecutorCompletionService<String>(executorService);
 	        List<String> list = new ArrayList<String>();
 	        for (int i = 0; i < ports.size(); i++) {
 	        	JSONObject param = new JSONObject();
 				param.put("method_name", "/interchanger/v1/checkModel");
-				param.put("host", d.getExclusiveSwitchboardIp());
 				param.put("port", ports.get(i));
-				param.put("user", /*d.getTelnetUser()!=null ?d.getTelnetUser() : null*/version.getTelnetUser());
-				param.put("password", /*d.getTelnetPwd()!=null ? d.getTelnetPwd() : null*/version.getTelnetPwd());
 				param.put("type", models);
 				param.put("deviceBrand", brandName);
 	            /*Future<String> s = */completionService.submit(getTask(i, url, param, method, auth));

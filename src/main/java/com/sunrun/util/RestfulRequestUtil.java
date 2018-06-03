@@ -20,19 +20,7 @@ import com.alibaba.fastjson.JSON;
  */
 public final class RestfulRequestUtil {
 	private static final Logger logger = Logger.getLogger(RestfulRequestUtil.class);
-	
-	/**
-	 * 请求 restful接口 并且返回自己封装的Json对象
-	 * @param requestUrl	请求接口路径
-	 * @param paramterObj	请求参数对象
-	 * @param requestMethod	请求方式（post/get）
-	 * @return
-	 */
-	public static Json getJSON(String requestUrl, Object paramterObj, String requestMethod, String authorization){
-		String sb = getResponse(requestUrl, paramterObj, requestMethod, authorization);
-		return JSON.parseObject(sb, Json.class);
-	}
-	
+
 
 	/**
 	 * 请求 restful接口 并且返回JSONObject对象

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sunrun.mapper.CommondMapper">
+
+	<insert id="insert">
+		insert into  ${table}  ( ${field} )  values( ${value} )
+	</insert>
+	
+	<delete id="delete" >
+		delete from ${table} where 1=1 
+		<if test="condition != null">
+			AND ${condition}
+		</if>
+	</delete>
+
+	<select id="select" resultType="java.util.Map">
+		select ${field}  from ${table} where 1=1
+		<if test="condition != null">
+			AND ${condition}
+		</if>
+	</select>
+	
+	<update id="update"  >
+		update ${table} set ${field} where 1=1
+		<if test="condition != null">
+			AND ${condition}
+		</if>
+	</update>
+	
+	<!-- <update id="updateDevOnlineTask">
+		update dev_online_task
+		<trim prefix="set" suffixOverrides=",">
+				update_time = now(),
+				<if test="task.exclusiveSwitchboardPort != null">exclusive_switchboard_port=#{task.exclusiveSwitchboardPort},</if>
+				<if test="task.accessSwitchboardCheckInfo != null">access_switchboard_check_info=#{task.accessSwitchboardCheckInfo},</if>
+			</trim>
+		where 1=1 and state=1
+		<if test="task.id != null"> 
+		    AND id = #{task.id}
+		</if>
+	</update> -->
+	
+
+</mapper>
